@@ -4,7 +4,9 @@ int main()
 {
 	auto fct = ResourceFactory();
 
+	//
 	// create box for a+a
+	//
 	auto a = fct.createResource("a");
 	auto box = Add();
 	box.inputs.push_back(a);
@@ -18,7 +20,9 @@ int main()
 	std::cout << "Should be 2x666: " << *(int*) res->value << std::endl;
 
 	fct.dump();
+	// 
 	// create box for (a+a)*10
+	//
 	auto plus = std::make_shared<Add>();
 	auto mul = Mul();
 	plus->inputs.push_back(a);
