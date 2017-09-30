@@ -64,6 +64,7 @@ class If:public Statement
 
 class While:public Statement
 {
+	public:
 	std::shared_ptr<Function> expr;
 	std::shared_ptr<Statement> stat;
 	public:
@@ -81,6 +82,20 @@ class While:public Statement
 	}
 };
 
+
+class DebugStatement:public Function
+{
+	public:
+	virtual void operator()()
+	{
+		std::cout << "Debugstat:\n";
+		unsigned int id = 0;
+		for(auto x: this->inputs)
+		{
+			std::cout << id++ << "\t" << *(int*) x->value << std::endl; 
+		}	
+	}
+};
 class Body: public Statement
 {
 	public:
@@ -106,6 +121,19 @@ class Add: public Function
 	}
 };
 
+class Copy: public Function
+{
+	public:
+	virtual void operator()()
+	{
+		for(auto x: children)
+			(*x)();
+		int out = *(int*) inputs[0]->value;
+		*((int*)output->value) = out;
+
+	}
+};
+
 class Mul: public Function
 {
 	public:
@@ -114,6 +142,19 @@ class Mul: public Function
 		for(auto x: children)
 			(*x)();
 		int out = (*(int*) inputs[0]->value) * (*(int*) inputs[1]->value);
+		*((int*)output->value) = out;
+
+	}
+};
+
+class Greater: public Function
+{
+	public:
+	virtual void operator()()
+	{
+		for(auto x: children)
+			(*x)();
+		int out = (*(int*) inputs[0]->value) > (*(int*) inputs[1]->value);
 		*((int*)output->value) = out;
 
 	}
