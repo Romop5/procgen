@@ -98,50 +98,68 @@ TEST_CASE("Try while")
 int fib(int n)
 {
 	auto res = ResourceFactory();
-	auto vn = res->createResource("n");
+	auto vn = res.createResource("n");
 	*(int*) vn->value = n;
-	auto first = res->createResource("first");
+	auto first = res.createResource("first");
 	*(int*) first->value = 1;
-	auto second= res->createResource("second");
+	auto second= res.createResource("second");
 	*(int*) second->value = 1;
-	auto result= res->createResource("result");
-	auto cnt = res->createResource("cnt");
+	auto result= res.createResource("result");
+	auto exprresult = res.createResource("exprresult");
+	auto cnt = res.createResource("cnt");
 	*(int*) cnt->value = 2;
 
 	// cntr < n
 	auto expr = std::make_shared<Greater>();
 	expr->inputs.push_back(vn);
 	expr->inputs.push_back(cnt);
+	expr->output = exprresult;
 	// cntr++
 	auto inc = std::make_shared<Add>();
-	auto c1 = res->createResource("const1");
+	auto c1 = res.createResource("const1");
 	*(int*) c1->value = 1;
 	inc->inputs.push_back(c1);
 	inc->inputs.push_back(cnt);
 	inc->output = cnt;
 
 	//int tmp = first + second;
-	auto tmp = res->createResource("tmp");
+	auto tmp = res.createResource("tmp");
 	auto sum = std::make_shared<Add>();
 	sum->inputs.push_back(first);
 	sum->inputs.push_back(second);
 	sum->output = tmp;
 
 	// first = second;
-	auto cp1 = std::shared_ptr<Copy>();
+	auto cp1 = std::make_shared<Copy>();
 	cp1->inputs.push_back(second);
 	cp1->output = first;
 
 	// second = tmp;
-	auto cp1 = std::shared_ptr<Copy>();
-	cp1->inputs.push_back(tmp);
-	cp1->output = second;
+	auto cp2 = std::make_shared<Copy>();
+	cp2->inputs.push_back(tmp);
+	cp2->output = second;
 	// result = second;
-	auto cp1 = std::shared_ptr<Copy>();
-	cp1->inputs.push_back(second);
-	cp1->output = result;
+	auto cp3 = std::make_shared<Copy>();
+	cp3->inputs.push_back(second);
+	cp3->output = result;
 
 	// finish it !
+	auto bodywhile = std::make_shared<Body>();
+	bodywhile->stats.push_back(inc); // cntr++
+	bodywhile->stats.push_back(sum); // int tmp = ...
+	bodywhile->stats.push_back(cp1); // first = second;
+	bodywhile->stats.push_back(cp2); // second = tmp;
+
+	auto wh = std::make_shared<While>();
+	wh->expr = expr;
+	wh->stat = bodywhile;
+
+	auto body = Body();
+	body.stats.push_back(wh);	// while(cntr < n) ...	
+	body.stats.push_back(cp3);	// result = second;
+	
+	body();
+	return *(int*)result->value;
 }
 
 TEST_CASE("Fibbonaci")
@@ -161,4 +179,12 @@ TEST_CASE("Fibbonaci")
 	// }
 	// result = second;
 
+	REQUIRE(fib(1) == 1);
+	REQUIRE(fib(2) == 1);
+	REQUIRE(fib(3) == 2);
+	REQUIRE(fib(4) == 3);
+	REQUIRE(fib(5) == 5);
+	REQUIRE(fib(6) == 8);
+	REQUIRE(fib(7) == 13);
+	REQUIRE(fib(44) == 701408733);
 }
