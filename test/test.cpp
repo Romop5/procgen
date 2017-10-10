@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "single.h"
+//#include "../src/function.h"
+//#include "../src/statement.h"
+#include "../src/single.h"
 
 // create box for a+a
 TEST_CASE("Create box for result = a + a, where a = 666;")

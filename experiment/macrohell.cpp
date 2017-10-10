@@ -45,5 +45,8 @@ REGFAC(Add,int);
 int main()
 {
 	for(auto &x: gTypes.classes)
+	{
 		std::cout << x.first << std::endl;
+		x.second();
+	}
 }

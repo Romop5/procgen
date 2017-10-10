@@ -5,6 +5,12 @@ file(GLOB SOURCES "src/*.cpp")
 enable_testing()
 add_test(NAME MyAwesomeTest COMMAND ibp-test)
 
+add_compile_options("-std=c++11")
 
-add_executable(ibp-test src/test.cpp)
+#message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+#message(STATUS "FOO is ${SOURCES}")
+# Important, removes main.cpp from /src/ list
+list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+#message(STATUS "FOO is ${SOURCES}")
+add_executable(ibp-test test/test.cpp ${SOURCES})
 add_executable(ibp src/main.cpp)
