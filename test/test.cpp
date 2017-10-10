@@ -4,12 +4,39 @@
 //#include "../src/statement.h"
 #include "../src/single.h"
 
+#include "../src/typereg.h"
+#include "../src/types.h"
+
+
+TEST_CASE("Testing new TypeRegister")
+{
+	auto tr = TypeRegister();
+	#define REG_TYPE(TYPE,TYPENAME)\
+	tr.add<TYPE>(TYPENAME);
+	FORALL_ATOMICTYPES(REG_TYPE);
+
+	auto a = tr.sharedResource(tr.getTypeId(keyword<int>()));
+	auto box = tAdd<int>();
+	box.inputs.push_back(a);
+	box.inputs.push_back(a);
+	auto res = tr.sharedResource(tr.getTypeId(keyword<int>()));
+	box.output = res;
+
+	*(int*) a->value = 666;
+	box();
+
+	REQUIRE(*(int*) res->value == 1332);
+
+}
+
+
+
 // create box for a+a
 TEST_CASE("Create box for result = a + a, where a = 666;")
 {
 	auto fct = ResourceFactory();
 	auto a = fct.createResource("a");
-	auto box = Add();
+	auto box = tAdd<int>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = fct.createResource("result");
@@ -21,6 +48,42 @@ TEST_CASE("Create box for result = a + a, where a = 666;")
 	REQUIRE(*(int*) res->value == 1332);
 
 }
+TEST_CASE("Create float box for result = a + a, where a = 666;")
+{
+	auto fct = ResourceFactory();
+	auto a = fct.createResource("a");
+	auto box = tAdd<float>();
+	box.inputs.push_back(a);
+	box.inputs.push_back(a);
+	auto res = fct.createResource("result");
+	box.output = res;
+
+	*(float*) a->value = 666.01;
+	box();
+
+	float r = (*(float*) (res->value))-1332;
+	REQUIRE(r < 0.2f);
+
+}
+
+TEST_CASE("Char test")
+{
+	auto fct = ResourceFactory();
+	auto a = fct.createResource("a");
+	auto box = tAdd<char>();
+	box.inputs.push_back(a);
+	box.inputs.push_back(a);
+	auto res = fct.createResource("result");
+	box.output = res;
+
+	*(char*) a->value = 130;
+	box();
+
+	float r = (*(float*) (res->value))-1332;
+	REQUIRE(r < 0.2f);
+
+}
+
 
 TEST_CASE("create box for (a+a)*10")
 {

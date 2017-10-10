@@ -4,15 +4,9 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include "resource.h"
 
 class Function;
-class Resource
-{
-	public:
-	unsigned int type;
-	void* value;	
-};
-
 class Statement
 {
 	public:

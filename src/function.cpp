@@ -47,3 +47,14 @@ void Greater::operator()()
 
 }
 
+/*
+template<typename T>
+void tAdd<T>::operator()()
+{
+	for(auto x: children)
+		(*x)();
+	T out = *(T*) inputs[0]->value +*(T*) inputs[1]->value;
+	*((T*)output->value) = out;
+}
+
+*/

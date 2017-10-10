@@ -50,4 +50,20 @@ class Greater: public Function
 	virtual void operator()();
 };
 
+template<typename T>
+class tAdd: public Function
+{
+	public:
+	//virtual void operator()();
+	virtual void operator()()
+	{
+		for(auto x: children)
+			(*x)();
+		T out = *(T*) inputs[0]->value +*(T*) inputs[1]->value;
+		*((T*)output->value) = out;
+	}
+
+
+};
+
 
