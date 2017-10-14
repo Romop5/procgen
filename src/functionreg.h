@@ -8,6 +8,11 @@ class FunctionReg
 	public:
 		FunctionReg(std::shared_ptr<TypeRegister> reg): tr(reg){};
 		bool addFunction(std::string name,func_constr c);
+		template<class X>
+		bool addFunction(std::string name)
+		{
+			this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
+		}
 		std::shared_ptr<Function> getFunc(std::string name);
 		
 		// Print out all info

@@ -25,3 +25,11 @@ void FunctionReg::_debug()
 	}
 
 }
+/*
+template<class X>
+bool FunctionReg::addFunction(std::string name)
+{
+	// create a constructor for class
+	this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
+}
+*/
