@@ -1,3 +1,5 @@
+#ifndef _TYPESTRING_H
+#define _TYPESTRING_H
 #include <string>
 #include "types.h"
 
@@ -13,6 +15,4 @@ std::string keyword<int>() {return "int";}
 #define KEYWORD(type,typeName)\
 template<> std::string keyword<type>() {return typeName;}
 
-// Register all built in C++ types
-FORALL_ATOMICTYPES(KEYWORD);
-
+#endif

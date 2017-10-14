@@ -25,7 +25,15 @@ TEST_CASE("Testing new TypeRegister")
 	*(int*) a->value = 666;
 	box();
 
-	REQUIRE(*(int*) res->value == 1332);
+	REQUIRE(*res == 1332);
+	//REQUIRE(*(int*) res->value == 1332);
+
+	auto mulbox = tMul<int>();
+	mulbox.inputs.push_back(a);
+	mulbox.inputs.push_back(a);
+	mulbox.output = res;
+	mulbox();
+	REQUIRE(*res == 443556);
 
 }
 

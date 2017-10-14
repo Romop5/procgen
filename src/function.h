@@ -49,7 +49,7 @@ class Greater: public Function
 	public:
 	virtual void operator()();
 };
-
+/*
 template<typename T>
 class tAdd: public Function
 {
@@ -65,5 +65,25 @@ class tAdd: public Function
 
 
 };
+*/
 
+// Define a binary operatorion OPNAME<type> 
+#define DEF_BINARY_OP(OPNAME,OPERATOR)\
+template<typename T>\
+class t##OPNAME: public Function\
+{\
+	public:\
+	virtual void operator()()\
+	{\
+		for(auto x: children)\
+			(*x)();\
+		T out = *(T*) inputs[0]->value OPERATOR *(T*) inputs[1]->value;\
+		*((T*)output->value) = out;\
+	}\
+};
 
+DEF_BINARY_OP(Add,+);
+DEF_BINARY_OP(Mul,*);
+DEF_BINARY_OP(Div,/);
+DEF_BINARY_OP(Greater,>);
+DEF_BINARY_OP(Eg,==);
