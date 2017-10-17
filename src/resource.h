@@ -1,13 +1,13 @@
+/*
+ * Procedural generation library
+ * xdobia11 - Roman Dobias
+ * Purpose: defines an atomic data handling structure
+ *
+ */
+
 #ifndef _RESOURCE_H
 #define _RESOURCE_H
 #include <cstddef>
-/*class Resource
-{
-	public:
-	unsigned int type;
-	void* value;	
-};
-*/
 class Resource
 {
 	public:
@@ -18,6 +18,7 @@ class Resource
 	Resource(void* dt, size_t id): value(dt),type(id){};
 	void* getData() {return value;}
 	size_t getId() {return type;}
+	
 	//template<typename T>
 	//T* operator*(){return dynamic_cast<T*>(value);}
 	template<typename T>

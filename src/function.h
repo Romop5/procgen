@@ -1,3 +1,9 @@
+/*
+ * Procedural generation library
+ * xdobia11 - Roman Dobias
+ * Purpose: defines standard boxes (functions)
+ *
+ */
 #include <iostream>
 #include <vector>
 #include <map>

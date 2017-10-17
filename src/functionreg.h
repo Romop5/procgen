@@ -1,13 +1,23 @@
+/*
+ * Procedural generation library
+ * xdobia11 - Roman Dobias
+ * Purpose: FunctionRegister registers shared<Function> under std::string name
+ * Note: standard functions available under FUNC:TYPE name
+ *
+ */
 #include "resource.h"
 #include "function.h"
 #include "typereg.h"
 
+// function pointer = Function constructor
 typedef std::shared_ptr<Function> (*func_constr)();
 class FunctionReg 
 {
 	public:
 		FunctionReg(std::shared_ptr<TypeRegister> reg): tr(reg){};
 		bool addFunction(std::string name,func_constr c);
+
+		// Registers class X constructor under 'name'
 		template<class X>
 		bool addFunction(std::string name)
 		{
