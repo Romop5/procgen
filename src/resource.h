@@ -11,11 +11,16 @@
 class Resource
 {
 	public:
-	void* value;
+	unsigned char* value;
 	size_t type;
 	public:
 	Resource():value(NULL), type(0){};
-	Resource(void* dt, size_t id): value(dt),type(id){};
+	Resource(unsigned char* dt, size_t id): value(dt),type(id){};
+	~Resource()
+	{
+		if(value)
+			delete[] value;
+	}
 	void* getData() {return value;}
 	size_t getId() {return type;}
 	

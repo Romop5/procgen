@@ -104,7 +104,7 @@ TEST_CASE("create box for (a+a)*10")
 	plus->inputs.push_back(a);
 	plus->inputs.push_back(a);
 	std::shared_ptr<Resource> c10 = std::make_shared<Resource>();
-	c10->value = new int();
+	c10->value = new unsigned char[sizeof(int)];
 
 	*(int*) c10->value = 10;
 

@@ -4,6 +4,8 @@
  * Purpose: defines standard boxes (functions)
  *
  */
+#ifndef _FUNCTIONS_H
+#define _FUNCTIONS_H
 #include <iostream>
 #include <vector>
 #include <map>
@@ -93,3 +95,4 @@ DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
 DEF_BINARY_OP(Greater,>);
 DEF_BINARY_OP(Eg,==);
+#endif

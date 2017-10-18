@@ -1,7 +1,8 @@
 #include "functionreg.h"
 #include <iostream>
 
-bool FunctionReg::addFunction(std::string name,func_constr c)
+//bool FunctionReg::addFunction(std::string name,func_constr c)
+bool FunctionReg::addFunction(std::string name,std::function<std::shared_ptr<Function>()> c)
 {
 	this->func[name] = c;	
 }

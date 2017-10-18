@@ -10,7 +10,7 @@ class ResourceFactory
 	{
 		resources[name] = std::make_shared<Resource>();
 		// TODO: alloc mem according to type
-		resources[name]->value = new int();
+		resources[name]->value = new unsigned char[sizeof(int)];
 		return resources[name];
 	}
 

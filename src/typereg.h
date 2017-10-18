@@ -46,7 +46,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		auto it = types.find(type);
 		if(it != types.end())
 		{
-			void* data = new unsigned char[it->second->getSize()];
+			unsigned char* data = new unsigned char[it->second->getSize()];
 			return std::make_shared<Resource>(data,it->first);
 		}
 		return std::make_shared<Resource>();
