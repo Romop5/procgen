@@ -5,19 +5,11 @@
 #include <memory>
 #include "typestring.h"
 #include "resource.h"
-class Type
+#include "typedesc.h"
+
+class TypeRegister: public std::enable_shared_from_this<TypeRegister> 
 {
-	std::string typeName;
-	size_t size;
-	public:
-	Type(){};
-	Type(std::string name, size_t len) :size(len),typeName(name){};
-	size_t getSize() {return this->size;}
-	std::string getName() {return this->typeName;}
-};
-class TypeRegister
-{
-	using TypeId = size_t;
+	//using TypeId = size_t;
 	public:
 	const TypeId UNKWNOWN = 0;
 	TypeRegister():highest(0){
@@ -27,8 +19,19 @@ class TypeRegister
 	bool add(const std::string& typeName)
 	{
 		TypeId id = highest++;
-		types[id] = Type(typeName,sizeof(T));
+		types[id] = std::make_shared<AtomicType>(sizeof(T));
 		names[typeName] = id;
+	}
+	bool addComposite(const std::string& typeName,std::vector<TypeId> types)
+	{
+		TypeId id = highest++;
+		unsigned int size = 0;
+		for(auto &x: types)
+			size += this->getType(x)->getAlignedSize();
+
+		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types);
+		names[typeName] = id;
+
 	}
 	TypeId getTypeId(const std::string& name)
 	{
@@ -43,7 +46,7 @@ class TypeRegister
 		auto it = types.find(type);
 		if(it != types.end())
 		{
-			void* data = new unsigned char[it->second.getSize()];
+			void* data = new unsigned char[it->second->getSize()];
 			return std::make_shared<Resource>(data,it->first);
 		}
 		return std::make_shared<Resource>();
@@ -56,7 +59,7 @@ class TypeRegister
 	}
 	
 
-	Type& getType(TypeId id)
+	std::shared_ptr<AbstractType>& getType(TypeId id)
 	{
 		auto it = types.find(id);
 		if(it != types.end())
@@ -68,7 +71,7 @@ class TypeRegister
 	private:
 	TypeId highest;
 	std::map<std::string,TypeId> names;
-	std::map<TypeId,Type> types;
+	std::map<TypeId,std::shared_ptr<AbstractType>> types;
 	
 	
 };
