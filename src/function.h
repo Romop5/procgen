@@ -90,9 +90,28 @@ class t##OPNAME: public Function\
 	}\
 };
 
+// Define a unary operatorion OPNAME<type> 
+#define DEF_UNARY_OP(OPNAME,OPERATOR)\
+template<typename T>\
+class t##OPNAME: public Function\
+{\
+	public:\
+	virtual void operator()()\
+	{\
+		for(auto x: children)\
+			(*x)();\
+		T out = *(T*) inputs[0]->value OPERATOR ;\
+		*((T*)output->value) = out;\
+	}\
+};
+
+
+// Copy input to output
+DEF_UNARY_OP(Copy,);
+
 DEF_BINARY_OP(Add,+);
 DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
 DEF_BINARY_OP(Greater,>);
-DEF_BINARY_OP(Eg,==);
+DEF_BINARY_OP(Eq,==);
 #endif

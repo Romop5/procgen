@@ -8,14 +8,22 @@
 #ifndef _RESOURCE_H
 #define _RESOURCE_H
 #include <cstddef>
+#include <string.h>
+#include <memory>
+
+class TypeRegister;
+
 class Resource
 {
 	public:
 	unsigned char* value;
 	size_t type;
+	std::shared_ptr<TypeRegister> tr;
 	public:
-	Resource():value(NULL), type(0){};
-	Resource(unsigned char* dt, size_t id): value(dt),type(id){};
+	// TODO: remove this constructor
+	Resource():tr(std::shared_ptr<TypeRegister>()),value(NULL), type(0){};
+	Resource(std::shared_ptr<TypeRegister> typereg, 
+		unsigned char* dt, size_t id): tr(typereg),value(dt),type(id){};
 	~Resource()
 	{
 		if(value)
@@ -31,6 +39,8 @@ class Resource
 	{
 		return ((*(T*) this->value) == val);
 	}
+
+	bool copy(const std::shared_ptr<Resource> src);
 };
 
 

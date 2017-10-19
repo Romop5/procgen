@@ -16,8 +16,7 @@ std::shared_ptr<Function> createCopy(std::shared_ptr<FunctionReg> fr,
 	return copy;
 }
 
-//std::shared_ptr<FunctionCall> 
-void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
+std::shared_ptr<FunctionCall> fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 {
 	/* 
 	 * INTERFACE
@@ -31,46 +30,46 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	 */
 
 	// input variable n 
-	auto vn = tr->sharedResource("long");
+	auto vn = tr->sharedResource("int");
 
-	auto const_one= tr->sharedResource("long");
-	*(long*) const_one->value = 1;
+	auto const_one= tr->sharedResource("int");
+	*(int*) const_one->value = 1;
 
-	auto const_two= tr->sharedResource("long");
-	*(long*) const_two->value = 2;
+	auto const_two= tr->sharedResource("int");
+	*(int*) const_two->value = 2;
 
 	// int first
-	auto first = tr->sharedResource("long");
+	auto first = tr->sharedResource("int");
 	// first = const_one
-	auto copyFirst = createCopy(fr,"long",const_one,first);
+	auto copyFirst = createCopy(fr,"int",const_one,first);
 	
 	// int second 
-	auto second = tr->sharedResource("long");
+	auto second = tr->sharedResource("int");
 	// second = const_one
-	auto copySecond = createCopy(fr,"long",const_one,second);
+	auto copySecond = createCopy(fr,"int",const_one,second);
 	
 	// int result 
-	auto result = tr->sharedResource("long");
+	auto result = tr->sharedResource("int");
 	// second = const_one
-	auto copyResult= createCopy(fr,"long",const_one,result);
+	auto copyResult= createCopy(fr,"int",const_one,result);
 	
 	// int cnt 
-	auto cnt= tr->sharedResource("long");
+	auto cnt= tr->sharedResource("int");
 	// second = const_two_
-	auto copyCnt= createCopy(fr,"long",const_two,cnt);
+	auto copyCnt= createCopy(fr,"int",const_two,cnt);
 
 
 	// maybe should be bool
-	auto exprresult= tr->sharedResource("long");
+	auto exprresult= tr->sharedResource("int");
 
 	// cntr < n
-	auto expr = fr->getFunc("tGreater:long");
+	auto expr = fr->getFunc("tGreater:int");
 	expr->inputs.push_back(vn);
 	expr->inputs.push_back(cnt);
 	expr->output = exprresult;
 
 	// cntr++
-	auto inc = fr->getFunc("tAdd:long");
+	auto inc = fr->getFunc("tAdd:int");
 
 	inc->inputs.push_back(const_one);
 	inc->inputs.push_back(cnt);
@@ -78,8 +77,8 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 
 	//int tmp = first + second;
 	// tmp
-	auto tmp = tr->sharedResource("long");
-	auto sum = fr->getFunc("tAdd:long");
+	auto tmp = tr->sharedResource("int");
+	auto sum = fr->getFunc("tAdd:int");
 	//auto sum = std::make_shared<Add>();
 	sum->inputs.push_back(first);
 	sum->inputs.push_back(second);
@@ -87,16 +86,16 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 
 	// first = second;
 	//auto cp1 = std::make_shared<Copy>();
-	auto cp1 = fr->getFunc("tCopy:long");
+	auto cp1 = fr->getFunc("tCopy:int");
 	cp1->inputs.push_back(second);
 	cp1->output = first;
 
 	// second = tmp;
-	auto cp2 = fr->getFunc("tCopy:long");
+	auto cp2 = fr->getFunc("tCopy:int");
 	cp2->inputs.push_back(tmp);
 	cp2->output = second;
 	// result = second;
-	auto cp3 = fr->getFunc("tCopy:long");
+	auto cp3 = fr->getFunc("tCopy:int");
 	cp3->inputs.push_back(second);
 	cp3->output = result;
 
@@ -128,14 +127,14 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	body->stats.push_back(cp3);	// result = second;
 	
 	//body();
-	//return *(long*)result->value;
+	//return *(int*)result->value;
 	
 	/* Bound interface */
 
 	//std::shared_ptr<CompositeFunction> cf = std::make_shared<CompositeFunction>(body, {vn}, result);
 	//return std::make_shared<FunctionCall>(cf);
-	//return addCompositeFunction("fibFce",body, {vn}, result);
-	fr->addCompositeFunction("fibFce", body,{vn}, result);
+	return addCompositeFunction("fibFce",body, {vn}, result);
+
 }
 
 int main()
@@ -147,22 +146,20 @@ int main()
 	registerStandardFunctions(&(*fr));
 
 	// create fibbonnaci prototype
-	fib(tr,fr);
+	auto fib_fce = fib(tr,fr);
 
-	auto fib_fce = fr->getFunc("fibFce");
-
-	auto n = tr->sharedResource("long");
-	auto output = tr->sharedResource("long");
+	auto n = tr->sharedResource("int");
+	auto output = tr->sharedResource("int");
 
 	fib_fce->inputs.push_back(n);
 	fib_fce->output = output;
 
 
-	for(long i = 0; i < 100; i++)
+	for(int i = 0; i < 100; i++)
 	{
-		*(long*) n->getData() = i;
+		*(int*) n->getData() = i;
 		(*fib_fce)();
-		std::cout << "Result: "<<*(long*) output->getData() << std::endl;
+		std::cout << "Result: "<<*(int*) output->getData() << std::endl;
 	}
 
 	return 0;
