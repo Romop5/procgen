@@ -1,39 +1,42 @@
 #include "statement.h"
 #include "function.h"
-void If::operator()()
+bool If::operator()(RunStatus& stat)
 {
 	// get result of expression
-	(*expr)();
+	if((*expr)(stat)) return true;
 
 	//expr.getOutput().value
 	bool first = true;
 	// evaluate
 	if(first)
-		(*paths[0])();
+		return (*paths[0])(stat);
 	else
-		(*paths[1])();
-
+		return (*paths[1])(stat);
 }
 void If::setExpression(std::shared_ptr<Function> exp)
 {
 	this->expr = expr;
 }
 
-void While::operator()()
+bool While::operator()(RunStatus& stat)
 {
 	while(true)
 	{
-		(*this->expr)();
+		if((*this->expr)(stat)) return true;
 		bool isTrue = *(bool*) expr->getOutput()->value;
 		if(!isTrue)
-			return;
+			break;
 		// eval statement
-		(*stat)();
+		if((*this->stat)(stat)) return true;
 	}
+	return false;
 }
-void Body::operator()()
+bool Body::operator()(RunStatus& stat)
 {
 	for(auto x: stats)
-		(*x)();
+	{
+		if((*x)(stat)) return true;
+	}
+	return false;
 }
 

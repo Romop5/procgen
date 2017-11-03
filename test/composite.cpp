@@ -63,7 +63,7 @@ TEST_CASE("Testing TypeRegister with STD func")
 	setc->inputs.push_back(b);
 	list->stats.push_back(setc);
 
-
-	(*list)();
+	RunStatus stat;
+	(*list)(stat);
 
 }

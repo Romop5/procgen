@@ -19,10 +19,11 @@ class AccessComposite: public Function
 	{
 		this->tr = tr;
 	}
-	virtual void operator()()
+	virtual bool operator()(RunStatus& stat)
 	{
 		copyComponent(this->tr,this->inputs[0],this->output,
 			       *(size_t*) this->inputs[1]->getData());
+		return false;
 	}
 
 };
@@ -40,10 +41,11 @@ class SetComposite: public Function
 	{	
 		this->tr = tr;
 	}
-	virtual void operator()()
+	virtual bool operator()(RunStatus& stat)
 	{
 		setComponent(this->tr,this->output,this->inputs[0],
 			       *(unsigned char*) this->inputs[1]->getData());
+		return false;
 	}
 
 };

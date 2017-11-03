@@ -1,11 +1,15 @@
 #include "function.h"
-void Function::operator()()
+bool Function::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
+	return false;
 }
 
-void DebugStatement::operator()()
+bool DebugStatement::operator()(RunStatus& stat)
 {
 	std::cout << "Debugstat:\n";
 	unsigned int id = 0;
@@ -13,46 +17,66 @@ void DebugStatement::operator()()
 	{
 		std::cout << id++ << "\t" << *(int*) x->value << std::endl; 
 	}	
+	return false;
 }
-void Add::operator()()
+bool Add::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
 	int out = *(int*) inputs[0]->value +*(int*) inputs[1]->value;
 	*((int*)output->value) = out;
+	return false;
 }
 
-void Copy::operator()()
+bool Copy::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
 	int out = *(int*) inputs[0]->value;
 	*((int*)output->value) = out;
+	return false;
 
 }
-void Mul::operator()()
+bool Mul::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
 	int out = (*(int*) inputs[0]->value) * (*(int*) inputs[1]->value);
 	*((int*)output->value) = out;
+	return false;
 
 }
-void Greater::operator()()
+bool Greater::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
 	int out = (*(int*) inputs[0]->value) > (*(int*) inputs[1]->value);
 	*((int*)output->value) = out;
+	return false;
 
 }
 
 /*
 template<typename T>
-void tAdd<T>::operator()()
+bool tAdd<T>::operator()(RunStatus& stat)
 {
 	for(auto x: children)
-		(*x)();
+	{
+		bool result = (*x)(stat);
+		if(result) return true;
+	}
 	T out = *(T*) inputs[0]->value +*(T*) inputs[1]->value;
 	*((T*)output->value) = out;
 }

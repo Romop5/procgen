@@ -6,15 +6,14 @@
 
 #include "../src/typereg.h"
 #include "../src/types.h"
+#include "std.h"
 
 
 TEST_CASE("Testing new TypeRegister")
 {
 	auto tr = TypeRegister();
-	#define REG_TYPE(TYPE,TYPENAME)\
-	tr.add<TYPE>(TYPENAME);
-	FORALL_ATOMICTYPES(REG_TYPE);
-
+	registerStandardTypes(&tr);	
+	
 	auto a = tr.sharedResource(tr.getTypeId(keyword<int>()));
 	auto box = tAdd<int>();
 	box.inputs.push_back(a);
@@ -23,8 +22,7 @@ TEST_CASE("Testing new TypeRegister")
 	box.output = res;
 
 	*(int*) a->value = 666;
-	RunStatus stat;
-	box(stat);
+	box();
 
 	REQUIRE(*res == 1332);
 	//REQUIRE(*(int*) res->value == 1332);
@@ -33,7 +31,7 @@ TEST_CASE("Testing new TypeRegister")
 	mulbox.inputs.push_back(a);
 	mulbox.inputs.push_back(a);
 	mulbox.output = res;
-	mulbox(stat);
+	mulbox();
 	REQUIRE(*res == 443556);
 
 }
@@ -52,8 +50,7 @@ TEST_CASE("Create box for result = a + a, where a = 666;")
 	box.output = res;
 
 	*(int*) a->value = 666;
-	RunStatus stat;
-	box(stat);
+	box();
 
 	REQUIRE(*(int*) res->value == 1332);
 
@@ -69,8 +66,7 @@ TEST_CASE("Create float box for result = a + a, where a = 666;")
 	box.output = res;
 
 	*(float*) a->value = 666.01;
-	RunStatus stat;
-	box(stat);
+	box();
 
 	float r = (*(float*) (res->value))-1332;
 	REQUIRE(r < 0.2f);
@@ -88,8 +84,7 @@ TEST_CASE("Char test")
 	box.output = res;
 
 	*(char*) a->value = 130;
-	RunStatus stat;
-	box(stat);
+	box();
 
 	float r = (*(float*) (res->value))-1332;
 	REQUIRE(r < 0.2f);
@@ -104,12 +99,11 @@ TEST_CASE("create box for (a+a)*10")
 	auto a = fct.createResource("a");
 	*(int*) a->value = 666;
 	auto plus = std::make_shared<Add>();
-	RunStatus stat;
 	auto mul = Mul();
 	plus->inputs.push_back(a);
 	plus->inputs.push_back(a);
 	std::shared_ptr<Resource> c10 = std::make_shared<Resource>();
-	c10->value = new unsigned char[sizeof(int)];
+	c10->value = new int();
 
 	*(int*) c10->value = 10;
 
@@ -123,7 +117,7 @@ TEST_CASE("create box for (a+a)*10")
 	
 	mul.output = fct.createResource("mulResult");
 
-	mul(stat);
+	mul();
 
 	// (a+a)*10 => (666+666)*2 = 13320
 	REQUIRE(*(int*) mul.output->value == 13320);
@@ -164,11 +158,10 @@ TEST_CASE("Try while")
 	dbg->inputs.push_back(b);
 	bd->stats.push_back(dbg);
 	// While
-	RunStatus stat;
 	auto wh = While();
 	wh.expr = condition;
 	wh.stat = bd;
-	(wh)(stat);
+	(wh)();
 
 	REQUIRE(*(int*) b->value == 10);
 	fct.dump();
@@ -233,12 +226,11 @@ int fib(int n)
 	wh->expr = expr;
 	wh->stat = bodywhile;
 
-	RunStatus stat;
 	auto body = Body();
 	body.stats.push_back(wh);	// while(cntr < n) ...	
 	body.stats.push_back(cp3);	// result = second;
 	
-	body(stat);
+	body();
 	return *(int*)result->value;
 }
 

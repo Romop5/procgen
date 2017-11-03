@@ -46,7 +46,7 @@ class FunctionCall : public Function
 	{
 		this->cf = cf;
 	}
-	void operator()()
+	bool operator()(RunStatus& stat)
 	{
 		// TODO: checkout type equivalence 
 		// bind inputs to interface
@@ -56,10 +56,20 @@ class FunctionCall : public Function
 			cf->inputs[i]->copy(this->inputs[i]);
 		}
 		// process function
-		(*cf->core)();
-
+		bool result = (*cf->core)(stat);
 		// copy result
 		this->output->copy(cf->output);
+		// TODO: determine if positive result is caused by return or 
+		// by runtime error
+		// if it was return, then reset the status
+		if(result)
+		{
+			if(stat.getStatus() != RunStatus::RETURN_REACHED)
+				return true;
+			stat.setStatus(RunStatus::OK);
+		}
+
+		return false;
 	}
 };
 

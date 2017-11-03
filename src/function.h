@@ -24,46 +24,46 @@ class Function: public Statement
 	std::shared_ptr<Resource>	output;
 	public:
 	std::shared_ptr<Resource>	getOutput() { return this->output; }
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 
 
 class DebugStatement:public Function
 {
 	public:
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 
 class Add: public Function
 {
 	public:
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 
 class Copy: public Function
 {
 	public:
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 
 class Mul: public Function
 {
 	public:
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 
 class Greater: public Function
 {
 	public:
-	virtual void operator()();
+	virtual bool operator()(RunStatus& stat);
 };
 /*
 template<typename T>
 class tAdd: public Function
 {
 	public:
-	//virtual void operator()();
-	virtual void operator()()
+	//virtual bool operator()(RunStatus& stat);
+	virtual bool operator()(RunStatus& stat)
 	{
 		for(auto x: children)
 			(*x)();
@@ -81,12 +81,13 @@ template<typename T>\
 class t##OPNAME: public Function\
 {\
 	public:\
-	virtual void operator()()\
+	virtual bool operator()(RunStatus& stat)\
 	{\
 		for(auto x: children)\
-			(*x)();\
+			if((*x)(stat)) return true;\
 		T out = *(T*) inputs[0]->value OPERATOR *(T*) inputs[1]->value;\
 		*((T*)output->value) = out;\
+		return false;\
 	}\
 };
 
@@ -96,12 +97,13 @@ template<typename T>\
 class t##OPNAME: public Function\
 {\
 	public:\
-	virtual void operator()()\
+	virtual bool operator()(RunStatus& stat)\
 	{\
 		for(auto x: children)\
-			(*x)();\
+			if((*x)(stat)) return true;\
 		T out = *(T*) inputs[0]->value OPERATOR ;\
 		*((T*)output->value) = out;\
+		return false;\
 	}\
 };
 

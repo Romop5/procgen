@@ -58,7 +58,9 @@ TEST_CASE("Testing TypeRegister with STD func")
 	box->inputs.push_back(b);
 	box->output = result;
 
-	(*box)();
+	RunStatus stat;
+	bool interpretationResult = (*box)(stat);
+
 
 	int r = *(int*) result->getData();
 	std::cout << *(int*) a->getData() << " OP " << *(int*) b->getData()  << std::endl;
