@@ -40,7 +40,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 			return it->second;
 		return UNKWNOWN;
 	}
-
+	std::string getTypeName(const TypeId id)
+	{
+		auto it = names.find(name);
+		if(it != names.end())
+			return it->first;
+		return "typeNotFound;
+	}
 	std::shared_ptr<Resource> sharedResource(TypeId type)
 	{
 		auto it = types.find(type);

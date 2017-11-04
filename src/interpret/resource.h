@@ -41,6 +41,8 @@ class Resource
 	}
 
 	bool copy(const std::shared_ptr<Resource> src);
+
+	std::string getName() {	return tr->getTypeName(id);}
 };
 
 
