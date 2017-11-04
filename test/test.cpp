@@ -1,11 +1,11 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-//#include "../src/function.h"
-//#include "../src/statement.h"
-#include "../src/single.h"
+//#include "function.h"
+//#include "statement.h"
+#include "single.h"
 
-#include "../src/typereg.h"
-#include "../src/types.h"
+#include "typereg.h"
+#include "types.h"
 
 
 TEST_CASE("Testing new TypeRegister")

@@ -1,10 +1,10 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "typereg.h"
+#include "../src/interpret/typereg.h"
 #include <iostream>
-#include "variablereg.h"
-#include "functionreg.h"
-#include "std.h"
+#include "../src/interpret/variablereg.h"
+#include "../src/interpret/functionreg.h"
+#include "../src/interpret/std.h"
 
 using namespace std;
 TEST_CASE("Testing TypeRegister with STD func")
