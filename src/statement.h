@@ -49,4 +49,14 @@ class Body: public Statement
 	virtual bool operator()(RunStatus&);
 };
 
+class Return: public Statement
+{
+	public:
+	std::shared_ptr<Statement> input;
+	std::shared_ptr<Statement> output;
+	public:
+	virtual bool operator()(RunStatus&);
+};
+
+
 #endif

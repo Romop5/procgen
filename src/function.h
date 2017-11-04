@@ -112,6 +112,7 @@ class t##OPNAME: public Function\
 DEF_UNARY_OP(Copy,);
 
 DEF_BINARY_OP(Add,+);
+DEF_BINARY_OP(Sub,-);
 DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
 DEF_BINARY_OP(Greater,>);

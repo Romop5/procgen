@@ -30,6 +30,7 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC_FORALL("tCopy",tCopy);
 
 	REG_FUNC_FORALL("tAdd",tAdd);
+	REG_FUNC_FORALL("tSub",tSub);
 	REG_FUNC_FORALL("tMul",tMul);
 	REG_FUNC_FORALL("tEq",tEq);
 	REG_FUNC_FORALL("tGreater",tGreater);

@@ -40,3 +40,9 @@ bool Body::operator()(RunStatus& stat)
 	return false;
 }
 
+bool Return::operator()(RunStatus& stat)
+{
+	stat.setStatus(RunStatus::RETURN_REACHED);
+	return true;
+}
+
