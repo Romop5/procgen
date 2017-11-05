@@ -22,3 +22,8 @@ void VariableReg::_debug()
 		std::cout << "VR: " << x.first << std::endl;
 	}
 }
+
+void VariableReg::clear()
+{
+	this->vars.clear();
+}

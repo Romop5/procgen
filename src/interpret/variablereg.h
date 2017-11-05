@@ -9,6 +9,7 @@ class VariableReg
 		
 		// Print out all info
 		void _debug();
+		void clear();
 	private:
 		std::shared_ptr<TypeRegister> tr;
 		std::map<std::string, std::shared_ptr<Resource>> vars;

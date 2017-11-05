@@ -22,7 +22,7 @@ set(INTERPRET_SRC
 	../interpret/functionreg.h
 	../interpret/resource.cpp
 	../interpret/resource.h
-	../interpret/single.h
+	../interpret/interpret.h
 	../interpret/statement.cpp
 	../interpret/statement.h
 	../interpret/std.cpp
