@@ -46,21 +46,21 @@ TEST_CASE("Testing TypeRegister with STD func")
 	auto list = std::make_shared<Body>();
 
 	auto seta = fr.getFunc("set");
-	seta->output = vec3_inst;
-	seta->inputs.push_back(a);
-	seta->inputs.push_back(z);
+	seta->bindOutput(vec3_inst);
+	seta->bindInput(0, fr.getHandler(a));
+	seta->bindInput(1, fr.getHandler(z));
 	list->stats.push_back(seta);
 
 	auto setb = fr.getFunc("set");
-	setb->output = vec3_inst;
-	setb->inputs.push_back(b);
-	setb->inputs.push_back(a);
+	setb->bindOutput(vec3_inst);
+	setb->bindInput(0, fr.getHandler(b));
+	setb->bindInput(1, fr.getHandler(a));
 	list->stats.push_back(setb);
 
 	auto setc = fr.getFunc("set");
-	setc->output = vec3_inst;
-	setc->inputs.push_back(c);
-	setc->inputs.push_back(b);
+	setc->bindOutput(vec3_inst);
+	setc->bindInput(0, fr.getHandler(c));
+	setc->bindInput(1, fr.getHandler(b));
 	list->stats.push_back(setc);
 
 	RunStatus stat;

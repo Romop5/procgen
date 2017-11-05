@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <string.h>
 #include <memory>
+//#include "typereg.h"
 
 class TypeRegister;
 
@@ -42,7 +43,7 @@ class Resource
 
 	bool copy(const std::shared_ptr<Resource> src);
 
-	std::string getName() {	return tr->getTypeName(id);}
+	std::string getName();
 };
 
 

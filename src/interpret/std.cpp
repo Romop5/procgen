@@ -27,14 +27,14 @@ void registerStandardFunctions(FunctionReg* fr)
 		//[&]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 
 
-	REG_FUNC_FORALL("tCopy",tCopy);
+	REG_FUNC_FORALL("Copy",Copy);
 
-	REG_FUNC_FORALL("tAdd",tAdd);
-	REG_FUNC_FORALL("tSub",tSub);
-	REG_FUNC_FORALL("tMul",tMul);
-	REG_FUNC_FORALL("tEq",tEq);
-	REG_FUNC_FORALL("tGreater",tGreater);
-	REG_FUNC_FORALL("tDiv",tDiv);
+	REG_FUNC_FORALL("Add",Add);
+	REG_FUNC_FORALL("Sub",Sub);
+	REG_FUNC_FORALL("Mul",Mul);
+	REG_FUNC_FORALL("Eq",Eq);
+	REG_FUNC_FORALL("Greater",Greater);
+	REG_FUNC_FORALL("Div",Div);
 
 	// composite utils
 	

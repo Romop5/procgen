@@ -21,8 +21,10 @@ class AccessComposite: public Function
 	}
 	virtual bool operator()(RunStatus& stat)
 	{
-		copyComponent(this->tr,this->inputs[0],this->output,
-			       *(size_t*) this->inputs[1]->getData());
+		if(_doInputs(stat)) return true;
+
+		copyComponent(this->tr,this->_getInput(0)->getOutput(),this->getOutput(),
+			       *(size_t*) this->_getInput(1)->getOutput()->getData());
 		return false;
 	}
 
@@ -43,8 +45,9 @@ class SetComposite: public Function
 	}
 	virtual bool operator()(RunStatus& stat)
 	{
-		setComponent(this->tr,this->output,this->inputs[0],
-			       *(unsigned char*) this->inputs[1]->getData());
+		if(_doInputs(stat)) return true;
+		setComponent(this->tr,this->getOutput(),this->_getInput(0)->getOutput(),
+			       *(unsigned char*) this->_getInput(1)->getOutput()->getData());
 		return false;
 	}
 

@@ -33,8 +33,8 @@ TEST_CASE("Testing TypeRegister with STD func")
 	std::cout << "Debug" <<std::endl;
 		
 
-	auto addBox = fr.getFunc("tAdd:int");
-	auto box = fr.getFunc("tMul:int");
+	auto addBox = fr.getFunc("Add:int");
+	auto box = fr.getFunc("Mul:int");
 	
 	REQUIRE(addBox!= nullptr);	
 	REQUIRE(box != nullptr);	
@@ -54,9 +54,10 @@ TEST_CASE("Testing TypeRegister with STD func")
 	*(int*) a->getData() = 100;
 	*(int*) b->getData() = 5;
 
-	box->inputs.push_back(a);
-	box->inputs.push_back(b);
-	box->output = result;
+
+	box->bindInput(0, fr.getHandler(a));
+	box->bindInput(1, fr.getHandler(b));
+	box->bindOutput(result);
 
 	RunStatus stat;
 	bool interpretationResult = (*box)(stat);
