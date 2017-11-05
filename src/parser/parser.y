@@ -55,12 +55,11 @@ void yyerror(Interpret& interpret, const char *s);
 %token COMMA
 %token EQ
 // Operators
-%token PLUS 
-%token MINUS 
-%token MUL 
-%token DIV 
-%token GREATER 
-%token LESS  
+%left GREATER LESS
+%left MINUS 
+%left PLUS 
+%left DIV 
+%left MUL 
 
 %type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement
 
@@ -187,12 +186,12 @@ variableDefinition:
 expr:
    	exprConst
 	| LPAR expr RPAR {$$ = $2;}
-	| expr MUL exprConst {$$ = interpret.createOperation("Mul", $1, $3);}
-	| expr DIV exprConst {$$ = interpret.createOperation("Div", $1, $3);}
-	| expr PLUS exprConst {$$ = interpret.createOperation("Add", $1, $3);}
-	| expr MINUS exprConst{$$ = interpret.createOperation("Sub", $1, $3);}
-	| expr GREATER exprConst {$$ =interpret.createOperation("Greater", $1, $3);}
-	| expr LESS exprConst {$$ = interpret.createOperation("Less", $1, $3);}
+	| expr MUL expr {$$ = interpret.createOperation("Mul", $1, $3);}
+	| expr DIV expr {$$ = interpret.createOperation("Div", $1, $3);}
+	| expr PLUS expr {$$ = interpret.createOperation("Add", $1, $3);}
+	| expr MINUS expr{$$ = interpret.createOperation("Sub", $1, $3);}
+	| expr GREATER expr {$$ =interpret.createOperation("Greater", $1, $3);}
+	| expr LESS expr {$$ = interpret.createOperation("Less", $1, $3);}
 exprConst:
 	 INT {$$ = interpret.createResource($1);}
 	| FLOAT {$$ = interpret.createResource($1);}
