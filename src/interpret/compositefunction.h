@@ -59,8 +59,11 @@ class FunctionCall : public Function
 		}
 		// process function
 		bool result = (*cf->core)(stat);
+
 		// copy result
-		this->getOutput()->copy(cf->output);
+		if(this->getOutput() != nullptr)
+			this->getOutput()->copy(cf->output);
+
 		// TODO: determine if positive result is caused by return or 
 		// by runtime error
 		// if it was return, then reset the status

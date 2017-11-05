@@ -4,6 +4,8 @@
 #include "variablereg.h"
 #include <stack>
 
+#include <error.h>
+
 using nodeId = size_t;
 
 class Interpret {
@@ -16,10 +18,11 @@ class Interpret {
 	std::shared_ptr<FunctionReg> fr;
 	std::shared_ptr<TypeRegister> tr;
 	std::shared_ptr<VariableReg> vr;
-	Interpret(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
+	Interpret(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr, std::shared_ptr<VariableReg> vr)
 	{
 		this->fr = fr;
 		this->tr = tr;
+		this->vr = vr;
 	}
 	size_t addNode(std::shared_ptr<Statement> st) 
 	{
@@ -45,7 +48,11 @@ class Interpret {
 	{
 		const std::string typeName = this->getFunction(right)->getOutput()->getName();
 		auto op = this->fr->getFunc(operation+":"+typeName);
+		if(op == nullptr)
+			error(1,0,"FUCK, type not found for op");
 		auto res = this->tr->sharedResource(typeName);
+		if(res == nullptr)
+			error(1,0,"FUCK, type not found");
 		op->bindOutput(res);
 		op->bindInput(0,this->getFunction(left));
 		op->bindInput(1,this->getFunction(right));

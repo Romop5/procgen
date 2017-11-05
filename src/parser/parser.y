@@ -5,6 +5,7 @@
 
 #include "interpret.h"
 #include <memory> 
+#include <error.h>
 using namespace std;
 
 // stuff from flex that bison needs to know about:
@@ -168,27 +169,34 @@ variableDefinition:
 	}
 expr:
    	exprConst
-	| expr MUL exprConst {interpret.createOperation("Mul", $1, $3);}
-	| expr DIV exprConst {interpret.createOperation("Div", $1, $3);}
-	| expr PLUS exprConst {interpret.createOperation("Plus", $1, $3);}
-	| expr MINUS exprConst{interpret.createOperation("Minus", $1, $3);}
-	| expr GREATER exprConst {interpret.createOperation("Greater", $1, $3);}
-	| expr LESS exprConst {interpret.createOperation("Less", $1, $3);}
+	| expr MUL exprConst {$$ = interpret.createOperation("Mul", $1, $3);}
+	| expr DIV exprConst {$$ = interpret.createOperation("Div", $1, $3);}
+	| expr PLUS exprConst {$$ = interpret.createOperation("Plus", $1, $3);}
+	| expr MINUS exprConst{$$ = interpret.createOperation("Minus", $1, $3);}
+	| expr GREATER exprConst {$$ =interpret.createOperation("Greater", $1, $3);}
+	| expr LESS exprConst {$$ = interpret.createOperation("Less", $1, $3);}
 exprConst:
-	 INT {interpret.createResource($1);}
-	| FLOAT {interpret.createResource($1);}
+	 INT {$$ = interpret.createResource($1);}
+	| FLOAT {$$ = interpret.createResource($1);}
 	
 type:
-    	KEYWORD_INT { $$ = INT;}
-	| KEYWORD_CHAR { $$ = CHAR;}
-	| KEYWORD_BOOL { $$ = BOOL;}
+    	KEYWORD_INT {}
+	| KEYWORD_CHAR {}
+	| KEYWORD_BOOL {}
 	;
 %%
 
-int main(int, char**) {
+int main(int argc, char** argv) {
+	if(argc < 2)
+		error(1,0,"./parser <FILE>");
+	yyin = fopen(argv[1],"r");
+	if(yyin == NULL)
+		error(1,0,"Failed to open file ...");
+
 	auto tr = std::make_shared<TypeRegister>();
 	auto fr = std::make_shared<FunctionReg>(tr);
-	Interpret interpret(tr,fr);
+	auto vr = std::make_shared<VariableReg>(tr);
+	Interpret interpret(tr,fr,vr);
 	do {
 		yyparse(interpret);
 	} while (!feof(yyin));
