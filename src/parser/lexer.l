@@ -19,6 +19,7 @@ using namespace std;
 "bool"		{cout << "Keyword: bool" << endl; return KEYWORD_BOOL;}
 "char"		{cout << "Keyword: char" << endl; return KEYWORD_CHAR;}
 "while"		{cout << "Keyword: while" << endl; return KEYWORD_WHILE;}
+"print"		{cout << "Keyword: while" << endl; return KEYWORD_PRINT;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INT; }

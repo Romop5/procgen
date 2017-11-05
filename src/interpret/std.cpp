@@ -26,6 +26,11 @@ void registerStandardFunctions(FunctionReg* fr)
 		[tr]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 		//[&]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 
+	#define REG_PRINT(type,typeName)\
+		fr->addFunction("PrintValue:" typeName,\
+		[]{return std::static_pointer_cast<Function>(std::make_shared<PrintValue<type>>());});
+
+	FORALL_ATOMICTYPES(REG_PRINT);
 
 	REG_FUNC_FORALL("Copy",Copy);
 

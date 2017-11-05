@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "functionreg.h"
 #include "variablereg.h"
+#include "std.h"
 #include <stack>
 
 #include <error.h>
@@ -62,8 +63,10 @@ class Interpret {
 	nodeId createAssignment(const std::string varname, nodeId exprTree)
 	{
 		auto var = this->vr->getVar(varname);
+		if(var == nullptr)
+			error(1,0,"Missing variable %s", varname.c_str());
 		const std::string typeName = this->getFunction(exprTree)->getOutput()->getName();
-		auto op = this->fr->getFunc("Copy"+typeName);
+		auto op = this->fr->getFunc("Copy:"+typeName);
 		op->bindOutput(var);
 		op->bindInput(0, this->getFunction(exprTree));
 		return addNode(op);

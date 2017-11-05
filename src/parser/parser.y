@@ -46,6 +46,7 @@ void yyerror(Interpret& interpret, const char *s);
 %token KEYWORD_BOOL
 %token KEYWORD_SPLITER
 %token KEYWORD_WHILE
+%token KEYWORD_PRINT
 %token LPAR
 %token RPAR
 %token LBRAC
@@ -61,7 +62,7 @@ void yyerror(Interpret& interpret, const char *s);
 %token GREATER 
 %token LESS  
 
-%type<nodeId> type expr exprConst statements statement body assignment variableDefinition
+%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement
 
 %parse-param {Interpret& interpret} 
 %locations
@@ -134,18 +135,34 @@ statements:
 		auto id = interpret.topBody();
 		auto body = std::static_pointer_cast<Body>(interpret.getNode(id));
 		body->stats.push_back(interpret.getNode($1));
+		std::cout << "Adding node " << $1 << std::endl;
 	}
 	| statements statement
 	{
 		auto id = interpret.topBody();
 		auto body = std::static_pointer_cast<Body>(interpret.getNode(id));
-		body->stats.push_back(interpret.getNode($1));
+		body->stats.push_back(interpret.getNode($2));
+		std::cout << "Adding node " << $2 << std::endl;
+		std::cout << "Another node " << $1 << std::endl;
 	}
 ;	
 statement:
-	variableDefinition
-	| assignment
+	printStatement {$$ = $1; 
+		std::cout << "Adding node " << $1 << std::endl;}
+	| variableDefinition {$$ = $1;
+		std::cout << "Adding node " << $1 << std::endl;}
+	| assignment {$$ = $1;
+		std::cout << "Adding node " << $1 << std::endl;}
 
+printStatement:
+	      KEYWORD_PRINT STRING SEMICOL
+		{
+			auto var = interpret.vr->getVar($2);
+			std::cout << "Type" << var->getName() << std::endl;
+			auto print = interpret.fr->getFunc(std::string("PrintValue:")+var->getName());
+			print->bindInput(0,interpret.fr->getHandler(var));
+			$$ = interpret.addNode(print);
+		}
 while:
      KEYWORD_WHILE LPAR expr RPAR LBRAC statements RBRAC
 assignment:
@@ -169,10 +186,11 @@ variableDefinition:
 	}
 expr:
    	exprConst
+	| LPAR expr RPAR {$$ = $2;}
 	| expr MUL exprConst {$$ = interpret.createOperation("Mul", $1, $3);}
 	| expr DIV exprConst {$$ = interpret.createOperation("Div", $1, $3);}
-	| expr PLUS exprConst {$$ = interpret.createOperation("Plus", $1, $3);}
-	| expr MINUS exprConst{$$ = interpret.createOperation("Minus", $1, $3);}
+	| expr PLUS exprConst {$$ = interpret.createOperation("Add", $1, $3);}
+	| expr MINUS exprConst{$$ = interpret.createOperation("Sub", $1, $3);}
 	| expr GREATER exprConst {$$ =interpret.createOperation("Greater", $1, $3);}
 	| expr LESS exprConst {$$ = interpret.createOperation("Less", $1, $3);}
 exprConst:
@@ -180,9 +198,9 @@ exprConst:
 	| FLOAT {$$ = interpret.createResource($1);}
 	
 type:
-    	KEYWORD_INT {}
-	| KEYWORD_CHAR {}
-	| KEYWORD_BOOL {}
+    	KEYWORD_INT {$$ = KEYWORD_INT;}
+	| KEYWORD_CHAR {$$ = KEYWORD_CHAR;}
+	| KEYWORD_BOOL {$$ = KEYWORD_BOOL;}
 	;
 %%
 
@@ -196,6 +214,10 @@ int main(int argc, char** argv) {
 	auto tr = std::make_shared<TypeRegister>();
 	auto fr = std::make_shared<FunctionReg>(tr);
 	auto vr = std::make_shared<VariableReg>(tr);
+
+	registerStandardTypes(tr.get());
+	registerStandardFunctions(fr.get());
+
 	Interpret interpret(tr,fr,vr);
 	do {
 		yyparse(interpret);
@@ -205,7 +227,10 @@ int main(int argc, char** argv) {
 	// get main()
 	auto main = interpret.fr->getFunc("main");
 	if(main != nullptr)
+	{
 		(*main)(stat);
+		std::cout << "Done" << std::endl;
+	}
 	else
 		std::cerr << "main() missing" << std::endl;
 	

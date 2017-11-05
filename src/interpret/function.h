@@ -45,6 +45,20 @@ class DebugStatement:public Function
 	virtual bool operator()(RunStatus& stat);
 };
 
+template<typename T>
+class PrintValue: public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+		std::cout << *(T*)(_getInput(0)->getOutput()->value) << std::endl;
+		return false;
+	}
+};
+
+
+
 // Define a binary operatorion OPNAME<type> 
 #define DEF_BINARY_OP(OPNAME,OPERATOR)\
 template<typename T>\
