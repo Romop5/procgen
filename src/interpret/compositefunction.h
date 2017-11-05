@@ -48,17 +48,19 @@ class FunctionCall : public Function
 	}
 	bool operator()(RunStatus& stat)
 	{
+		if(this->_doInputs(stat))
+			return true;
 		// TODO: checkout type equivalence 
 		// bind inputs to interface
 		for(int i=0; i < cf->inputs.size();i++)
 		{
 
-			cf->inputs[i]->copy(this->inputs[i]);
+			cf->inputs[i]->copy(this->_getInput(i)->getOutput());
 		}
 		// process function
 		bool result = (*cf->core)(stat);
 		// copy result
-		this->output->copy(cf->output);
+		this->getOutput()->copy(cf->output);
 		// TODO: determine if positive result is caused by return or 
 		// by runtime error
 		// if it was return, then reset the status

@@ -8,11 +8,11 @@
 std::shared_ptr<Function> createCopy(std::shared_ptr<FunctionReg> fr,
 		std::string type,std::shared_ptr<Resource> src, std::shared_ptr<Resource> dst)
 {
-	auto copy= fr->getFunc("tCopy:"+type);
+	auto copy= fr->getFunc("Copy:"+type);
 	if(copy == nullptr)
-		throw std::runtime_error("tCopy not found");
-	copy->inputs.push_back(src);
-	copy->output = dst;
+		throw std::runtime_error("Copy not found");
+	copy->bindInput(0,fr->getHandler(src));
+	copy->bindOutput(dst);
 	return copy;
 }
 
@@ -64,41 +64,41 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	auto exprresult= tr->sharedResource("long");
 
 	// cntr < n
-	auto expr = fr->getFunc("tGreater:long");
-	expr->inputs.push_back(vn);
-	expr->inputs.push_back(cnt);
-	expr->output = exprresult;
+	auto expr = fr->getFunc("Greater:long");
+	expr->bindInput(0, fr->getHandler(vn));
+	expr->bindInput(1, fr->getHandler(cnt));
+	expr->bindOutput(exprresult);
 
 	// cntr++
-	auto inc = fr->getFunc("tAdd:long");
+	auto inc = fr->getFunc("Add:long");
 
-	inc->inputs.push_back(const_one);
-	inc->inputs.push_back(cnt);
-	inc->output = cnt;
+	inc->bindInput(0, fr->getHandler(const_one));
+	inc->bindInput(1, fr->getHandler(cnt));
+	inc->bindOutput(cnt);
 
 	//int tmp = first + second;
 	// tmp
 	auto tmp = tr->sharedResource("long");
-	auto sum = fr->getFunc("tAdd:long");
+	auto sum = fr->getFunc("Add:long");
 	//auto sum = std::make_shared<Add>();
-	sum->inputs.push_back(first);
-	sum->inputs.push_back(second);
-	sum->output = tmp;
+	sum->bindInput(0, fr->getHandler(first));
+	sum->bindInput(1, fr->getHandler(second));
+	sum->bindOutput(tmp);
 
 	// first = second;
 	//auto cp1 = std::make_shared<Copy>();
-	auto cp1 = fr->getFunc("tCopy:long");
-	cp1->inputs.push_back(second);
-	cp1->output = first;
+	auto cp1 = fr->getFunc("Copy:long");
+	cp1->bindInput(0, fr->getHandler(second));
+	cp1->bindOutput(first);
 
 	// second = tmp;
-	auto cp2 = fr->getFunc("tCopy:long");
-	cp2->inputs.push_back(tmp);
-	cp2->output = second;
+	auto cp2 = fr->getFunc("Copy:long");
+	cp2->bindInput(0, fr->getHandler(tmp));
+	cp2->bindOutput(second);
 	// result = second;
-	auto cp3 = fr->getFunc("tCopy:long");
-	cp3->inputs.push_back(second);
-	cp3->output = result;
+	auto cp3 = fr->getFunc("Copy:long");
+	cp3->bindInput(0, fr->getHandler(second));
+	cp3->bindOutput(result);
 
 	// finish it !
 	auto bodywhile = std::make_shared<Body>();
@@ -154,8 +154,8 @@ int main()
 	auto n = tr->sharedResource("long");
 	auto output = tr->sharedResource("long");
 
-	fib_fce->inputs.push_back(n);
-	fib_fce->output = output;
+	fib_fce->bindInput(0, fr->getHandler(n));
+	fib_fce->bindOutput(output);
 
 
 	RunStatus stat;

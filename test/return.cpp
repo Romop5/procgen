@@ -32,11 +32,11 @@ TEST_CASE("Testing return")
 
 
 	
-	auto dec = fr.getFunc("tSub:int");
+	auto dec = fr.getFunc("Sub:int");
 	REQUIRE(dec != nullptr);
-	dec->inputs.push_back(vara);
-	dec->inputs.push_back(varb);
-	dec->output = vara;
+	dec->bindInput(0,fr.getHandler(vara));
+	dec->bindInput(1,fr.getHandler(varb));
+	dec->bindOutput(vara);
 
 	auto ret = std::make_shared<Return>();
 	REQUIRE(ret != nullptr);
@@ -45,11 +45,11 @@ TEST_CASE("Testing return")
 	body->stats.push_back(dec);
 	//body->stats.push_back(ret);
 
-	auto expr = fr.getFunc("tGreater:int");
+	auto expr = fr.getFunc("Greater:int");
 	REQUIRE(expr != nullptr);
-	expr->inputs.push_back(vara);
-	expr->inputs.push_back(varb);
-	expr->output = output;
+	expr->bindInput(0,fr.getHandler(vara));
+	expr->bindInput(1,fr.getHandler(varb));
+	expr->bindOutput(output);
 	auto wh= std::make_shared<While>();
 	REQUIRE(wh != nullptr);
 	wh->expr = expr;

@@ -41,6 +41,13 @@ class FunctionReg
 		}
 
 		std::shared_ptr<Function> getFunc(std::string name);
+
+		std::shared_ptr<HandleFunction> getHandler(std::shared_ptr<Resource> res)
+		{
+			auto hf = std::make_shared<HandleFunction>();
+			hf->bindOutput(res);
+			return hf;
+		}
 		
 		// Print out all info
 		void _debug();
