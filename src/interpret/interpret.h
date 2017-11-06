@@ -14,6 +14,9 @@ class Interpret {
 	std::map<size_t, std::shared_ptr<Statement>> nodes;
 
 	std::stack<nodeId> bodies;
+
+	std::vector<std::shared_ptr<Resource>> params;
+	std::string lastString;
 	public:
 
 	std::shared_ptr<FunctionReg> fr;
@@ -95,6 +98,30 @@ class Interpret {
 	nodeId topBody()
 	{
 		return this->bodies.top();
+	}
+
+	void paramPush(std::shared_ptr<Resource> param)
+	{
+		this->params.push_back(param);
+	}
+
+	void paramClear()
+	{
+		this->params.clear();
+	}
+
+	std::vector<std::shared_ptr<Resource>>& paramGet()
+	{
+		return this->params;
+	}	
+
+	void setLastString(const std::string & str)
+	{
+		this->lastString = str;	
+	}
+	const std::string & getLastString()
+	{
+		return this->lastString;
 	}
 };
 

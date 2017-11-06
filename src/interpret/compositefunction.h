@@ -45,6 +45,7 @@ class FunctionCall : public Function
 	FunctionCall(std::shared_ptr<CompositeFunction> cf)
 	{
 		this->cf = cf;
+		this->bindOutput(this->cf->output);
 	}
 	bool operator()(RunStatus& stat)
 	{
@@ -61,8 +62,8 @@ class FunctionCall : public Function
 		bool result = (*cf->core)(stat);
 
 		// copy result
-		if(this->getOutput() != nullptr)
-			this->getOutput()->copy(cf->output);
+		//if(this->getOutput() != nullptr)
+		//	this->getOutput()->copy(cf->output);
 
 		// TODO: determine if positive result is caused by return or 
 		// by runtime error

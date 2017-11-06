@@ -61,7 +61,7 @@ void yyerror(Interpret& interpret, const char *s);
 %left DIV 
 %left MUL 
 
-%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement
+%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement functionCall
 
 %parse-param {Interpret& interpret} 
 %locations
@@ -77,18 +77,18 @@ definitions:
 	| definitions definition {}
 	;
 definition:
-	  structDefinition {}
+	structDefinition {}
 	| functionDefinition {}
 	;
 structDefinition:
-	  KEYWORD_STRUCT STRING LBRAC structMembers RBRAC SEMICOL{}
+	KEYWORD_STRUCT STRING LBRAC structMembers RBRAC SEMICOL{}
 	;
 structMembers:
-		structMember {}
-		| structMembers structMember {}
+	structMember {}
+	| structMembers structMember {}
 	;
 structMember:
-		type STRING SEMICOL {}
+	type STRING SEMICOL {}
 	;
 functionDefinition:
 	type 
@@ -100,9 +100,11 @@ functionDefinition:
 		std::cout << $3 << "[p] Got function" << std::endl;
 
 		interpret.vr->clear();
+		interpret.paramClear();
+
 		auto returnResource = interpret.tr->sharedResource(typeToString($1));
 		interpret.vr->addVar("return",returnResource);
-		interpret.fr->addCompositeFunction($3, interpret.getNode($7),{}, returnResource);
+		interpret.fr->addCompositeFunction($3, interpret.getNode($7),interpret.paramGet(), returnResource);
 		std::cout << "Registering: '"<< $3 << "' func" << std::endl;
 	}
 
@@ -112,7 +114,13 @@ paramList:
 	| paramList COMMA param
 	;
 param:
-     	type STRING
+     	type STRING 
+	{
+		auto res = interpret.tr->sharedResource(typeToString($1));
+		interpret.vr->addVar($2,res);
+		interpret.paramPush(res);
+		
+	}
 	;
 body:
     	LBRAC
@@ -136,7 +144,8 @@ statements:
 		body->stats.push_back(interpret.getNode($1));
 		std::cout << "Adding node " << $1 << std::endl;
 	}
-	| statements statement
+	statements
+/*	| statements statement
 	{
 		auto id = interpret.topBody();
 		auto body = std::static_pointer_cast<Body>(interpret.getNode(id));
@@ -144,6 +153,7 @@ statements:
 		std::cout << "Adding node " << $2 << std::endl;
 		std::cout << "Another node " << $1 << std::endl;
 	}
+*/
 ;	
 statement:
 	printStatement {$$ = $1; 
@@ -152,6 +162,7 @@ statement:
 		std::cout << "Adding node " << $1 << std::endl;}
 	| assignment {$$ = $1;
 		std::cout << "Adding node " << $1 << std::endl;}
+
 
 printStatement:
 	      KEYWORD_PRINT STRING SEMICOL
@@ -195,7 +206,23 @@ expr:
 exprConst:
 	 INT {$$ = interpret.createResource($1);}
 	| FLOAT {$$ = interpret.createResource($1);}
+/*	| STRING {interpret.setLastString($1); std::cout << "LOL" << std::endl; } functionCall {std::cout << "The end" << std::endl; $$ = $3;}
+
 	
+functionCall:
+	{
+		$$ = interpret.addNode(interpret.fr->getHandler(interpret.vr->getVar(interpret.getLastString())));		
+	}
+	| RPAR exprParams LPAR
+	{
+		auto func = interpret.fr->getFunc(interpret.getLastString());	
+		$$ = interpret.addNode(func);
+	}
+
+exprParams:
+	  expr
+	| exprParams expr
+*/
 type:
     	KEYWORD_INT {$$ = KEYWORD_INT;}
 	| KEYWORD_CHAR {$$ = KEYWORD_CHAR;}
