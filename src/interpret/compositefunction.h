@@ -49,6 +49,7 @@ class FunctionCall : public Function
 	}
 	bool operator()(RunStatus& stat)
 	{
+		/* Prepare arguments */
 		if(this->_doInputs(stat))
 			return true;
 		// TODO: checkout type equivalence 

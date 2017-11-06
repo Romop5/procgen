@@ -16,7 +16,7 @@ class Interpret {
 	std::stack<nodeId> bodies;
 
 	std::vector<std::shared_ptr<Resource>> params;
-	std::string lastString;
+	std::stack<std::string> lastString;
 	public:
 
 	std::shared_ptr<FunctionReg> fr;
@@ -115,13 +115,17 @@ class Interpret {
 		return this->params;
 	}	
 
-	void setLastString(const std::string & str)
+	void addLastString(const std::string & str)
 	{
-		this->lastString = str;	
+		this->lastString.push(str);	
 	}
 	const std::string & getLastString()
 	{
-		return this->lastString;
+		return this->lastString.top();
+	}
+	void popLastString()
+	{
+		this->lastString.pop();
 	}
 };
 

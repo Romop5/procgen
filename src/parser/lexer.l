@@ -20,6 +20,7 @@ using namespace std;
 "char"		{cout << "Keyword: char" << endl; return KEYWORD_CHAR;}
 "while"		{cout << "Keyword: while" << endl; return KEYWORD_WHILE;}
 "print"		{cout << "Keyword: print" << endl; return KEYWORD_PRINT;}
+"return"	{cout << "Keyword: return" << endl; return KEYWORD_RETURN;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INT; }

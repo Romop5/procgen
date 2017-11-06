@@ -47,6 +47,7 @@ void yyerror(Interpret& interpret, const char *s);
 %token KEYWORD_SPLITER
 %token KEYWORD_WHILE
 %token KEYWORD_PRINT
+%token KEYWORD_RETURN
 %token LPAR
 %token RPAR
 %token LBRAC
@@ -61,7 +62,7 @@ void yyerror(Interpret& interpret, const char *s);
 %left DIV 
 %left MUL 
 
-%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement functionCall
+%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement functionCall returnStatement
 
 %parse-param {Interpret& interpret} 
 %locations
@@ -92,18 +93,21 @@ structMember:
 	;
 functionDefinition:
 	type 
-	{ std::cout << "it's a function" << std::endl; }
+	{ 
+		std::cout << "it's a function" << std::endl; 
+		interpret.paramClear();
+		interpret.vr->clear();
+		auto returnResource = interpret.tr->sharedResource(typeToString($1));
+		interpret.vr->addVar("return",returnResource);
+	}
 	STRING LPAR paramList RPAR body	
 
 	{
 		if($1 == INT) std::cout << "It's int" << std::endl;
 		std::cout << $3 << "[p] Got function" << std::endl;
 
-		interpret.vr->clear();
-		interpret.paramClear();
+		auto returnResource = interpret.vr->getVar("return");
 
-		auto returnResource = interpret.tr->sharedResource(typeToString($1));
-		interpret.vr->addVar("return",returnResource);
 		interpret.fr->addCompositeFunction($3, interpret.getNode($7),interpret.paramGet(), returnResource);
 		std::cout << "Registering: '"<< $3 << "' func" << std::endl;
 	}
@@ -162,8 +166,19 @@ statement:
 		std::cout << "Adding node " << $1 << std::endl;}
 	| assignment {$$ = $1;
 		std::cout << "Adding node " << $1 << std::endl;}
+	| returnStatement
 
-
+returnStatement:
+	       KEYWORD_RETURN expr SEMICOL
+		{
+			auto retResource = interpret.vr->getVar("return");
+			auto node = interpret.getFunction($2);
+			std::cout << retResource->getName() << " omg wtf" << std::endl;
+			auto copy = interpret.fr->getFunc(std::string("Copy:")+retResource->getName());
+			copy->bindInput(0,node);
+			copy->bindOutput(retResource);
+			$$ = interpret.addNode(copy);	
+		}
 printStatement:
 	      KEYWORD_PRINT STRING SEMICOL
 		{
@@ -196,32 +211,40 @@ variableDefinition:
 	}
 expr:
    	exprConst
-	| LPAR expr RPAR {$$ = $2;}
 	| expr MUL expr {$$ = interpret.createOperation("Mul", $1, $3);}
 	| expr DIV expr {$$ = interpret.createOperation("Div", $1, $3);}
 	| expr PLUS expr {$$ = interpret.createOperation("Add", $1, $3);}
 	| expr MINUS expr{$$ = interpret.createOperation("Sub", $1, $3);}
 	| expr GREATER expr {$$ =interpret.createOperation("Greater", $1, $3);}
 	| expr LESS expr {$$ = interpret.createOperation("Less", $1, $3);}
+
 exprConst:
 	 INT {$$ = interpret.createResource($1);}
 	| FLOAT {$$ = interpret.createResource($1);}
-/*	| STRING {interpret.setLastString($1); std::cout << "LOL" << std::endl; } functionCall {std::cout << "The end" << std::endl; $$ = $3;}
-
+	| STRING {interpret.addLastString($1); std::cout << "LOL" << std::endl; } functionCall {std::cout << "The end" << std::endl; $$ = $3;} 
+	| LPAR expr RPAR {$$ = $2;} 
 	
 functionCall:
 	{
-		$$ = interpret.addNode(interpret.fr->getHandler(interpret.vr->getVar(interpret.getLastString())));		
+		$$ = interpret.addNode(interpret.fr->getHandler(interpret.vr->getVar(interpret.getLastString())));
+		interpret.popLastString();
 	}
-	| RPAR exprParams LPAR
+	| 
+
+	LPAR expr RPAR
 	{
 		auto func = interpret.fr->getFunc(interpret.getLastString());	
+		interpret.popLastString();
+		func->bindInput(0, interpret.getFunction($2));
 		$$ = interpret.addNode(func);
 	}
 
-exprParams:
-	  expr
+
+/*exprParams:
+	  expr 
+	  expr ex
 	| exprParams expr
+
 */
 type:
     	KEYWORD_INT {$$ = KEYWORD_INT;}
