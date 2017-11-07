@@ -100,5 +100,6 @@ DEF_BINARY_OP(Sub,-);
 DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
 DEF_BINARY_OP(Greater,>);
+DEF_BINARY_OP(Less,<);
 DEF_BINARY_OP(Eq,==);
 #endif

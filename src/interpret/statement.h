@@ -25,10 +25,11 @@ class If:public Statement
 	private:
 	// eval expr to choose path
 	std::shared_ptr<Function> expr;
-	std::vector<std::shared_ptr<Statement>> paths;
+	std::map<size_t, std::shared_ptr<Statement>> paths;
 	public:
 	virtual bool operator()(RunStatus&);
 	void setExpression(std::shared_ptr<Function> exp);
+	void setPath(size_t id, std::shared_ptr<Statement> path);
 };
 
 class While:public Statement

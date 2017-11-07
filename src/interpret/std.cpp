@@ -39,6 +39,7 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC_FORALL("Mul",Mul);
 	REG_FUNC_FORALL("Eq",Eq);
 	REG_FUNC_FORALL("Greater",Greater);
+	REG_FUNC_FORALL("Less",Less);
 	REG_FUNC_FORALL("Div",Div);
 
 	// composite utils

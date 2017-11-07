@@ -21,6 +21,8 @@ using namespace std;
 "while"		{cout << "Keyword: while" << endl; return KEYWORD_WHILE;}
 "print"		{cout << "Keyword: print" << endl; return KEYWORD_PRINT;}
 "return"	{cout << "Keyword: return" << endl; return KEYWORD_RETURN;}
+"if"		{cout << "Keyword: if" << endl; return KEYWORD_IF;}
+"="		{cout << "Keyword: =" << endl; return KEYWORD_ASSIGN;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INT; }
@@ -37,7 +39,7 @@ using namespace std;
 "("		{cout << "Keyword: (" << endl; return LPAR;}
 ")"		{cout << "Keyword: )" << endl; return RPAR;}
 ";"		{cout << "Keyword: ;" << endl; return SEMICOL;}
-"="		{cout << "Keyword: =" << endl; return EQ;}
+"=="		{cout << "Keyword: =" << endl; return EQ;}
 "+"		{cout << "Keyword: +" << endl; return PLUS;}
 "-"		{cout << "Keyword: -" << endl; return MINUS;}
 "*"		{cout << "Keyword: *" << endl; return MUL;}

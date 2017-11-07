@@ -48,6 +48,8 @@ void yyerror(Interpret& interpret, const char *s);
 %token KEYWORD_WHILE
 %token KEYWORD_PRINT
 %token KEYWORD_RETURN
+%token KEYWORD_IF
+%token KEYWORD_ASSIGN
 %token LPAR
 %token RPAR
 %token LBRAC
@@ -62,7 +64,8 @@ void yyerror(Interpret& interpret, const char *s);
 %left DIV 
 %left MUL 
 
-%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement functionCall returnStatement
+%type<nodeId> type expr exprConst statements statement body assignment variableDefinition printStatement functionCall returnStatement whileStatement 
+		ifStatement
 
 %parse-param {Interpret& interpret} 
 %locations
@@ -167,6 +170,28 @@ statement:
 	| assignment {$$ = $1;
 		std::cout << "Adding node " << $1 << std::endl;}
 	| returnStatement
+	| whileStatement
+	| ifStatement
+
+ifStatement:
+	   KEYWORD_IF LPAR expr RPAR  body
+	{
+		auto ifBox = std::make_shared<If>();
+		ifBox->setExpression(interpret.getFunction($3));
+		ifBox->setPath(0,interpret.getNode($5));
+		ifBox->setPath(1,interpret.getNode(interpret.createNOOP()));
+		$$ = interpret.addNode(ifBox);
+	}
+
+whileStatement:
+	      KEYWORD_WHILE LPAR  expr RPAR body
+		{
+			auto whileBox = std::make_shared<While>();
+			whileBox->expr = interpret.getFunction($3);
+			whileBox->stat = interpret.getNode($5);
+			$$ = interpret.addNode(whileBox);
+	
+		}
 
 returnStatement:
 	       KEYWORD_RETURN expr SEMICOL
@@ -191,7 +216,7 @@ printStatement:
 while:
      KEYWORD_WHILE LPAR expr RPAR LBRAC statements RBRAC
 assignment:
-	STRING EQ expr SEMICOL
+	STRING KEYWORD_ASSIGN expr SEMICOL
 	{
 		$$ = interpret.createAssignment($1,$3);
 	}
@@ -203,7 +228,7 @@ variableDefinition:
 		interpret.vr->addVar(std::string($2),res);
 		$$ = interpret.createNOOP();
 	}
-	| type STRING EQ expr SEMICOL 
+	| type STRING KEYWORD_ASSIGN expr SEMICOL 
 	{
 		auto res = interpret.tr->sharedResource(typeToString($1));
 		interpret.vr->addVar(std::string($2),res);
@@ -217,6 +242,7 @@ expr:
 	| expr MINUS expr{$$ = interpret.createOperation("Sub", $1, $3);}
 	| expr GREATER expr {$$ =interpret.createOperation("Greater", $1, $3);}
 	| expr LESS expr {$$ = interpret.createOperation("Less", $1, $3);}
+	| expr EQ expr {$$ = interpret.createOperation("Eq", $1, $3);}
 
 exprConst:
 	 INT {$$ = interpret.createResource($1);}
