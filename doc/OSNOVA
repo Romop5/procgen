@@ -1,0 +1,45 @@
+/////////////////////////////////////////////////
+OSNOVA BP PRACE (XDOBIA11)
+/////////////////////////////////////////////////
+
+01 Uvod
+====
+	- k comu je mozne pouzit proc. gen (motivacia)
+	- kde je mozne taketo nieco vyuzit (hry, dema, kultura)
+	- preco k tomu porebujeme prave jazyk (komfort, elegancia)
+02 Teoria - Proc generovanie
+=========================
+	- ako sa obvykle robi proc. generovanie (dostupne formalizmy)
+	L-SYSTEMY
+	=========
+		- zakladny popis, niekolko ukazok
+	SUMY (NOISE)
+	============
+		- popis zakladnych sumov, ktore sa vyuzivaju v proc.gen
+
+03 Formalne jazyky a gramatiky
+==================
+	- uvod do matematickych formalizmov ktore sluzia na popis jazykov
+	REGULARNE JAZYKY
+	================
+		- o co sa jedna, ako sa daju spracovat
+	BEZKONTEXTOVE JAZYKY
+	====================
+		- parsery LL / LR
+	STRUKTURA PREKLADACOV
+	====================
+		- lex->syntax->semantika
+
+03 Navrh jazyka
+============
+	- co vlastne ocakavame od naseho jazyka
+	- cielova skupina
+	- nastrelenie jazyka (co vlastne popisuje, klucove konstrukcie)
+	- LEXIKALNA ANALYZA
+		- popis ako spracovavame vstupny text
+		- zmienka o flexe	
+	- SYNTAKTICKA ANALYZA
+	- INTEPRET
+		- popis OO modelu
+		- principy
+	
