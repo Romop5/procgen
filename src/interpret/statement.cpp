@@ -18,6 +18,11 @@ void If::setExpression(std::shared_ptr<Function> exp)
 	this->expr = expr;
 }
 
+void If::setPath(size_t id, std::shared_ptr<Statement> path)
+{
+	this->paths[id] = path;
+}
+
 bool While::operator()(RunStatus& stat)
 {
 	while(true)

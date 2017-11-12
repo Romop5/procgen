@@ -1,13 +1,13 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-//#include "function.h"
+#include "function.h"
 //#include "statement.h"
-#include "single.h"
+//#include "single.h"
 
 #include "typereg.h"
 #include "types.h"
 
-
+/*
 TEST_CASE("Testing new TypeRegister")
 {
 	auto tr = TypeRegister();
@@ -16,7 +16,7 @@ TEST_CASE("Testing new TypeRegister")
 	FORALL_ATOMICTYPES(REG_TYPE);
 
 	auto a = tr.sharedResource(tr.getTypeId(keyword<int>()));
-	auto box = tAdd<int>();
+	auto box = Add<int>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = tr.sharedResource(tr.getTypeId(keyword<int>()));
@@ -45,7 +45,7 @@ TEST_CASE("Create box for result = a + a, where a = 666;")
 {
 	auto fct = ResourceFactory();
 	auto a = fct.createResource("a");
-	auto box = tAdd<int>();
+	auto box = Add<int>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = fct.createResource("result");
@@ -62,7 +62,7 @@ TEST_CASE("Create float box for result = a + a, where a = 666;")
 {
 	auto fct = ResourceFactory();
 	auto a = fct.createResource("a");
-	auto box = tAdd<float>();
+	auto box = Add<float>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = fct.createResource("result");
@@ -81,7 +81,7 @@ TEST_CASE("Char test")
 {
 	auto fct = ResourceFactory();
 	auto a = fct.createResource("a");
-	auto box = tAdd<char>();
+	auto box = Add<char>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = fct.createResource("result");
@@ -96,7 +96,7 @@ TEST_CASE("Char test")
 
 }
 
-
+/*
 TEST_CASE("create box for (a+a)*10")
 {
 	auto fct = ResourceFactory();
@@ -267,4 +267,4 @@ TEST_CASE("Fibbonaci")
 	REQUIRE(fib(6) == 8);
 	REQUIRE(fib(7) == 13);
 	REQUIRE(fib(44) == 701408733);
-}
+}*/

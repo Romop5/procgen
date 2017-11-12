@@ -26,15 +26,21 @@ void registerStandardFunctions(FunctionReg* fr)
 		[tr]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 		//[&]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 
+	#define REG_PRINT(type,typeName)\
+		fr->addFunction("PrintValue:" typeName,\
+		[]{return std::static_pointer_cast<Function>(std::make_shared<PrintValue<type>>());});
 
-	REG_FUNC_FORALL("tCopy",tCopy);
+	FORALL_ATOMICTYPES(REG_PRINT);
 
-	REG_FUNC_FORALL("tAdd",tAdd);
-	REG_FUNC_FORALL("tSub",tSub);
-	REG_FUNC_FORALL("tMul",tMul);
-	REG_FUNC_FORALL("tEq",tEq);
-	REG_FUNC_FORALL("tGreater",tGreater);
-	REG_FUNC_FORALL("tDiv",tDiv);
+	REG_FUNC_FORALL("Copy",Copy);
+
+	REG_FUNC_FORALL("Add",Add);
+	REG_FUNC_FORALL("Sub",Sub);
+	REG_FUNC_FORALL("Mul",Mul);
+	REG_FUNC_FORALL("Eq",Eq);
+	REG_FUNC_FORALL("Greater",Greater);
+	REG_FUNC_FORALL("Less",Less);
+	REG_FUNC_FORALL("Div",Div);
 
 	// composite utils
 	

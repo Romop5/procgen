@@ -1,84 +1,36 @@
 #include "function.h"
 bool Function::operator()(RunStatus& stat)
 {
-	for(auto x: children)
+	if(_doInputs(stat)) return true;
+	return false;
+}
+
+bool Function::bindInput(size_t id, std::shared_ptr<Function> func)
+{
+	this->_inputs[id] = func;	
+}
+bool Function::bindOutput(std::shared_ptr<Resource> res)
+{
+	this->_output = res;
+}
+
+bool Function::_doInputs(RunStatus& stat)
+{
+	for(auto &x: this->_inputs)
 	{
-		bool result = (*x)(stat);
-		if(result) return true;
+		if((*(x.second))(stat) == true)
+			return true;
 	}
 	return false;
 }
 
 bool DebugStatement::operator()(RunStatus& stat)
 {
-	std::cout << "Debugstat:\n";
-	unsigned int id = 0;
-	for(auto x: this->inputs)
-	{
-		std::cout << id++ << "\t" << *(int*) x->value << std::endl; 
-	}	
-	return false;
-}
-bool Add::operator()(RunStatus& stat)
-{
-	for(auto x: children)
-	{
-		bool result = (*x)(stat);
-		if(result) return true;
-	}
-	int out = *(int*) inputs[0]->value +*(int*) inputs[1]->value;
-	*((int*)output->value) = out;
+	//TODO
 	return false;
 }
 
-bool Copy::operator()(RunStatus& stat)
+bool HandleFunction::operator()(RunStatus& stat)
 {
-	for(auto x: children)
-	{
-		bool result = (*x)(stat);
-		if(result) return true;
-	}
-	int out = *(int*) inputs[0]->value;
-	*((int*)output->value) = out;
 	return false;
-
 }
-bool Mul::operator()(RunStatus& stat)
-{
-	for(auto x: children)
-	{
-		bool result = (*x)(stat);
-		if(result) return true;
-	}
-	int out = (*(int*) inputs[0]->value) * (*(int*) inputs[1]->value);
-	*((int*)output->value) = out;
-	return false;
-
-}
-bool Greater::operator()(RunStatus& stat)
-{
-	for(auto x: children)
-	{
-		bool result = (*x)(stat);
-		if(result) return true;
-	}
-	int out = (*(int*) inputs[0]->value) > (*(int*) inputs[1]->value);
-	*((int*)output->value) = out;
-	return false;
-
-}
-
-/*
-template<typename T>
-bool tAdd<T>::operator()(RunStatus& stat)
-{
-	for(auto x: children)
-	{
-		bool result = (*x)(stat);
-		if(result) return true;
-	}
-	T out = *(T*) inputs[0]->value +*(T*) inputs[1]->value;
-	*((T*)output->value) = out;
-}
-
-*/

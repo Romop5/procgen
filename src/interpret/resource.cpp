@@ -14,3 +14,7 @@ bool Resource::copy(const std::shared_ptr<Resource> src)
 	return true;
 }
 
+std::string Resource::getName()
+{
+	return tr->getTypeName(this->type);
+}
