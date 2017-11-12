@@ -31,8 +31,7 @@ set(INTERPRET_SRC
 	../interpret/typedesc.h
 	../interpret/typereg.h
 	../interpret/types.h
-	../interpret/typestring.cpp
-	../interpret/typestring.h
+	../interpret/types.cpp
 	../interpret/variablereg.cpp
 	../interpret/variablereg.h
 	)

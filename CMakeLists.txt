@@ -35,8 +35,7 @@ set(INTERPRET_SOURCE
 	src/interpret/typedesc.h
 	src/interpret/typereg.h
 	src/interpret/types.h
-	src/interpret/typestring.cpp
-	src/interpret/typestring.h
+	src/interpret/types.cpp
 	src/interpret/variablereg.cpp)
 
 ###############################################################################

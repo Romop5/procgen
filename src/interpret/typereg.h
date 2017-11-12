@@ -3,7 +3,7 @@
 
 #include <map>
 #include <memory>
-#include "typestring.h"
+#include "types.h"
 #include "resource.h"
 #include "typedesc.h"
 
@@ -13,7 +13,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	public:
 	const TypeId UNKWNOWN = 0;
 	TypeRegister():highest(0){
-		add<void>("unknown");
+		add<char>("unknown");
 	};
 	template<typename T>
 	bool add(const std::string& typeName)
