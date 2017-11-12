@@ -6,7 +6,10 @@
 # asi budete chtit prejmenovat / you will probably rename:
 CO=projekt
 
-all: $(CO).pdf
+all: $(CO).pdf copy
+
+copy:
+	cp projekt.pdf ~/WWW/doc.pdf
 
 pdf: $(CO).pdf
 
