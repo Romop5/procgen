@@ -27,7 +27,6 @@ set(INTERPRET_SOURCE
 	src/interpret/functionreg.h
 	src/interpret/resource.cpp
 	src/interpret/resource.h
-	src/interpret/single.h
 	src/interpret/statement.cpp
 	src/interpret/statement.h
 	src/interpret/std.cpp

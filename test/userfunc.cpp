@@ -155,7 +155,8 @@ int main()
 	auto output = tr->sharedResource("long");
 
 	fib_fce->bindInput(0, fr->getHandler(n));
-	fib_fce->bindOutput(output);
+	//fib_fce->bindOutput(output);
+	
 
 
 	RunStatus stat;
@@ -163,7 +164,7 @@ int main()
 	{
 		*(long*) n->getData() = i;
 		(*fib_fce)(stat);
-		std::cout << "Result: "<<*(long*) output->getData() << std::endl;
+		std::cout << "Result: "<<*(long*) fib_fce->getOutput()->getData() << std::endl;
 	}
 
 	return 0;
