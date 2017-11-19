@@ -88,5 +88,34 @@ class AtomicResource : public Resource
 
 };
 
+class CollectionResouce : public Resource
+{
+	private:
+		size_t arrayType;
+	public:
+	std::vector<std::shared_ptr<Resource>> collection;
+	public:
+	CollectionResouce(std::shared_ptr<TypeRegister> typereg, size_t baseType, size_t arrayType)
+	{
+		this->tr = typereg;
+		this->baseType = baseType;
+		this->arrayType = arrayType;
+	}
+
+	~CollectionResouce()
+	{
+	}
+
+	void append(std::shared_ptr<Resource> item)
+	{
+		if(item->getBaseId() == this->getBaseId())
+		{
+			auto newElement = this->tr->sharedResource(item->getBaseId());
+			newElement.copy(item);
+			this->collection.push_back(newElement);
+		}
+	}
+
+};
 
 #endif
