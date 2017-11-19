@@ -21,11 +21,11 @@ TEST_CASE("Testing new TypeRegister")
 	auto res = tr.sharedResource(tr.getTypeId(keyword<int>()));
 	box.output = res;
 
-	*(int*) a->value = 666;
+	*(int*) a->getData() = 666;
 	box();
 
 	REQUIRE(*res == 1332);
-	//REQUIRE(*(int*) res->value == 1332);
+	//REQUIRE(*(int*) res->getData() == 1332);
 
 	auto mulbox = tMul<int>();
 	mulbox.inputs.push_back(a);
@@ -49,10 +49,10 @@ TEST_CASE("Create box for result = a + a, where a = 666;")
 	auto res = fct.createResource("result");
 	box.output = res;
 
-	*(int*) a->value = 666;
+	*(int*) a->getData() = 666;
 	box();
 
-	REQUIRE(*(int*) res->value == 1332);
+	REQUIRE(*(int*) res->getData() == 1332);
 
 }
 TEST_CASE("Create float box for result = a + a, where a = 666;")
@@ -65,10 +65,10 @@ TEST_CASE("Create float box for result = a + a, where a = 666;")
 	auto res = fct.createResource("result");
 	box.output = res;
 
-	*(float*) a->value = 666.01;
+	*(float*) a->getData() = 666.01;
 	box();
 
-	float r = (*(float*) (res->value))-1332;
+	float r = (*(float*) (res->getData()))-1332;
 	REQUIRE(r < 0.2f);
 
 }
@@ -83,10 +83,10 @@ TEST_CASE("Char test")
 	auto res = fct.createResource("result");
 	box.output = res;
 
-	*(char*) a->value = 130;
+	*(char*) a->getData() = 130;
 	box();
 
-	float r = (*(float*) (res->value))-1332;
+	float r = (*(float*) (res->getData()))-1332;
 	REQUIRE(r < 0.2f);
 
 }
@@ -97,15 +97,15 @@ TEST_CASE("create box for (a+a)*10")
 	auto fct = ResourceFactory();
 	auto res = fct.createResource("result");
 	auto a = fct.createResource("a");
-	*(int*) a->value = 666;
+	*(int*) a->getData() = 666;
 	auto plus = std::make_shared<Add>();
 	auto mul = Mul();
 	plus->inputs.push_back(a);
 	plus->inputs.push_back(a);
 	std::shared_ptr<Resource> c10 = std::make_shared<Resource>();
-	c10->value = new int();
+	c10->getData() = new int();
 
-	*(int*) c10->value = 10;
+	*(int*) c10->getData() = 10;
 
 	plus->output = res;
 
@@ -120,7 +120,7 @@ TEST_CASE("create box for (a+a)*10")
 	mul();
 
 	// (a+a)*10 => (666+666)*2 = 13320
-	REQUIRE(*(int*) mul.output->value == 13320);
+	REQUIRE(*(int*) mul.output->getData() == 13320);
 }
 
 TEST_CASE("Try while")
@@ -134,10 +134,10 @@ TEST_CASE("Try while")
 	auto res = fct.createResource("result");
 	// var a
 	auto a = fct.createResource("a");
-	*(int*) a->value = 10;
+	*(int*) a->getData() = 10;
 	// var b
 	auto b = fct.createResource("b");
-	*(int*) b->value = 5;
+	*(int*) b->getData() = 5;
 
 	// A > B
 	auto condition = std::make_shared<Greater>();
@@ -146,7 +146,7 @@ TEST_CASE("Try while")
 	condition->output = res;
 	// A++
 	auto c1 = fct.createResource("c1");
-	*(int*) c1->value = 1;
+	*(int*) c1->getData() = 1;
 	auto inc = std::make_shared<Add>();
 	inc->inputs.push_back(b);
 	inc->inputs.push_back(c1);
@@ -163,7 +163,7 @@ TEST_CASE("Try while")
 	wh.stat = bd;
 	(wh)();
 
-	REQUIRE(*(int*) b->value == 10);
+	REQUIRE(*(int*) b->getData() == 10);
 	fct.dump();
 }
 
@@ -171,15 +171,15 @@ int fib(int n)
 {
 	auto res = ResourceFactory();
 	auto vn = res.createResource("n");
-	*(int*) vn->value = n;
+	*(int*) vn->getData() = n;
 	auto first = res.createResource("first");
-	*(int*) first->value = 1;
+	*(int*) first->getData() = 1;
 	auto second= res.createResource("second");
-	*(int*) second->value = 1;
+	*(int*) second->getData() = 1;
 	auto result= res.createResource("result");
 	auto exprresult = res.createResource("exprresult");
 	auto cnt = res.createResource("cnt");
-	*(int*) cnt->value = 2;
+	*(int*) cnt->getData() = 2;
 
 	// cntr < n
 	auto expr = std::make_shared<Greater>();
@@ -189,7 +189,7 @@ int fib(int n)
 	// cntr++
 	auto inc = std::make_shared<Add>();
 	auto c1 = res.createResource("const1");
-	*(int*) c1->value = 1;
+	*(int*) c1->getData() = 1;
 	inc->inputs.push_back(c1);
 	inc->inputs.push_back(cnt);
 	inc->output = cnt;
@@ -231,7 +231,7 @@ int fib(int n)
 	body.stats.push_back(cp3);	// result = second;
 	
 	body();
-	return *(int*)result->value;
+	return *(int*)result->getData();
 }
 
 TEST_CASE("Fibbonaci")

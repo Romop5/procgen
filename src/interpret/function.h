@@ -52,7 +52,7 @@ class PrintValue: public Function
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
-		std::cout << *(T*)(_getInput(0)->getOutput()->value) << std::endl;
+		std::cout << *(T*)(_getInput(0)->getOutput()->getData()) << std::endl;
 		return false;
 	}
 };
@@ -68,8 +68,8 @@ class OPNAME: public Function\
 	virtual bool operator()(RunStatus& stat)\
 	{\
 		if(_doInputs(stat)) return true;\
-		T out = *(T*) _getInput(0)->getOutput()->value OPERATOR *(T*) _getInput(1)->getOutput()->value;\
-		*(T*)(getOutput()->value) = out;\
+		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
+		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
 };
@@ -83,8 +83,8 @@ class OPNAME: public Function\
 	virtual bool operator()(RunStatus& stat)\
 	{\
 		if(_doInputs(stat)) return true;\
-		T out = *(T*) _getInput(0)->getOutput()->value OPERATOR ;\
-		*(T*)(getOutput()->value) = out;\
+		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR ;\
+		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
 };

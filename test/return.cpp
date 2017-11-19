@@ -20,15 +20,15 @@ TEST_CASE("Testing return")
 
 	auto vara= tr->sharedResource("int");
 	REQUIRE(vara != nullptr);
-	*(long*) vara->value = 10;
+	*(long*) vara->getData() = 10;
 
 	auto varb= tr->sharedResource("int");
 	REQUIRE(varb != nullptr);
-	*(long*) varb->value = 1;
+	*(long*) varb->getData() = 1;
 
 	auto output = tr->sharedResource("int");
 	REQUIRE(output != nullptr);
-	*(long*) output->value = 1;
+	*(long*) output->getData() = 1;
 
 
 	
@@ -57,6 +57,6 @@ TEST_CASE("Testing return")
 
 	RunStatus stat;
 	(*wh)(stat);
-	std::cout << "Result: " << *(long*) vara->value << " vs " << *(long*) varb->value << std::endl;
+	std::cout << "Result: " << *(long*) vara->getData() << " vs " << *(long*) varb->getData() << std::endl;
 
 }

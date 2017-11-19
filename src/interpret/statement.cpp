@@ -28,7 +28,7 @@ bool While::operator()(RunStatus& stat)
 	while(true)
 	{
 		if((*this->expr)(stat)) return true;
-		bool isTrue = *(bool*) expr->getOutput()->value;
+		bool isTrue = *(bool*) expr->getOutput()->getData();
 		if(!isTrue)
 			break;
 		// eval statement

@@ -1,14 +1,14 @@
 #include "resource.h"
 #include "typereg.h"
 
-bool Resource::copy(const std::shared_ptr<Resource> src)
+bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 {
 	if(!value)
 		return false;
-	if(src->getId() != type)
+	if(src->getBaseId() != baseType)
 		return false;
 
-	size_t size = tr->getType(type)->getSize();
+	size_t size = tr->getType(baseType)->getSize();
 	memcpy(this->value,src->getData(),size);
 
 	return true;
@@ -16,5 +16,5 @@ bool Resource::copy(const std::shared_ptr<Resource> src)
 
 std::string Resource::getName()
 {
-	return tr->getTypeName(this->type);
+	return tr->getTypeName(this->baseType);
 }

@@ -44,7 +44,7 @@ class Interpret {
 	nodeId createResource(BASE value)
 	{
 		auto constVar = this->tr->sharedResource(keyword<BASE>());
-		*(BASE*) constVar->value = value;
+		*(BASE*) constVar->getData() = value;
 		return this->addNode(fr->getHandler(constVar));
 	}
 

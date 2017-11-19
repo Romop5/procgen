@@ -34,10 +34,10 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	auto vn = tr->sharedResource("long");
 
 	auto const_one= tr->sharedResource("long");
-	*(long*) const_one->value = 1;
+	*(long*) const_one->getData() = 1;
 
 	auto const_two= tr->sharedResource("long");
-	*(long*) const_two->value = 2;
+	*(long*) const_two->getData() = 2;
 
 	// int first
 	auto first = tr->sharedResource("long");
@@ -128,7 +128,7 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	body->stats.push_back(cp3);	// result = second;
 	
 	//body();
-	//return *(long*)result->value;
+	//return *(long*)result->getData();
 	
 	/* Bound interface */
 

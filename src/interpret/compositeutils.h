@@ -57,7 +57,7 @@ class SetComposite: public Function
 
 void* getComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite, int id)
 {
-	auto type = tr->getType(composite->getId());
+	auto type = tr->getType(composite->getBaseId());
 	if(type->getType() != COMPOSITE)
 		return NULL;
 	auto compo = std::dynamic_pointer_cast<CompositeType>(type);
@@ -67,7 +67,7 @@ void* getComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> co
 
 void copyComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> dest, int id)
 {
-	auto type = tr->getType(composite->getId());
+	auto type = tr->getType(composite->getBaseId());
 	if(type->getType() != COMPOSITE)
 		return;
 	auto compo = std::dynamic_pointer_cast<CompositeType>(type);
@@ -75,17 +75,18 @@ void copyComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> co
 	void* src =  (void*) ((unsigned char*) composite->getData() + compo->getOffset(id));
 
 
-	delete[] (unsigned char*) dest->value;
-	dest->value = new unsigned char[type->getSize()];
-	memcpy(dest->value, src, type->getSize());
+	auto atomicDest = std::dynamic_pointer_cast<AtomicResource>(dest);
+	delete[] (unsigned char*) dest->getData();
+	atomicDest->setData(new unsigned char[type->getSize()]);
+	memcpy(dest->getData(), src, type->getSize());
 	
 
 }
 
 void setComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> src, int id)
 {
-	auto compotype = tr->getType(composite->getId());
-	auto smalltype = tr->getType(src->getId());
+	auto compotype = tr->getType(composite->getBaseId());
+	auto smalltype = tr->getType(src->getBaseId());
 	if(compotype->getType() != COMPOSITE)
 		return;
 	auto compo = std::dynamic_pointer_cast<CompositeType>(compotype);

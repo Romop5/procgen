@@ -14,27 +14,67 @@
 
 class TypeRegister;
 
-class Resource
+enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION};
+
+class Resource 
 {
-	public:
-	unsigned char* value;
-	size_t type;
+	
+	protected:
+	ResourceType resourceType;
+	size_t baseType;
 	std::shared_ptr<TypeRegister> tr;
 	public:
-	// TODO: remove this constructor
-	Resource():tr(std::shared_ptr<TypeRegister>()),value(NULL), type(0){};
-	Resource(std::shared_ptr<TypeRegister> typereg, 
-		unsigned char* dt, size_t id): tr(typereg),value(dt),type(id){};
-	~Resource()
+	//Resource():tr(std::shared_ptr<TypeRegister>()),value(NULL), type(0){};
+	//Resource(std::shared_ptr<TypeRegister> typereg, 
+	//	unsigned char* dt, size_t id): tr(typereg),value(dt),type(id){};
+	
+	// Virtual destructor
+	virtual ~Resource() {}
+
+	// Virtual data accessor
+	virtual void* getData() = 0;
+
+	// Get base type id (registered in TypeRegister)
+	size_t getBaseId() {return baseType;}
+	
+	ResourceType getResourceType() {return resourceType;}
+	// Get base type name
+	std::string getName();
+
+	/*template<typename T>
+	bool operator==(const T& val)
+	{
+		return ((*(T*) this->value) == val);
+	}
+	*/
+	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
+
+};
+
+
+class AtomicResource : public Resource
+{
+	private:
+	unsigned char* value;
+	public:
+	AtomicResource(std::shared_ptr<TypeRegister> typereg, 
+		unsigned char* dt, size_t id) 
+	{
+		this->tr = typereg;
+		this->value = dt;
+		this->baseType = id;
+	}
+	virtual ~AtomicResource()
 	{
 		if(value)
 			delete[] value;
 	}
-	void* getData() {return value;}
-	size_t getId() {return type;}
+	virtual void* getData() {return value;}
+	void setData(void* dt) { this->value = (unsigned char*) dt;}
 	
 	//template<typename T>
 	//T* operator*(){return dynamic_cast<T*>(value);}
+	/*
 	template<typename T>
 	bool operator==(const T& val)
 	{
@@ -42,8 +82,10 @@ class Resource
 	}
 
 	bool copy(const std::shared_ptr<Resource> src);
+	*/
 
-	std::string getName();
+	virtual bool copy(const std::shared_ptr<Resource> src);
+
 };
 
 

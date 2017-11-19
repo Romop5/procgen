@@ -19,16 +19,16 @@ int fib(int n)
 
 	auto vn = vr->addVar("n", tr->sharedResource(type));
 
-	*(int*) vn->value = n;
+	*(int*) vn->getData() = n;
 	auto first = vr->addVar("first", tr->sharedResource(type));
-	*(int*) first->value = 1;
+	*(int*) first->getData() = 1;
 	auto second= vr->addVar("second", tr->sharedResource(type));
-	*(int*) second->value = 1;
+	*(int*) second->getData() = 1;
 	auto result = vr->addVar("result", tr->sharedResource(type));
 	auto exprresult= vr->addVar("exprresult", tr->sharedResource(type));
 	auto exprresult = res.createResource("exprresult");
 	auto cnt= vr->addVar("cnt", tr->sharedResource(type));
-	*(int*) cnt->value = 2;
+	*(int*) cnt->getData() = 2;
 
 	auto fr = std::make_shared<FunctionRegister>();
 
@@ -42,7 +42,7 @@ int fib(int n)
 	// cntr++
 	auto inc = std::make_shared<Add>();
 	auto c1 = res.createResource("const1");
-	*(int*) c1->value = 1;
+	*(int*) c1->getData() = 1;
 	inc->inputs.push_back(c1);
 	inc->inputs.push_back(cnt);
 	inc->output = cnt;
@@ -84,7 +84,7 @@ int fib(int n)
 	body.stats.push_back(cp3);	// result = second;
 	
 	body();
-	return *(int*)result->value;
+	return *(int*)result->getData();
 }
 
 TEST_CASE("Fibbonaci")
