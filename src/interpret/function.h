@@ -57,6 +57,105 @@ class PrintValue: public Function
 	}
 };
 
+class CollectionAppend:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput())->append(_getInput(1)->getOutput());
+
+		return false;
+	}
+};
+
+class CollectionIndex:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// TODO check if 0 is collection and 1 is size_t
+		auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
+		this->bindOutput(res->at(*(int*)_getInput(1)->getOutput()->getData()));
+		return false;
+	}
+};
+
+class CollectionLength:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// TODO check if 0 is collection and 1 is size_t
+		auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
+		*(int*) this->getOutput()->getData() = res->length();
+		return false;
+	}
+};
+
+class CollectionRemove:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// TODO check if 0 is collection and 1 is size_t
+		auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
+		res->remove(*(int*)_getInput(1)->getOutput()->getData());
+		return false;
+	}
+};
+
+/*
+ * Input 0 = struct
+ * Input 1 = index
+ * Output = part 
+ */
+class CompositeGet:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// TODO check if 0 is collection and 1 is size_t
+		auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
+		size_t index = *(int*)_getInput(1)->getOutput()->getData();
+		this->bindOutput(res->getComponent(index));
+		return false;
+	}
+};
+
+/*
+ * Input 0 = struct
+ * Input 1 = index
+ * Input 2 = part 
+ */
+class CompositeSet:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// TODO check if 0 is collection and 1 is size_t
+		auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
+		size_t index = *(int*)_getInput(1)->getOutput()->getData();
+		res->getComponent(index)->copy(_getInput(2)->getOutput());
+		return false;
+	}
+};
+
+
+
+
+
 
 
 // Define a binary operatorion OPNAME<type> 

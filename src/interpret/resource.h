@@ -10,7 +10,8 @@
 #include <cstddef>
 #include <string.h>
 #include <memory>
-//#include "typereg.h"
+#include <vector>
+#include <map>
 
 class TypeRegister;
 
@@ -88,34 +89,53 @@ class AtomicResource : public Resource
 
 };
 
-class CollectionResouce : public Resource
+class CompositeResource : public Resource
+{
+	private:
+		std::map<size_t, std::shared_ptr<Resource>> components;
+	public:
+	CompositeResource(std::shared_ptr<TypeRegister> typereg,size_t base, std::map<size_t, std::shared_ptr<Resource>> data)
+	{
+		this->baseType = base;
+		this->components = data;
+		this->tr = typereg;
+		this->resourceType = ResourceType::COMPOSITE;
+	}
+
+	std::shared_ptr<Resource> getComponent(size_t index) { return components[index]; }
+	// TODO
+	virtual bool copy(const std::shared_ptr<Resource> src);
+	virtual void* getData(){};
+
+};
+
+class CollectionResource : public Resource
 {
 	private:
 		size_t arrayType;
+		std::vector<std::shared_ptr<Resource>> collection;
 	public:
-	std::vector<std::shared_ptr<Resource>> collection;
-	public:
-	CollectionResouce(std::shared_ptr<TypeRegister> typereg, size_t baseType, size_t arrayType)
+	CollectionResource(std::shared_ptr<TypeRegister> typereg, size_t baseType, size_t arrayType)
 	{
 		this->tr = typereg;
 		this->baseType = baseType;
 		this->arrayType = arrayType;
+		this->resourceType = ResourceType::COLLECTION;
 	}
 
-	~CollectionResouce()
+	~CollectionResource()
 	{
 	}
 
-	void append(std::shared_ptr<Resource> item)
-	{
-		if(item->getBaseId() == this->getBaseId())
-		{
-			auto newElement = this->tr->sharedResource(item->getBaseId());
-			newElement.copy(item);
-			this->collection.push_back(newElement);
-		}
-	}
+	void append(std::shared_ptr<Resource> item);
+	void remove(size_t index);
+	std::shared_ptr<Resource> at(size_t index);
+	size_t length() {return this->collection.size();}
+	size_t getArrayType() {return this->arrayType;}
 
+	virtual void* getData(){};
+	// TODO
+	virtual bool copy(const std::shared_ptr<Resource> src);
 };
 
 #endif

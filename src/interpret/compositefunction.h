@@ -80,15 +80,4 @@ class FunctionCall : public Function
 	}
 };
 
-/*
-std::shared_ptr<FunctionCall> addCompositeFunction(
-		std::string name,
-		std::shared_ptr<Statement> core,
-		std::vector<std::shared_ptr<Resource>> inputs, 
-		std::shared_ptr<Resource> output)
-{
-	auto cfs = std::make_shared<CompositeFunction>(core,inputs, output);
-	return std::make_shared<FunctionCall>(cfs);
-}
-*/
 #endif

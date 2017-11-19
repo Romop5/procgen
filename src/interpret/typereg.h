@@ -33,6 +33,12 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		names[typeName] = id;
 
 	}
+	bool addCollection(const std::string& typeName,TypeId baseType)
+	{
+		TypeId id = highest++;
+		types[id] = std::make_shared<CollectionType>(shared_from_this(),baseType);
+		names[typeName] = id;
+	}
 	TypeId getTypeId(const std::string& name)
 	{
 		auto it = names.find(name);
@@ -54,8 +60,35 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		auto it = types.find(type);
 		if(it != types.end())
 		{
-			unsigned char* data = new unsigned char[it->second->getSize()];
-			return std::make_shared<AtomicResource>(shared_from_this(),data,it->first);
+			switch(it->second->getType())
+			{
+				case ATOMIC:
+					{
+					unsigned char* data = new unsigned char[it->second->getSize()];
+					return std::make_shared<AtomicResource>(shared_from_this(),data,it->first);
+					}
+					break;
+				case COLLECTION:
+					{
+					TypeId baseType = (std::dynamic_pointer_cast<CollectionType>(it->second))->getBaseType();
+					return std::make_shared<CollectionResource>(shared_from_this(),baseType, it->first);
+					}
+					break;
+				case COMPOSITE:
+					{
+						auto compo = std::dynamic_pointer_cast<CompositeType>(it->second);
+						std::map<size_t,std::shared_ptr<Resource>> map;
+						for(int i = 0; i < compo->components.size();i++)
+						{
+							auto res = this->sharedResource(compo->components[i]);
+							map[i] = res;
+						}
+						return std::make_shared<CompositeResource>(shared_from_this(),type,map);
+					}
+				default:
+					// TODO exception
+					break;
+			}
 		}
 		return nullptr;
 	}

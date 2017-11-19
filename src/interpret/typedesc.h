@@ -6,7 +6,7 @@
 #include <memory>
 //typedef int TypeId;
 using TypeId = size_t;
-enum descType {ATOMIC,COMPOSITE,ABSTRACT};
+enum descType {ATOMIC,COMPOSITE,COLLECTION,ABSTRACT};
 
 class	TypeRegister;
 
@@ -43,6 +43,16 @@ class CompositeType : public AbstractType
 	std::vector<TypeId> components;
 	unsigned int getOffset(unsigned int componentID);
 		
+};
+class CollectionType : public AbstractType
+{
+	std::shared_ptr<TypeRegister> tr;
+	TypeId baseType;
+	public:
+	CollectionType(std::shared_ptr<TypeRegister>,
+			TypeId baseType);
+	virtual descType getType() { return COLLECTION;}
+	TypeId getBaseType() { return baseType;}
 };
 
 #endif

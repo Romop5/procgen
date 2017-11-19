@@ -28,3 +28,9 @@ unsigned int CompositeType::getOffset(unsigned int componentID)
 	return sum;
 }
 
+
+CollectionType::CollectionType(std::shared_ptr<TypeRegister>,
+			TypeId baseType)
+{
+	this->baseType = baseType;
+}

@@ -1,69 +1,59 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "typereg.h"
+#include <stdexcept>
 #include <iostream>
-#include "variablereg.h"
-#include "functionreg.h"
-#include "std.h"
-#include "statement.h"
+#include "interpret.h"
 
-using namespace std;
-TEST_CASE("Testing TypeRegister with STD func")
+TEST_CASE("Composite")
 {
-	std::shared_ptr<TypeRegister> tr = std::make_shared<TypeRegister>() ;
-	// Register all standard C++ types
+	auto tr = std::make_shared<TypeRegister>();	
 	registerStandardTypes(&(*tr));
+	
+	auto fr = std::make_shared<FunctionReg>(tr);	
+	registerStandardFunctions(&(*fr));
 
+	// register collection of ints
 
-	auto vr = VariableReg(tr);
-	vr.addVar("a", tr->sharedResource("int"));
+	TypeId base = tr->getTypeId("int");	
+	tr->addCollection("collection-int",base);
+	
+	auto collection = std::dynamic_pointer_cast<CollectionResource>(tr->sharedResource("collection-int"));
 
-	auto fr = FunctionReg(tr);	
-	registerStandardFunctions(&fr);
-		
+	REQUIRE(collection != nullptr);
 
-	/*
-	 * struct vec3
-	 * 	float x,y,z
-	 */
-
-	auto int_type = tr->getTypeId("int");
-
-	std::vector<TypeId> types = {int_type,int_type,int_type};
-
-	auto vec3_type = tr->addComposite("vec3",types);
-	auto vec3_inst = tr->sharedResource(vec3_type);
-
-	auto z = tr->sharedResource("int");
-	auto a = tr->sharedResource("int");
-	auto b = tr->sharedResource("int");
-	auto c = tr->sharedResource("int");
-	*(int*) z->getData() = 0;
-	*(int*) a->getData() = 1;
-	*(int*) b->getData() = 2;
-	*(int*) c->getData() = 3;
-
-	auto list = std::make_shared<Body>();
-
-	auto seta = fr.getFunc("set");
-	seta->bindOutput(vec3_inst);
-	seta->bindInput(0, fr.getHandler(a));
-	seta->bindInput(1, fr.getHandler(z));
-	list->stats.push_back(seta);
-
-	auto setb = fr.getFunc("set");
-	setb->bindOutput(vec3_inst);
-	setb->bindInput(0, fr.getHandler(b));
-	setb->bindInput(1, fr.getHandler(a));
-	list->stats.push_back(setb);
-
-	auto setc = fr.getFunc("set");
-	setc->bindOutput(vec3_inst);
-	setc->bindInput(0, fr.getHandler(c));
-	setc->bindInput(1, fr.getHandler(b));
-	list->stats.push_back(setc);
+	// Fill up the collection with int <0,5)	
+	
+	auto number = tr->sharedResource("int");
+	
+	auto appender = std::make_shared<CollectionAppend>();	
+	appender->bindInput(0, fr->getHandler(collection));
+	appender->bindInput(1, fr->getHandler(number));
 
 	RunStatus stat;
-	(*list)(stat);
+	for(int i = 0; i < 5; i++)
+	{
+		*(int*) number->getData() = i;
+		REQUIRE((*appender)(stat) == false);
+	}
+
+	// Check all items
+	for(int i = 0; i < 5; i++)
+	{
+		REQUIRE(*(int*) collection->at(i)->getData() == i);
+		std::cout << "Coll: " << i << " - " << *(int*) collection->at(i)->getData() << std::endl;
+	}
+
+	auto index = tr->sharedResource("int");
+	auto getter = std::make_shared<CollectionIndex>();	
+	getter->bindInput(0, fr->getHandler(collection));
+	getter->bindInput(1, fr->getHandler(index));
+
+	for(int i = 0; i < 5; i++)
+	{
+		*(int*) index->getData() = i;
+		(*getter)(stat);
+		std::cout << "Coll vol2: " << i << " - " << *(int*) number->getData() << std::endl;
+		REQUIRE(*(int*) getter->getOutput()->getData() == i);
+	}
 
 }
