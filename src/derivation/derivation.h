@@ -2,10 +2,17 @@
 
 class Derivation
 {
-	std::shared_ptr<FunctionReg> fr;
-	std::shared_ptr<TypeReg> tr;
 	public:
-	Derivation(std::shared_ptr<TypeReg> tr, std::shared_ptr<FunctionReg> fr)
+	using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function> >;
+	private:
+	std::shared_ptr<FunctionReg> fr;
+	std::shared_ptr<TypeRegister> tr;
+
+	std::map<TypeId, std::vector<ruleType>> rules;
+	std::vector<std::shared_ptr<Resource>> currentString;
+	std::vector<std::shared_ptr<Resource>> nextString;
+	public:
+	Derivation(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	{
 		this->tr = tr;
 		this->fr = fr;
@@ -14,9 +21,14 @@ class Derivation
 	// Add rule for symbol
 	void addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure);
 
+	bool hasAnyRule(TypeId type);
+
+	bool applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol);
+
+	bool isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol);
+
 	// Set symbols
 	void setStartSymbols(std::vector<std::shared_ptr<Resource>> symbols);
-
 
 	// Run generation
 	void generate();
