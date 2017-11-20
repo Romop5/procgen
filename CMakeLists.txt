@@ -51,4 +51,5 @@ add_executable(compositeType test/composite.cpp ${INTERPRET_SOURCE})
 add_executable(userfunc test/userfunc.cpp ${INTERPRET_SOURCE})
 add_executable(return test/return.cpp ${INTERPRET_SOURCE})
 add_executable(collection test/collection.cpp ${INTERPRET_SOURCE})
+add_executable(composite test/composite.cpp ${INTERPRET_SOURCE})
 #
