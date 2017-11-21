@@ -1,0 +1,29 @@
+PYRAMIDA:
+
+TYPE	Position:
+	float x;
+	float y;
+
+TYPE	Polygon:
+	Position A;
+	Position B;
+	Position C;
+
+TYPE	Poschodie:
+	float strana;
+	float vyska;
+
+RULE FOR Poschodie
+PROVIDED {
+	if(this[strana] > 10)
+		return true;
+	return false;
+}
+DO {
+	// Produce 4 walls + roof	
+	Polygon(Position(x,y),Position(z,a),...);
+	...
+
+	// Add another Poschodie with different strana
+	Poschodie(this[strana]*0.9, this[vyska]+5);
+};
