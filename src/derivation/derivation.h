@@ -4,10 +4,10 @@ class Derivation
 {
 	public:
 	using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function> >;
-	private:
 	std::shared_ptr<FunctionReg> fr;
 	std::shared_ptr<TypeRegister> tr;
 
+	private:
 	std::map<TypeId, std::vector<ruleType>> rules;
 	std::vector<std::shared_ptr<Resource>> currentString;
 	std::vector<std::shared_ptr<Resource>> nextString;
@@ -27,11 +27,12 @@ class Derivation
 
 	bool isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol);
 
+	void appendNextSymbol(std::shared_ptr<Resource> symbol);
 	// Set symbols
 	void setStartSymbols(std::vector<std::shared_ptr<Resource>> symbols);
 
 	// Run generation
-	void generate();
+	void generate(size_t steps = -1);
 
 	// Print the status into stdout
 	void _debug();

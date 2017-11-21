@@ -25,10 +25,24 @@ class TestInt : public Function
 	}
 };
 
+class CopyInt : public Function
+{
+	Derivation* der;
+	public:
+	CopyInt(Derivation* der)
+	{
+		this->der = der;
+	}
+	virtual bool operator()(RunStatus& rs)
+	{
+		this->der->appendNextSymbol(_getInput(0)->getOutput());
+		return false;
+	}
+};
 
 int main()
 {
-
+	srandom(time(NULL));
 	
 	auto tr = std::make_shared<TypeRegister>();
 	auto fr = std::make_shared<FunctionReg>(tr);
@@ -52,9 +66,11 @@ int main()
 	// Add rule
 	
 	derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<TestInt>(&derivation));
+	derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<CopyInt>(&derivation));
 
-	derivation.generate();
+	derivation.generate(1);
 	
+	derivation._debug();
 
 
 	return 0;

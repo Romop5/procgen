@@ -11,9 +11,13 @@ void Derivation::setStartSymbols(std::vector<std::shared_ptr<Resource>> symbols)
 	this->currentString = symbols;
 }
 	
-void Derivation::generate()
+void Derivation::generate(size_t maxSteps)
 {
 	bool shouldContinue = false;
+	size_t step = 0;
+	do {
+	std::cout << "Step: " <<step++ <<std::endl;
+	shouldContinue = false;
 	for(size_t i = 0; i < this->currentString.size(); i++)
 	{
 		// Find a rule for current symbols
@@ -37,15 +41,21 @@ void Derivation::generate()
 			{
 				shouldContinue = true;	
 				size_t randomChoose = random() % availableRules.size();
+				std::cout << "Random no: "<< randomChoose << std::endl;
 				// apply rule on symbol
 				applyRule(availableRules[randomChoose], sym);
 			} else {
 				std::cerr << "No aplicable rule found for type: " << sym->getName() << std::endl;
+				this->appendNextSymbol(sym);
 			}
 		} else {
 			std::cerr << "No rule found for type: " << sym->getName() << std::endl;
+			this->appendNextSymbol(sym);
 		}
 	}
+	this->currentString = this->nextString;
+	this->nextString.clear();
+	} while (shouldContinue && step < maxSteps);
 }
 
 bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol)
@@ -73,8 +83,19 @@ bool Derivation::hasAnyRule(TypeId type)
 	return false;
 }
 
-
-void _debug()
+void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 {
-
+	this->nextString.push_back(symbol);
 }
+
+void Derivation::_debug()
+{
+	// Print content of currentString
+	std::cout << "Current String Content" << std::endl;
+	for(size_t i = 0; i < this->currentString.size(); i++)
+	{
+		std::cout << i << "\t'" << this->currentString[i]->getName() << "'"<<std::endl;
+	}
+	std::cout << "Elements count: " << this->currentString.size() << std::endl;
+}
+

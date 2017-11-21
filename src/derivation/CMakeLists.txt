@@ -26,7 +26,7 @@ set(INTERPRET_SRC
 	../interpret/variablereg.cpp
 	../interpret/variablereg.h
 	derivation.cpp
-	main.cpp
+	algae.cpp
 	)
 
 add_executable(derivation
