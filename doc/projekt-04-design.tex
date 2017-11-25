@@ -1,17 +1,69 @@
 %03 Navrh jazyka
 %============
 \chapter{Návrh jazyka}
-	- co vlastne ocakavame od naseho jazyka
-	- cielova skupina
-	- nastrelenie jazyka (co vlastne popisuje, klucove konstrukcie)
-%	- LEXIKALNA ANALYZA
-\section{Lexikálna analýza}
-		- popis ako spracovavame vstupny text
-		- zmienka o flexe	
-%	- SYNTAKTICKA ANALYZA
-\section{Syntaktická analýza}
-%	- INTEPRET
-\section{Interpret}
-		- popis OO modelu
-		- principy
-	
+
+Formálna báza navrhovaného jazyka vychádza z fungovania \textit{L-systémov}.
+Základom jazyka sú symboly a pravidlá, ktorými sa odvodzujú nové symboly.
+
+
+Fungovanie programu popísaného našim jazykom je založené na prepisovaní typovaných symbolov.
+Po spustení programu sa vytvorí uživateľom definovaný počiatočný reťazec symbolov s počiatočnými hodnotami.
+Následne prebiehajú takzvané prepisovacie cyklusy. V každej iterácii sa postupne pre každý symbol aktuálneho reťazca
+vyhodnotia všetky definované pravidlá pre jeho typ a z množiny prípustných pravidieľ sa náhodne vyberie.
+Vybraté pravidlo je aplikované a jeho aplikáciou môže vniknúť nový symbol, ktorý sa pridá na koniec reťazca pre ďalšiu iteráciu.
+V prípade, že žiadne z pravidieľ nie je aplikovateľné, je tento symbol taktiež pridaný k ďalšej iterácii.
+
+Výpočet je ukončený v momente keď počas iterácie nebolo použité ani jedno z uživateľových pravidiel.
+
+\section{Symboly}
+Symboly sú definované uživateľom, pričom sa jedná o štruktúry, ktoré sú odvodené z predom definovaných
+typov a vstavaných (atomických typov). Jednotlivé zložky (vlastnosti) je možné unikátne pomenovať.
+
+\section{Pravidlá a funkcie}
+Uživateľ taktiež špecifikuje pravidlá. Každé pravidlo je zložené z dvoch časti: \textbf{predikátovej funkcie} a \textbf{procedúry}.
+
+Predikátová funkcia zobrazuje parametre symbolu na boolovskú hodnotu, ktorá určuje, či je pravidlo aplikovateľné na
+aktuálny symbol. 
+
+Precedúra pravidla predstavuje akciu, resp. súbor akcií, ktoré sa majú vykonať pri aplikácii pravidla na symbol. 
+
+Pre zvýšenie komfortu je rovnako možné definovať vlastné pomocné funkcie, ktoré je následne možné následne použiť v iných funkciach. 
+Jazyk ale striktne nepovoluje rekurziu pri volaní funkcií.
+
+Vyžšie spomenuté konštrukcie definujú svoju činnosť na základe sekvencie príkazov. Príkazy v navrhovanom jazyku predstavujú \textit{imperatívnu} časť jazyka.
+Každý príkaz je buď priradenie, podmienka, cyklus alebo výraz.
+
+\section{Vstavané funkcie}
+
+\begin{itemize}
+\item random()
+	Funkcia, ktorá slúži k výpočtu rovnomerného rozloženia, normalizovaného na interval $<0,1>$
+\end{itemize}
+\section{Modulárnosť}
+\section{Prístup k stromu symbolov}
+
+Navrhovaný jazyk obsahuje mechanizmus pre prácu s kontextom. Každý symbol obsahuje odkazy na symbol, z ktorého vznikol, ako aj symboli, ktoré sa vyskytli
+pri prepisovaní v jeho okolí (kontext). Pre prístup k týmto symbolom sú dostupné vstavané nasledujúce vstavané funkcie:
+
+\begin{itemize}
+\item getCurrentSymbolID()
+	Funkcia získa identifikátor práve derivovaného symbolu.
+\item getSiblingForID(ID,relativePos)
+	Funkcia vráti identifikátor symbolu, ktorý sa nachádza v rovnakom derivačnom reťazci ako symbol \texttt{ID}. \texttt{relativePos} určuje vzdialenosť
+	od referečného symbolu. Kladné hodnoty predstavujú vzdialenosť z prava, záporné z ľava. 
+	V prípade, že symbol neexistuje vráti funkcia \texttt{UNKID}
+\item getParent(ID)
+	Získa identifikátor symbolu, z ktorého vznikol symbol \texttt{ID}.
+\end{itemize}
+
+Nakoľko je náš navrhovaný jazyk typovaný a symbol môže obecne vzniknúť z ľubovoľného symbolu obecne odlišného typu, je nutné zabezpečiť manipuláciu so
+symbolom, ktorého typ dopredu nepoznáme.
+
+K tomuto slúžia nasledujúce funkcie:
+\begin{itemize}
+\item hasPropertyWithName(ID,property)
+	Funkcia vracia hodnotu \texttt{TRUE} v prípade ak symbol, resp. jeho typ obsahuje vlastnosť \texttt{property}. Inak \texttt{FALSE}.
+\item type getPropertyAsType(ID,property,type)
+
+\end{itemize}
+
