@@ -127,6 +127,10 @@ class Interpret {
 	{
 		this->lastString.pop();
 	}
+
+
+
+	std::vector<TypeId> structDef;
 };
 
 

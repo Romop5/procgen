@@ -18,6 +18,7 @@ using namespace std;
 "int"		{cout << "Keyword: int" << endl; return KEYWORD_INT;}
 "bool"		{cout << "Keyword: bool" << endl; return KEYWORD_BOOL;}
 "char"		{cout << "Keyword: char" << endl; return KEYWORD_CHAR;}
+"float"		{cout << "Keyword: char" << endl; return KEYWORD_FLOAT;}
 "while"		{cout << "Keyword: while" << endl; return KEYWORD_WHILE;}
 "print"		{cout << "Keyword: print" << endl; return KEYWORD_PRINT;}
 "return"	{cout << "Keyword: return" << endl; return KEYWORD_RETURN;}
@@ -34,6 +35,8 @@ using namespace std;
 }
 ":"		{cout << "Keyword: :" << endl; return KEYWORD_SPLITER;}
 ","		{cout << "Keyword: ," << endl; return COMMA;}
+"["		{cout << "Keyword: [" << endl; return LANGL;}
+"]"		{cout << "Keyword: ]" << endl; return RANGL;}
 "{"		{cout << "Keyword: {" << endl; return LBRAC;}
 "}"		{cout << "Keyword: }" << endl; return RBRAC;}
 "("		{cout << "Keyword: (" << endl; return LPAR;}

@@ -27,6 +27,11 @@ OSNOVA BP PRACE (XDOBIA11)
 	- co to vlastne je generovanie ? Co je to proceduralne generovanie ?
 		Da sa formalne popisat ? Aké sú existujúce spôsoby ?
 	- ako sa obvykle robi proc. generovanie (dostupne formalizmy)
+		= sumy pre vyskove mapy
+			napr. Perlin noise
+		= Voronoi diagram pre mesta
+		= L systemy pre assety
+
 	L-SYSTEMY
 	=========
 		- zakladny popis, niekolko ukazok

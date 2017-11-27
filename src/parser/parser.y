@@ -52,12 +52,15 @@ void yyerror(Interpret& interpret, const char *s);
 %token KEYWORD_ASSIGN
 %token LPAR
 %token RPAR
+%token LANGL
+%token RANGL
 %token LBRAC
 %token RBRAC
 %token SEMICOL
 %token COMMA
 %token EQ
 // Operators
+%left EQ
 %left GREATER LESS
 %left MINUS 
 %left PLUS 
@@ -85,14 +88,21 @@ definition:
 	| functionDefinition {}
 	;
 structDefinition:
-	KEYWORD_STRUCT STRING LBRAC structMembers RBRAC SEMICOL{}
+	KEYWORD_STRUCT STRING LBRAC structMembers RBRAC SEMICOL 
+	{
+		// define a new type	
+		interpret.tr->addComposite($2,interpret.structDef);
+		interpret.structDef.clear();
+	}
 	;
 structMembers:
 	structMember {}
 	| structMembers structMember {}
 	;
 structMember:
-	type STRING SEMICOL {}
+	type STRING SEMICOL {
+		interpret.structDef.push_back($1);
+	}
 	;
 functionDefinition:
 	type 
@@ -100,7 +110,7 @@ functionDefinition:
 		std::cout << "it's a function" << std::endl; 
 		interpret.paramClear();
 		interpret.vr->clear();
-		auto returnResource = interpret.tr->sharedResource(typeToString($1));
+		auto returnResource = interpret.tr->sharedResource($1);
 		interpret.vr->addVar("return",returnResource);
 	}
 	STRING LPAR paramList RPAR body	
@@ -123,7 +133,7 @@ paramList:
 param:
      	type STRING 
 	{
-		auto res = interpret.tr->sharedResource(typeToString($1));
+		auto res = interpret.tr->sharedResource($1);
 		interpret.vr->addVar($2,res);
 		interpret.paramPush(res);
 		
@@ -224,13 +234,13 @@ assignment:
 variableDefinition:
 	type STRING SEMICOL
 	{
-		auto res = interpret.tr->sharedResource(typeToString($1));
+		auto res = interpret.tr->sharedResource($1);
 		interpret.vr->addVar(std::string($2),res);
 		$$ = interpret.createNOOP();
 	}
 	| type STRING KEYWORD_ASSIGN expr SEMICOL 
 	{
-		auto res = interpret.tr->sharedResource(typeToString($1));
+		auto res = interpret.tr->sharedResource($1);
 		interpret.vr->addVar(std::string($2),res);
 		$$ = interpret.createAssignment($2,$4);
 	}
@@ -248,6 +258,7 @@ exprConst:
 	 INT {$$ = interpret.createResource($1);}
 	| FLOAT {$$ = interpret.createResource($1);}
 	| STRING {interpret.addLastString($1); std::cout << "LOL" << std::endl; } functionCall {std::cout << "The end" << std::endl; $$ = $3;} 
+	| STRING LANGL INT RANGL {}
 	| LPAR expr RPAR {$$ = $2;} 
 	
 functionCall:
@@ -273,10 +284,13 @@ functionCall:
 
 */
 type:
-    	KEYWORD_INT {$$ = KEYWORD_INT;}
-	| KEYWORD_CHAR {$$ = KEYWORD_CHAR;}
-	| KEYWORD_BOOL {$$ = KEYWORD_BOOL;}
+    	KEYWORD_INT {$$ = interpret.tr->getTypeId("int");}
+    	| KEYWORD_FLOAT {$$ = interpret.tr->getTypeId("float");}
+	| KEYWORD_CHAR {$$ = interpret.tr->getTypeId("char");}
+	| KEYWORD_BOOL {$$ = interpret.tr->getTypeId("bool");}
+    	| STRING {$$ = interpret.tr->getTypeId($1);}
 	;
+;
 %%
 
 int main(int argc, char** argv) {
