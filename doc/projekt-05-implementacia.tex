@@ -3,23 +3,57 @@
 %	- gramaticke pravidla
 
 \chapter{Implementácia}
-Aby bolo možné programovací jazyk prakticky využiť, je nutné naprogramovať systém, ktorý bude jazyk prijímať a interpretovať.
+Aby bolo možné programovací jazyk prakticky využiť, je nutné naprogramovať systém, ktorý spracuje textový vstup so zapísaným programom v sytaxi
+jazyka a jeho činnosťou bude interpretácia vstupu.
 
-Program, ktorý prijíma reťazec patriaci do programovacieho jazyka sa nazýva
-syntaktický analyzátor (\textit{ang. parser}). 
+%TODO Meduna ?
+Čásť systému, ktorá realizuje spracovanie vstupu uživateľa sa obvykle nazýva \textit{lexikálny analyzátor} (\textit{ang. lexer}). Výstupom analyzátora je
+séria štruktúr zvaných \textit{token}, ktoré predstavujú slovo s typom a hodnotou. 
 
+V tomto projekte sú 
 
-	- co vlastne ocakavame od naseho jazyka
-	- cielova skupina
-	- nastrelenie jazyka (co vlastne popisuje, klucove konstrukcie)
-%	- LEXIKALNA ANALYZA
 \section{Lexikálna analýza}
 		- popis ako spracovavame vstupny text
 		- zmienka o flexe	
+Pre spracovanie vstupného textu je využitý voľne dostupný generátor Flex, šírený pod licenciou BSD. Flex umožňuje definovať tokeny
+v komfortnej podobe a následne vygenerovať deterministický konečný automat, zapísaný v jazyku C alebo C++.
+
+Vo Flexe sa jednotlivé tokeny definujú pomocou regulárneho výrazu. Prípadne kolízie regulárnych výrazov sú vrámci tohoto generátora
+riešené chronológiou zoznamu pravidiel, teda skôr zadaná pravidlo má prioritu voči neskôr zadanému.
+
+Pravidlá sa zadávajú v následujúcej forme:
+\begin{verbatim}
+"<REGULARNY-VYRAZ>" {<KOD>}
+\end{verbatim}
+
+\texttt{<REGULARNY-VYRAZ>} predstavuje reťazec, ktorého prečítaním zo vstupu sa vykoná kód \texttt{<KOD>}.
+Výsledkom kódu je obvykle návratová hodnota, ktorá je predaná lexéru pomocou konštrukcie \texttt{return}.
+
+Typ návratovej hodnoty je explicitne špecifikovať priamo v zdrojovom súbore s pravidlami, alebo importovať z výstupu Bisona.
+
 %	- SYNTAKTICKA ANALYZA
 \section{Syntaktická analýza}
+Táto čásť projektu je založená na generátore syntaktického analyzátora GNU/Bison, ktorý pre zadanú gramatiku v BCN forme vytvorí preložiteľný
+C/C++ kód, predstavujúci LALR sytaktický analyzátor.
+
+Bison rozližuje medzi terminálnym a non-terminálnym symbolom. Terminálne symboly sú definované pomocou špecialneho príkazu a predstavujú
+jednotlivé tokeny, získané lexérom.
+
+Non-terminálne symboli sú definované pravidlami gramatiky. 
+\subsection{Definícia pravidiel}
+Pravidlá sú definované v následujúcom formáte:
+
+\begin{verbatim}
+<nazov-symbolu>:
+        <symbol1> <symbol2> ... { } 
+        | <symbol3> <symbol4> ... { }
+\end{verbatim}
+
+Pravidlá môžu mať viacero alternatív, ktoré sú v definícii oddelené pomocou znaku \texttt{|}. 
+
+
+
 %	- INTEPRET
 \section{Interpret}
-		- popis OO modelu
-		- principy
+
 	
