@@ -1,0 +1,29 @@
+program:
+	declarations
+declarations:
+	declaration declarations
+	EMPTY
+
+declaration:
+	type-declaration
+	rule-declaration
+	init
+
+
+type-declaration:
+	struct NAME { subtypes } ;
+
+subtypes:
+	subtype optional-subtypes
+
+optional-subtypes:
+	EMPTY	
+	subtype optional-subtypes
+
+subtype:
+	type NAME ;
+
+rule-declaration:
+	
+
+
