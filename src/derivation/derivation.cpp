@@ -53,6 +53,7 @@ void Derivation::generate(size_t maxSteps)
 			this->appendNextSymbol(sym);
 		}
 	}
+	std::cout << this->nextString.size() << std::endl;
 	this->currentString = this->nextString;
 	this->nextString.clear();
 	} while (shouldContinue && step < maxSteps);
@@ -86,6 +87,9 @@ bool Derivation::hasAnyRule(TypeId type) const
 void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 {
 	this->nextString.push_back(symbol);
+	std::cout << "Appended\n";
+	std::cout << this->nextString.size() << "\n";
+	std::cout << this << std::endl;
 }
 
 void Derivation::_debug()

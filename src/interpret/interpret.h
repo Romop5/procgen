@@ -1,3 +1,5 @@
+#ifndef _INTERPRET_H
+#define _INTERPRET_H
 #include "typereg.h"
 #include "resource.h"
 #include "functionreg.h"
@@ -135,3 +137,4 @@ class Interpret {
 
 
 
+#endif

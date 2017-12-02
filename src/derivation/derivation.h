@@ -1,3 +1,5 @@
+#ifndef DERIVATION_H
+#define DERIVATION_H
 #include "interpret.h"
 
 class Derivation
@@ -43,3 +45,4 @@ class Derivation
 	}
 
 };
+#endif
