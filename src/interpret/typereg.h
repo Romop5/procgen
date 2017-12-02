@@ -29,10 +29,24 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		for(auto &x: types)
 			size += this->getType(x)->getAlignedSize();
 
-		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types);
+		std::vector<std::string> componentNames;
+		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,componentNames);
 		names[typeName] = id;
 
 	}
+	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
+	{
+		TypeId id = highest++;
+		unsigned int size = 0;
+		for(auto &x: types)
+			size += this->getType(x)->getAlignedSize();
+
+		// TODO: refactor items and their names
+		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,itemNames);
+		names[typeName] = id;
+
+	}
+
 	bool addCollection(const std::string& typeName,TypeId baseType)
 	{
 		TypeId id = highest++;

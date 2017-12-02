@@ -38,10 +38,15 @@ class CompositeType : public AbstractType
 	std::shared_ptr<TypeRegister> tr;
 	public:
 	CompositeType(std::shared_ptr<TypeRegister>,
-			unsigned int size, std::vector<TypeId> compos);
+			unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items);
 	virtual descType getType() { return COMPOSITE;};
 	std::vector<TypeId> components;
+	std::vector<std::string> componentsNames;
+
 	unsigned int getOffset(unsigned int componentID);
+
+	bool hasComponentWithName(const std::string name);
+	size_t getComponentPositionByName(const std::string name);
 		
 };
 class CollectionType : public AbstractType

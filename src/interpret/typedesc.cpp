@@ -9,11 +9,12 @@ unsigned int AbstractType::getAlignedSize()
 		return this->size;
 	return this->size-rest+alignment;
 }
-CompositeType::CompositeType(std::shared_ptr<TypeRegister> tr,unsigned int size, std::vector<TypeId> compos)
+CompositeType::CompositeType(std::shared_ptr<TypeRegister> tr,unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items)
 {
 	this->tr = tr;
 	this->size = size;
 	this->components = compos;
+	this->componentsNames = items;
 }
 unsigned int CompositeType::getOffset(unsigned int componentID)
 {
@@ -33,4 +34,22 @@ CollectionType::CollectionType(std::shared_ptr<TypeRegister>,
 			TypeId baseType)
 {
 	this->baseType = baseType;
+}
+
+
+bool CompositeType::hasComponentWithName(const std::string name)
+{
+	for(auto &x: this->componentsNames)
+		if(x == name)
+			return true;
+	return false;
+}
+
+size_t CompositeType::getComponentPositionByName(const std::string name)
+{
+	for(size_t x = 0 ; x < this->componentsNames.size(); x++)
+		if(this->componentsNames[x] == name)
+			return x;
+	return -1;
+
 }
