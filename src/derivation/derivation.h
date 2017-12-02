@@ -21,11 +21,11 @@ class Derivation
 	// Add rule for symbol
 	void addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure);
 
-	bool hasAnyRule(TypeId type);
+	bool hasAnyRule(TypeId type) const;
 
 	bool applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol);
 
-	bool isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol);
+	bool isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol) const;
 
 	void appendNextSymbol(std::shared_ptr<Resource> symbol);
 	// Set symbols
@@ -36,5 +36,10 @@ class Derivation
 
 	// Print the status into stdout
 	void _debug();
+
+	const std::vector<std::shared_ptr<Resource>> getCurrentSymbolList() const
+	{
+		return this->currentString;
+	}
 
 };

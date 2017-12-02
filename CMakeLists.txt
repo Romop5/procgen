@@ -38,12 +38,18 @@ set(INTERPRET_SOURCE
 	src/interpret/types.cpp
 	src/interpret/variablereg.cpp)
 
+set(DERIVATION_SOURCE
+	src/derivation/appender.h
+	src/derivation/derivation.cpp
+	src/derivation/derivation.h
+)
 ###############################################################################
 ############    TESTS                                      ####################
 ###############################################################################
 
 include_directories(src/interpret)
 
+# Interpret tests
 add_executable(boxesTest test/test.cpp ${INTERPRET_SOURCE})
 #add_executable(typesTest test/typereg.cpp ${SOURCES})
 add_executable(variabletest test/variablereg.cpp ${INTERPRET_SOURCE})
@@ -53,4 +59,8 @@ add_executable(return test/return.cpp ${INTERPRET_SOURCE})
 add_executable(collection test/collection.cpp ${INTERPRET_SOURCE})
 add_executable(composite test/composite.cpp ${INTERPRET_SOURCE})
 add_executable(compositeComponents test/compositeComponents.cpp ${INTERPRET_SOURCE})
-#
+
+# Rewriting tests
+include_directories(src/derivation)
+add_executable(algae test/algae.cpp ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+

@@ -58,7 +58,7 @@ void Derivation::generate(size_t maxSteps)
 	} while (shouldContinue && step < maxSteps);
 }
 
-bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol)
+bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol) const
 {
 	auto boolResource = this->tr->sharedResource("bool");	
 	std::get<0>(rule)->bindInput(0, fr->getHandler(symbol));
@@ -75,7 +75,7 @@ bool Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symb
 	(*std::get<1>(rule))(rs);
 }
 
-bool Derivation::hasAnyRule(TypeId type)
+bool Derivation::hasAnyRule(TypeId type) const
 {
 	auto it = this->rules.find(type);
 	if(it != this->rules.end())
