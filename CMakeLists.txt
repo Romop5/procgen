@@ -64,3 +64,5 @@ add_executable(compositeComponents test/compositeComponents.cpp ${INTERPRET_SOUR
 include_directories(src/derivation)
 add_executable(algae test/algae.cpp ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
 
+add_executable(dom test/dom.cpp ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+
