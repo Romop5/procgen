@@ -1,0 +1,44 @@
+JAZYK RRE PROC GENEROVANIE
+==========================
+
+Stanovenie cieľov:
+	- vytvoriť jazyk, ktorý umožní definovať gramatiky podobné L-systémom,
+	  pomocou ktorých sa bude generovať obsah
+	- jazyk by mal byť flexibilný v zmysle:
+		= dynamického obsahu (predmetu) genovania
+			napr. generujem čo chcem, stromy, architekturu
+
+		= dynamickosť v dobe spustenia
+	- zavedenie typov 
+		= silnejšia kontrola, lepší komfort pri odladení jazyka
+	- multiplatformnosť:
+		= neexistuje dôvod prečo by to nemalo ísť
+	 	
+
+Motivácia:
+Chcel by som vytvoriť demo s nádhernou krajinkou. V krajine by som chcel
+mať stromy a rastliny, ktoré budu vyzerať prirodzene, teda každý strom odlišne, zároveň podobne.
+
+K svojmu 3D rendereru preto pripojím knižnicu s takýmto jazykom a vždy, keď budem chcieť vytvoriť strom, taky si vygenerujem.
+
+
+USE CASES
+==========================
+- Generovanie real-time proceduralnych objektov, textur
+	= hry, demá, hudba, whatever
+- Offline tvorba assetov, tvorčia činnosť
+
+- Vizualizácia v editore
+
+
+Ako to napísať v BP ?
+==========================
+- postupnost dokumentu - kucharka takehoto jazyka
+
+Chronologia:
+- co je proceduralne generovanie, kde sa da pouzit a preco by sa nam hodil takyto jazyk
+- techniky v proceduralnom generovani
+	hlavne gramatiky a šumy
+
+- navrh jazyka
+
