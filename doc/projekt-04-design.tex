@@ -92,5 +92,15 @@ K tomuto slúžia nasledujúce funkcie:
 
 
 \section{Objektový návrh}
-
-
+\begin{tikzpicture}
+	\begin{class}[text  width=6cm]{Statement}{0,0}
+		\operation{operator()() : bool returned}
+	\end{class}
+	\begin{class}[text  width=4cm]{If}{0,3}
+		\inherit{Statement}
+		\operation{operator()() : bool returned}
+	\end{class}
+	\begin{class}[text  width=4cm]{Body}{3,3}
+		\operation{operator()() : bool returned}
+	\end{class}
+\end{tikzpicture}
