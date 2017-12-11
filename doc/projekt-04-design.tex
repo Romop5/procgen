@@ -2,10 +2,11 @@
 %============
 \chapter{Návrh jazyka}
 
-Formálna báza navrhovaného jazyka vychádza z fungovania \textit{L-systémov}.
+Jazyk, ktorý bol navrhnutý v tejto práci vychádza vo svojom základe z \textbf{L-systémov}.
 Základom jazyka sú symboly a pravidlá, ktorými sa odvodzujú nové symboly.
 
 
+\section{Definícia jazyka}
 Fungovanie programu popísaného našim jazykom je založené na prepisovaní typovaných symbolov.
 Po spustení programu sa vytvorí uživateľom definovaný počiatočný reťazec symbolov s počiatočnými hodnotami.
 Následne prebiehajú takzvané prepisovacie cyklusy. V každej iterácii sa postupne pre každý symbol aktuálneho reťazca
@@ -15,11 +16,11 @@ V prípade, že žiadne z pravidieľ nie je aplikovateľné, je tento symbol tak
 
 Výpočet je ukončený v momente keď počas iterácie nebolo použité ani jedno z uživateľových pravidiel.
 
-\section{Symboly}
-Symboly sú definované uživateľom, pričom sa jedná o štruktúry, ktoré sú odvodené z predom definovaných
-typov a vstavaných (atomických typov). Jednotlivé zložky (vlastnosti) je možné unikátne pomenovať.
+\subsection{Symboly}
+Symboly sú typované. Každý uživateľom definovaný symbol predstavuje unikátny typ, ktorý predstavuje štruktúru, zloženú z atomických (preddefinovaných typov) alebo
+z iných kompozitných typov. Jednotlivé zložky majú vrámci štruktúry unikátny názov, ktorý predstavuje ich identifikáciu.
 
-\section{Pravidlá a funkcie}
+\subsection{Pravidlá a funkcie}
 Uživateľ taktiež špecifikuje pravidlá. Každé pravidlo je zložené z dvoch časti: \textbf{predikátovej funkcie} a \textbf{procedúry}.
 
 Predikátová funkcia zobrazuje parametre symbolu na boolovskú hodnotu, ktorá určuje, či je pravidlo aplikovateľné na
@@ -33,65 +34,41 @@ Jazyk ale striktne nepovoluje rekurziu pri volaní funkcií.
 Vyžšie spomenuté konštrukcie definujú svoju činnosť na základe sekvencie príkazov. Príkazy v navrhovanom jazyku predstavujú \textit{imperatívnu} časť jazyka.
 Každý príkaz je buď priradenie, podmienka, cyklus alebo výraz.
 
-\section{Syntax}
-
-Štruktúru zdrojového kódu je možné rozdeliť na definíciu typov, pravidiel a pomocných funkcií.
-
-\subsection{Definícia typu}
-
-\begin{verbatim}
-<TYPE> <TYPENAME> { 
-        <TYPE1> <NAME1>,	
-        ...
-        <TYPEN> <NAMEN>	
-}
-\end{verbatim}
-
-\subsection{Definícia pravidla}
-
-\begin{verbatim}
-rule <TYPE> if { 
-	return BOOLEAN;
-} do {
-}
-\end{verbatim}
-
-\section{Vstavané funkcie}
-
-\begin{itemize}
-\item \texttt{random()} \\
-	Funkcia, ktorá slúži k výpočtu rovnomerného rozloženia, normalizovaného na interval $<0,1>$
-\end{itemize}
-\section{Modulárnosť}
-\section{Prístup k stromu symbolov}
-
-Navrhovaný jazyk obsahuje mechanizmus pre prácu s kontextom. Každý symbol obsahuje odkazy na symbol, z ktorého vznikol, ako aj symboli, ktoré sa vyskytli
-pri prepisovaní v jeho okolí (kontext). Pre prístup k týmto symbolom sú dostupné vstavané nasledujúce vstavané funkcie:
-
-\begin{itemize}
-\item \texttt{getCurrentSymbolID()} \\
-	Funkcia získa identifikátor práve derivovaného symbolu.
-\item \texttt{getSiblingForID(ID,relativePos)} \\
-	Funkcia vráti identifikátor symbolu, ktorý sa nachádza v rovnakom derivačnom reťazci ako symbol \texttt{ID}. \texttt{relativePos} určuje vzdialenosť
-	od referečného symbolu. Kladné hodnoty predstavujú vzdialenosť z prava, záporné z ľava. 
-	V prípade, že symbol neexistuje vráti funkcia \texttt{UNKID}
-\item \texttt{getParent(ID)} \\
-	Získa identifikátor symbolu, z ktorého vznikol symbol \texttt{ID}.
-\end{itemize}
-
-Nakoľko je náš navrhovaný jazyk typovaný a symbol môže obecne vzniknúť z ľubovoľného symbolu obecne odlišného typu, je nutné zabezpečiť manipuláciu so
-symbolom, ktorého typ dopredu nepoznáme.
-
-K tomuto slúžia nasledujúce funkcie:
-\begin{itemize}
-\item \texttt{hasPropertyWithName(ID,property)} \\
-	Funkcia vracia hodnotu \texttt{TRUE} v prípade ak symbol, resp. jeho typ obsahuje vlastnosť \texttt{property}. Inak \texttt{FALSE}.
-\item type \texttt{getPropertyAsType(ID,property,type)}
-
-\end{itemize}
-
 
 \section{Objektový návrh}
+Pred samotnou implementáciou jazyka je nutné premyslieť ako budú jednotlivé štruktúry uložené v pamäti a ako budú vyzerať ich vzájomné väzby.
+\subsection{Symboly}
+Ako už bolo zmienené, symboly sú kompozitné typy. Je teda nutné vytvoriť rozhranie, ktoré umožňí definovať atomické aj zložené typy a pre tento účel je vhodné využiť návrhový vzor \textit{Composite} (TODO).  Rovnako uchovanie samotného typu vyžaduje uložiť metadáta typu (jednoznačný identifikátor, názov, prípadne podtypy) a samotné inštancie typov. 
+
+Hodnoty typov sú reprezentované abstraktnou triedou \texttt{Resource}, ktorá uchováva identifikáciu typu a typ typu. Pomocou dedičnosti sa následne rozlišuje medzi atomickým (\texttt{AtomicResource} a kompozitným typom \texttt{CompositeResource}.
+
+Z hľadiska uloženia metadát sa javí neefektívne ukladať popis typu v každej inštancii typu. Preto je nutné zaviesť akýsi register, ktorý by uchoval popis typu na jednom mieste. Z toho dôvodu je pridaná trieda \textit{TypeRegister}, ktorej účelom je spravovať definované typy ako aj ponúkať mechizmus k tvorbe inštancii takýchto typov. 
+Pre každý typ obsahuje tento register inštanciu triedy \textit{TypeDecriptor}. 
+
+\begin{figure}[ht]
+\caption{Lol}
+\centering
+\begin{tikzpicture}[show background grid]
+	\begin{abstractclass}[text  width=6cm]{Resource}{0,0}
+		\attribute{- typeId}
+		\operation{getTypeId()}
+	\end{abstractclass}
+	\begin{class}[text  width=4cm]{AtomicResource}{-4,3}
+		\inherit{Resource}
+		\attribute{- data}
+		\operation{getTypeId()}
+		\operation{getData(): void*}
+	\end{class}
+	\begin{class}[text  width=4cm]{CompositeResouce}{4,3}
+		\inherit{Resource}
+		\operation{getTypeId()}
+		\operation{getComponent(id): AbstractResource}
+	\end{class}
+
+	\aggregation{CompositeResouce}{components}{n}{AtomicResource}
+\end{tikzpicture}
+\end{figure}
+
 \begin{tikzpicture}
 	\begin{class}[text  width=6cm]{Statement}{0,0}
 		\operation{operator()() : bool returned}
