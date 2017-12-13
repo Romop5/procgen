@@ -49,16 +49,24 @@ set(DERIVATION_SOURCE
 
 include_directories(src/interpret)
 
+add_library(procedural ${INTERPRET_SOURCE})
+
 # Interpret tests
-add_executable(boxesTest test/test.cpp ${INTERPRET_SOURCE})
-#add_executable(typesTest test/typereg.cpp ${SOURCES})
-add_executable(variabletest test/variablereg.cpp ${INTERPRET_SOURCE})
-add_executable(compositeType test/composite.cpp ${INTERPRET_SOURCE})
-add_executable(userfunc test/userfunc.cpp ${INTERPRET_SOURCE})
-add_executable(return test/return.cpp ${INTERPRET_SOURCE})
-add_executable(collection test/collection.cpp ${INTERPRET_SOURCE})
-add_executable(composite test/composite.cpp ${INTERPRET_SOURCE})
-add_executable(compositeComponents test/compositeComponents.cpp ${INTERPRET_SOURCE})
+add_executable(boxesTest test/test.cpp)
+target_link_libraries(boxesTest procedural)
+
+add_executable(variabletest test/variablereg.cpp)
+target_link_libraries(variabletest procedural)
+add_executable(compositeType test/composite.cpp)
+target_link_libraries(compositeType procedural)
+
+add_executable(userfunc test/userfunc.cpp)
+target_link_libraries(userfunc procedural)
+
+#add_executable(return test/return.cpp ${INTERPRET_SOURCE})
+#add_executable(collection test/collection.cpp ${INTERPRET_SOURCE})
+#add_executable(composite test/composite.cpp ${INTERPRET_SOURCE})
+#add_executable(compositeComponents test/compositeComponents.cpp ${INTERPRET_SOURCE})
 
 # Rewriting tests
 include_directories(src/derivation)
