@@ -55,6 +55,61 @@ Pravidlá môžu mať viacero alternatív, ktoré sú v definícii oddelené pom
 
 %	- INTEPRET
 
-\section{Interpret}
+\section{Syntax}
 
-	
+Štruktúru zdrojového kódu je možné rozdeliť na definíciu typov, pravidiel a pomocných funkcií.
+
+\subsection{Definícia typu}
+
+\begin{verbatim}
+<TYPE> <TYPENAME> { 
+        <TYPE1> <NAME1>,	
+        ...
+        <TYPEN> <NAMEN>	
+}
+\end{verbatim}
+
+\subsection{Definícia pravidla}
+
+\begin{verbatim}
+rule <TYPE> if { 
+	return BOOLEAN;
+} do {
+}
+\end{verbatim}
+
+\section{Vstavané funkcie}
+
+\begin{itemize}
+\item \texttt{random()} \\
+	Funkcia, ktorá slúži k výpočtu rovnomerného rozloženia, normalizovaného na interval $<0,1>$
+\end{itemize}
+\section{Modulárnosť}
+\section{Prístup k stromu symbolov}
+
+Navrhovaný jazyk obsahuje mechanizmus pre prácu s kontextom. Každý symbol obsahuje odkazy na symbol, z ktorého vznikol, ako aj symboli, ktoré sa vyskytli
+pri prepisovaní v jeho okolí (kontext). Pre prístup k týmto symbolom sú dostupné vstavané nasledujúce vstavané funkcie:
+
+\begin{itemize}
+\item \texttt{getCurrentSymbolID()} \\
+	Funkcia získa identifikátor práve derivovaného symbolu.
+\item \texttt{getSiblingForID(ID,relativePos)} \\
+	Funkcia vráti identifikátor symbolu, ktorý sa nachádza v rovnakom derivačnom reťazci ako symbol \texttt{ID}. \texttt{relativePos} určuje vzdialenosť
+	od referečného symbolu. Kladné hodnoty predstavujú vzdialenosť z prava, záporné z ľava. 
+	V prípade, že symbol neexistuje vráti funkcia \texttt{UNKID}
+\item \texttt{getParent(ID)} \\
+	Získa identifikátor symbolu, z ktorého vznikol symbol \texttt{ID}.
+\end{itemize}
+
+Nakoľko je náš navrhovaný jazyk typovaný a symbol môže obecne vzniknúť z ľubovoľného symbolu obecne odlišného typu, je nutné zabezpečiť manipuláciu so
+symbolom, ktorého typ dopredu nepoznáme.
+
+K tomuto slúžia nasledujúce funkcie:
+\begin{itemize}
+\item \texttt{hasPropertyWithName(ID,property)} \\
+	Funkcia vracia hodnotu \texttt{TRUE} v prípade ak symbol, resp. jeho typ obsahuje vlastnosť \texttt{property}. Inak \texttt{FALSE}.
+\item type \texttt{getPropertyAsType(ID,property,type)}
+
+\end{itemize}
+
+

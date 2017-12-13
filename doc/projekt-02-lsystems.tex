@@ -1,32 +1,52 @@
 \chapter{Procedurálne generovanie}
-V tejto kapitole si predstavíme samotné 
 
-\section{Fraktály}
+V tejto kapitole je popísané samotné generovanie, jeho zmysel a využitie, a niektoré obvyklé metódy, pomocou ktorých sa v praxi realizuje.
+\section{Definícia}
+Formálne je možno definovať procedurálne generovanie ako spôsob vytváranie obsahu na základe algoritmov  bez alebo s obmedzeným ľudským zásahom.
+\footnote{\url{https://en.wikipedia.org/wiki/Procedural_generation}} 
+
+V praxi sa jedná o automatizované vytvorenie obsahu, ktorý vzniká z predom definovaného vstupu pomocou postupov (algoritmov), ktoré sú riadene parametrami.
+
+Pod slovom obsah je obecne možné dosadiť akýkoľvek prejav ľudského intelektu, od textu, obrazu až po hudbu, ktorý by pri klasickej tvorbe bol vytvorený manuálne človekom.
+
+Výhody tohoto prístupu teda spočívajú v:
+\begin{itemize}
+\item možnosti získania rozsiahlych dát na základe malej vstupnej množiny
+\item získaní výsledkov, ktoré sú si podobné, zároveň vyzerajú jedinečne
+\item v jednoduchej tvorbe výstupov, ktoré požadujú pravideľnú alebo opakujúcu sa štruktúru
+\end{itemize}
+
+Svoje uplatnenie nachádza napr. vo filmoch{REF}. Moderné filmy sú často zasadené v fiktívnom svete, ktorý je dielom grafických umelcov. Generovanie uľahčuje prácu umelcov pri vytváraní modelov, ktoré sú si podobné, ako sú napr. modely vegetácie. {REF} Podobne je generovanie využitie pri rôznych filmárskych efektoch ako sú explózie, časticové efekty v podobe ohňa alebo hmly, ktoré by bolo zložité animovať manuálne.
+
+Táto technika sa taktiež uplatňuje vo video hrách, kde sa využíva k tvorbe herných levelov, grafických modelov a ich textúr, prípade k tvorbe samotného príbehu.
+
+V dnešnej dobe sa v oblasti generovania ustálili techniky, ktoré si následne rozoberieme.
+
+\section{Šumy}
+
+Obecne je šum N-rozmerný signál, ktorého hodnoty podliehajú istej náhodnosti. Typickým príkladom šumu sú náhodné a pseudonáhodné generátory čísiel, ktoré sa ale v počítačovej grafike nepoužívajú z dôvodu nespojitosti ich hodnôt. 
+
+Spojité šumy majú v poč. grafike uplatnenie hlavne v oblasti vytváranie textúr.
+
+Bežne sa používa napr. Perlinov šum, ktorého dvojrozmerná vizualizácia pripomína oblaky či dym. 
+
+Okrem textúr je možné využiť šumy k tvorbe 3D terénu. V tomto prípade sa hodnoty šumu interpretujú ako výšková mapa.
+
+TODO priklad výškovej mapy
+
+\section{L-systémy}
+L-systémy boli pôvodne predstavené v roku 1968 matematikom Lindenmayerom ako matematický formalizmus pre popis rastu a počítačovú vizualizáciu rastlín \cite{Lsystems}.
+Ich definícia vychádza z prepisovacích systémov, ktoré upravujú o pararelné prepisovanie symbolov.
+Napriek ich jednoduchosti umožňujú vytvárať komplexné štruktúry. V počítačovej grafike sa obvykle využívajú spolu s tzv. korytnačiou grafikou (angl. turtle graphics).
+
+Existuje niekoľko rozšírení L-systémov, ktoré umožňujú elegantnejšie popísať zložité štruktúry. Jedným z nich sú parametrické L-systémy, ktoré si predstavíme v podkapitole
+\ref{parametric}.
+
+
+\subsection{Fraktály}
 Fraktály sú objekty, ktoré sú si sami podobné. 
 	- existujuce metody a principy, z ktorych vychadzaneme
 	- co to vlastne je generovanie ? Co je to proceduralne generovanie ?
 		Da sa formalne popisat ? Aké sú existujúce spôsoby ?
 	- ako sa obvykle robi proc. generovanie (dostupne formalizmy)
 	
-\
-%02 Teoria - Proc generovanie
-%=========================
-\chapter{L systémy}
-%	L-SYSTEMY
-%	=========
-L-systémy boli pôvodne predstavené v roku 1968 matematikom Lindenmayerom ako matematický formalizmus pre popis rastu a počítačovú vizualizáciu rastlín \cite{Lsystems}.
-Ich definícia vychádza z prepisovacích systémov, ktoré si predstavíme v podkapitole \ref{rewriting}.
-Napriek ich jednoduchosti umožňujú vytvárať komplexné štruktúry. V počítačovej grafike sa obvykle využívajú spolu s tzv. korytnačiou grafikou (angl. turtle graphics).
-
-Existuje niekoľko rozšírení L-systémov, ktoré umožňujú elegantnejšie popísať zložité štruktúry. Jedným z nich sú parametrické L-systémy, ktoré si predstavíme v podkapitole
-\ref{parametric}.
-
-\section{Prepisovacie systémy}\label{rewriting}
-\section{DOL L-systémy}\label{dollsystems}
-\section{Parametrické L-systémy}\label{parametric}
-\section{Šumy}
-%	SUMY (NOISE)
-%	============
-		- popis zakladnych sumov, ktore sa vyuzivaju v proc.gen
-
-
