@@ -63,10 +63,12 @@ bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource
 {
 	auto boolResource = this->tr->sharedResource("bool");	
 	std::get<0>(rule)->bindInput(0, fr->getHandler(symbol));
-	std::get<0>(rule)->bindOutput(boolResource);
+	if(std::get<0>(rule)->getOutput() == nullptr)
+		std::get<0>(rule)->bindOutput(boolResource);
 	RunStatus rs;
 	(*(std::get<0>(rule)))(rs);
-	return *(bool*) boolResource->getData();
+	return *(bool*) std::get<0>(rule)->getOutput()->getData();
+	//return *(bool*) boolResource->getData();
 }
 
 bool Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol)

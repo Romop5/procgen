@@ -18,6 +18,7 @@
  */
 #include "derivation.h"
 #include "appender.h"
+#include <cassert>
 
 /*
  * This implements PYRAMIDE procedure part of rule
@@ -46,7 +47,10 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	// Create predicate function for 'pyramide rule'
 	
 	auto inputPyramide = tr->sharedResource("pyramide");
+	assert(inputPyramide);
+
 	auto boolReturn = tr->sharedResource("bool");
+	assert(boolReturn);
 
 /*
  * Pseudocode logic:
@@ -57,7 +61,11 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
  */
 
 	auto getWidth = std::make_shared<CompositeGet>();
+	assert(getWidth);
+
 	auto indexWidth = tr->sharedResource("int");
+	assert(indexWidth);
+
 	*(int*) indexWidth->getData() = 0;
 	getWidth->bindInput(0, fr->getHandler(inputPyramide));	
 	getWidth->bindInput(1, fr->getHandler(indexWidth));	
@@ -67,7 +75,9 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	*(int*) comparisonConstant->getData() = 100;
 
 	auto comparisonResult= tr->sharedResource("bool");
-	auto greater = fr->getFunc("int:Greated");
+	auto greater = fr->getFunc("Greater:int");
+	assert(greater);
+
 	greater->bindInput(0, getWidth);
 	greater->bindInput(1, fr->getHandler(comparisonConstant));
 	greater->bindOutput(comparisonResult);
@@ -81,20 +91,23 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	auto falseConstant= tr->sharedResource("bool");
 	*(bool*) falseConstant->getData() = false;
 
-	auto copyTrue = fr->getFunc("bool:Copy");
+	auto copyTrue = fr->getFunc("Copy:bool");
+	assert(copyTrue);
+
 	copyTrue->bindInput(0, fr->getHandler(trueConstant));
 	copyTrue->bindOutput(boolReturn);
 
-	auto copyFalse = fr->getFunc("bool:Copy");
-	copyFalse->bindInput(0, fr->getHandler(trueConstant));
-	copyTrue->bindOutput(boolReturn);
+	auto copyFalse = fr->getFunc("Copy:bool");
+	assert(copyFalse);
+	copyFalse->bindInput(0, fr->getHandler(falseConstant));
+	copyFalse->bindOutput(boolReturn);
 
 
 	auto ifbox = std::make_shared<If>();
 	ifbox->setExpression(greater);
 	// on true, return true
 	ifbox->setPath(0,copyTrue);
-	ifbox->setPath(1,copyTrue);
+	ifbox->setPath(1,copyFalse);
 
 
 	auto typePyramide = tr->getTypeId("pyramide");
@@ -122,7 +135,9 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	auto inputProcPyramide = tr->sharedResource("pyramide");		
 	auto outputPyramide = tr->sharedResource("pyramide");		
 	
-	auto getPyramideWidth = fr->getFunc("get");
+	auto getPyramideWidth = std::make_shared<CompositeGet>();
+	assert(getPyramideWidth);
+
 	auto widthIndex = tr->sharedResource("int");
 	*(int*) widthIndex->getData() = 0;
 
@@ -134,19 +149,25 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	*(float*) halfConstant->getData() = 0.5;
 	
 	auto mulResult= tr->sharedResource("float");
-	auto mulBox = fr->getFunc("float:Mul");
+	auto mulBox = fr->getFunc("Mul:float");
+	assert(mulBox);
+
 	mulBox->bindInput(0, fr->getHandler(halfConstant));
 	mulBox->bindInput(1, getPyramideWidth);
 	mulBox->bindOutput(mulResult);
 
 	// newone.width = pyramide.width*0.5;
-	auto setPyramideWidth = fr->getFunc("set");
+	auto setPyramideWidth = std::make_shared<CompositeSet>();
+	assert(setPyramideWidth);
+
 	setPyramideWidth->bindInput(0, fr->getHandler(outputPyramide));
 	setPyramideWidth->bindInput(1, fr->getHandler(widthIndex));
 	setPyramideWidth->bindInput(2, mulBox);
 
 //----------------------------------------------------------
-	auto getPyramideHeigth= fr->getFunc("get");
+	auto getPyramideHeigth= std::make_shared<CompositeGet>();
+	assert(getPyramideHeigth);
+
 	auto heigthIndex = tr->sharedResource("int");
 	*(int*) heigthIndex->getData() = 1;
 
@@ -158,13 +179,17 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	*(float*) twentyConstant->getData() = 20.0;
 	
 	auto addResult= tr->sharedResource("float");
-	auto addBox = fr->getFunc("float:Add");
+	auto addBox = fr->getFunc("Add:float");
+	assert(addBox);
+
 	addBox->bindInput(0, fr->getHandler(twentyConstant));
 	addBox->bindInput(1, getPyramideHeigth);
 	addBox->bindOutput(addResult);
 
 	// newone.width = pyramide.width*0.5;
-	auto setPyramideHeigth= fr->getFunc("set");
+	auto setPyramideHeigth= std::make_shared<CompositeSet>();
+	assert(setPyramideHeigth);
+
 	setPyramideHeigth->bindInput(0, fr->getHandler(outputPyramide));
 	setPyramideHeigth->bindInput(1, fr->getHandler(heigthIndex));
 	setPyramideHeigth->bindInput(2, addBox);
@@ -179,12 +204,16 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 
 	auto outputFloor = tr->sharedResource("floor");
 
-	auto setFloorWidth= fr->getFunc("set");
+	auto setFloorWidth= std::make_shared<CompositeSet>();
+	assert(setFloorWidth);
+
 	setFloorWidth->bindInput(0, fr->getHandler(outputFloor));
 	setFloorWidth->bindInput(1, fr->getHandler(widthIndex));
 	setFloorWidth->bindInput(2, getPyramideWidth);
 
-	auto setFloorHeigth= fr->getFunc("set");
+	auto setFloorHeigth= std::make_shared<CompositeSet>();
+	assert(setFloorHeigth);
+
 	setFloorHeigth->bindInput(0, fr->getHandler(outputFloor));
 	setFloorHeigth->bindInput(1, fr->getHandler(widthIndex));
 	setFloorHeigth->bindInput(2, getPyramideHeigth);
@@ -211,11 +240,6 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 
 int main(int argc, char **argv)
 {
-	std::cerr << "Produces Nth generation of algae string" << std::endl;
-	if(argc < 2)
-	{
-		std::cout << "Format: <iteration-count>" << std::endl;
-	}
 	srandom(time(NULL));
 	
 	auto tr = std::make_shared<TypeRegister>();
@@ -227,18 +251,6 @@ int main(int argc, char **argv)
 	auto derivation = std::make_shared<Derivation>(tr,fr);
 
 
-	/* L-sys grammar */
-
-	// int -> int float 
-	// float -> int
-	
-	auto intValue = tr->sharedResource("int");
-	auto floatValue  = tr->sharedResource("float");
-
-	std::vector<std::shared_ptr<Resource>> symbols = {intValue};
-
-	derivation->setStartSymbols(symbols);
-
 	// Add rule
 	
 	pyramide_language(derivation,tr,fr);
@@ -248,7 +260,26 @@ int main(int argc, char **argv)
 
 
 	derivation->addRule(tr->getTypeId("pyramide"), pyramideCond,pyramideProc);
-	derivation->generate(atoi(argv[1]));
+
+/*
+ * Starting symbol
+ * 	pyramide(1000, 0)
+ */
+
+	auto startPyramide = std::dynamic_pointer_cast<CompositeResource>(tr->sharedResource("pyramide"));
+	assert(startPyramide);
+
+	*(float*) startPyramide->getComponent(0)->getData() = 1000;
+	*(float*) startPyramide->getComponent(1)->getData() = 0;
+
+	std::vector<std::shared_ptr<Resource>> symbols = {startPyramide};
+
+	derivation->setStartSymbols(symbols);
+
+/*
+ * Run generation
+ */
+	derivation->generate(100);
 	
 	auto syms= derivation->getCurrentSymbolList();
 

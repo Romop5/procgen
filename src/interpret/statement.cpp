@@ -15,7 +15,7 @@ bool If::operator()(RunStatus& stat)
 }
 void If::setExpression(std::shared_ptr<Function> exp)
 {
-	this->expr = expr;
+	this->expr = exp;
 }
 
 void If::setPath(size_t id, std::shared_ptr<Statement> path)
