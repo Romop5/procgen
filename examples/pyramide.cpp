@@ -238,8 +238,37 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 
 }
 
+// Print out result
+std::string inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resource>> symbols)
+{
+	for(auto &x: symbols)
+	{
+		if(x->getBaseId() == floor)
+		{
+			auto floorObject = std::dynamic_pointer_cast<CompositeResource>(x);
+			float width = *(float*) floorObject->getComponent(0)->getData();
+			float heigth = *(float*) floorObject->getComponent(1)->getData();
+			std::cout << "Floor object: " << width << " " << heigth << std::endl;
+		} else {
+			auto floorObject = std::dynamic_pointer_cast<CompositeResource>(x);
+			float width = *(float*) floorObject->getComponent(0)->getData();
+			float heigth = *(float*) floorObject->getComponent(1)->getData();
+			std::cout << "Pyramide object: " << width << " " << heigth << std::endl;
+			
+		}
+	}
+}
+
+
 int main(int argc, char **argv)
 {
+	std::cout << "Generate pyramide\n" << std::endl;
+	if(argc < 2)
+	{	
+		std::cout << "FORMAT: <iteration-count>\n";
+		return 1;
+	}
+	unsigned int iterationCount = atoi(argv[1]);
 	srandom(time(NULL));
 	
 	auto tr = std::make_shared<TypeRegister>();
@@ -279,9 +308,11 @@ int main(int argc, char **argv)
 /*
  * Run generation
  */
-	derivation->generate(100);
+	derivation->generate(iterationCount);
 	
 	auto syms= derivation->getCurrentSymbolList();
+
+	inspectResultSymbols(tr->getTypeId("floor"), syms);
 
 
 	return 0;
