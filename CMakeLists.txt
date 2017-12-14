@@ -49,7 +49,7 @@ set(DERIVATION_SOURCE
 
 include_directories(src/interpret)
 
-add_library(procedural ${INTERPRET_SOURCE})
+add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
 
 # Interpret tests
 add_executable(boxesTest test/test.cpp)
@@ -63,14 +63,20 @@ target_link_libraries(compositeType procedural)
 add_executable(userfunc test/userfunc.cpp)
 target_link_libraries(userfunc procedural)
 
-#add_executable(return test/return.cpp ${INTERPRET_SOURCE})
-#add_executable(collection test/collection.cpp ${INTERPRET_SOURCE})
-#add_executable(composite test/composite.cpp ${INTERPRET_SOURCE})
-#add_executable(compositeComponents test/compositeComponents.cpp ${INTERPRET_SOURCE})
+add_executable(return test/return.cpp )
+target_link_libraries(return procedural)
+add_executable(collection test/collection.cpp )
+target_link_libraries(collection procedural)
+add_executable(composite test/composite.cpp )
+target_link_libraries(composite procedural)
+add_executable(compositeComponents test/compositeComponents.cpp )
+target_link_libraries(compositeComponents procedural)
 
 # Rewriting tests
 include_directories(src/derivation)
-add_executable(algae test/algae.cpp ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+add_executable(algae examples/algae.cpp)
+target_link_libraries(algae procedural)
 
-add_executable(dom test/dom.cpp ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+add_executable(dom examples/dom.cpp)
+target_link_libraries(dom procedural)
 
