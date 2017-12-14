@@ -47,6 +47,7 @@ class Body: public Statement
 	public:
 	std::vector<std::shared_ptr<Statement>> stats;
 	public:
+	void append(std::shared_ptr<Statement> stat) {this->stats.push_back(stat);}
 	virtual bool operator()(RunStatus&);
 };
 
