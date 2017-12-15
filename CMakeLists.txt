@@ -80,5 +80,7 @@ target_link_libraries(algae procedural)
 add_executable(dom examples/dom.cpp)
 target_link_libraries(dom procedural)
 
+find_package(glm REQUIRED)
 add_executable(pyramide examples/pyramide.cpp)
 target_link_libraries(pyramide procedural)
+target_link_libraries(pyramide glm)

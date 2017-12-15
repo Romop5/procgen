@@ -13,11 +13,12 @@
  * Note: FLOOR is cuboid (temporary a terminating symbol)
  * Note 2: this gonna be replaced with quad as terminating symbol THE MOMENT the language parsing is ready
  * Grammar:
- * 	PYRAMIDE(width > 100, position) :  PYRAMIDE(width*0.5,position+10), FLOOR(width,position)
+ * 	PYRAMIDE(width > 5, position) :  PYRAMIDE(width*0.91,position+10), FLOOR(width,position)
  *
  */
 #include "derivation.h"
 #include "appender.h"
+#include "obj.h"
 #include <cassert>
 
 /*
@@ -54,7 +55,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 
 /*
  * Pseudocode logic:
- * 	if(pyramide.width > 100 )
+ * 	if(pyramide.width > 5 )
  * 		return = true;
  * 	else
  * 		return = false;
@@ -72,7 +73,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	
 
 	auto comparisonConstant= tr->sharedResource("float");
-	*(float*) comparisonConstant->getData() = 100.0;
+	*(float*) comparisonConstant->getData() = 5.0;
 
 	auto comparisonResult= tr->sharedResource("float");
 	auto greater = fr->getFunc("Greater:float");
@@ -83,7 +84,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	greater->bindOutput(comparisonResult);
 
 	// now we have 'greater' as expression tree which stands for
-	// 	(pyramide.width > 100)
+	// 	(pyramide.width > 5)
 	
 	// create two returns with correct value
 	auto trueConstant= tr->sharedResource("bool");
@@ -126,7 +127,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
  * Procedure pseudocode:
  * procedure(pyramide):
  * 	Pyramide newone;
- * 	newone.width = pyramide.width*0.5;
+ * 	newone.width = pyramide.width*0.91;
  * 	newone.heigth = pyramide.height+20;
  * 	appendSymbol(newone);
  *
@@ -151,7 +152,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 
 	
 	auto halfConstant = tr->sharedResource("float");
-	*(float*) halfConstant->getData() = 0.5;
+	*(float*) halfConstant->getData() = 0.91;
 	
 	auto mulResult= tr->sharedResource("float");
 	auto mulBox = fr->getFunc("Mul:float");
@@ -247,6 +248,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 void inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resource>>& symbols)
 {
 
+	Object o;
 	std::cout << ">>>>>>> RESULTING OBJECT >>>>>>\n";
 	for(auto &x: symbols)
 	{
@@ -256,6 +258,7 @@ void inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resour
 			float width = *(float*) floorObject->getComponent(0)->getData();
 			float heigth = *(float*) floorObject->getComponent(1)->getData();
 			std::cout << "Floor object: " << width << " " << heigth << std::endl;
+			o.addPrimitive(glm::vec3(0.0f,heigth,0.0f),glm::vec3(width,20.0f,width));
 		} else {
 			auto floorObject = std::dynamic_pointer_cast<CompositeResource>(x);
 			float width = *(float*) floorObject->getComponent(0)->getData();
@@ -264,6 +267,8 @@ void inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resour
 			
 		}
 	}
+
+	o.dumpVertices("pyramide.obj");
 
 }
 
@@ -300,7 +305,7 @@ int main(int argc, char **argv)
 
 /*
  * Starting symbol
- * 	pyramide(1000, 0)
+ * 	pyramide(50, 0)
  */
 
 	auto startPyramide = std::dynamic_pointer_cast<CompositeResource>(tr->sharedResource("pyramide"));
