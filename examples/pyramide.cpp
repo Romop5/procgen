@@ -71,11 +71,11 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	getWidth->bindInput(1, fr->getHandler(indexWidth));	
 	
 
-	auto comparisonConstant= tr->sharedResource("int");
-	*(int*) comparisonConstant->getData() = 100;
+	auto comparisonConstant= tr->sharedResource("float");
+	*(float*) comparisonConstant->getData() = 100.0;
 
-	auto comparisonResult= tr->sharedResource("bool");
-	auto greater = fr->getFunc("Greater:int");
+	auto comparisonResult= tr->sharedResource("float");
+	auto greater = fr->getFunc("Greater:float");
 	assert(greater);
 
 	greater->bindInput(0, getWidth);
@@ -103,8 +103,13 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	copyFalse->bindOutput(boolReturn);
 
 
+	auto conversionResult= tr->sharedResource("bool");
+	auto convertor = std::make_shared<FloatToBool>();
+	convertor->bindInput(0, greater);
+	convertor->bindOutput(conversionResult);
+
 	auto ifbox = std::make_shared<If>();
-	ifbox->setExpression(greater);
+	ifbox->setExpression(convertor);
 	// on true, return true
 	ifbox->setPath(0,copyTrue);
 	ifbox->setPath(1,copyFalse);
@@ -215,7 +220,7 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 	assert(setFloorHeigth);
 
 	setFloorHeigth->bindInput(0, fr->getHandler(outputFloor));
-	setFloorHeigth->bindInput(1, fr->getHandler(widthIndex));
+	setFloorHeigth->bindInput(1, fr->getHandler(heigthIndex));
 	setFloorHeigth->bindInput(2, getPyramideHeigth);
 
 	// append new symbol
@@ -239,8 +244,10 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 }
 
 // Print out result
-std::string inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resource>> symbols)
+void inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resource>>& symbols)
 {
+
+	std::cout << ">>>>>>> RESULTING OBJECT >>>>>>\n";
 	for(auto &x: symbols)
 	{
 		if(x->getBaseId() == floor)
@@ -257,6 +264,7 @@ std::string inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr
 			
 		}
 	}
+
 }
 
 

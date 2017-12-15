@@ -153,6 +153,20 @@ class CompositeSet:public Function
 };
 
 
+// TODO: create macro type2type
+class FloatToBool:public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		bool out =(bool) *(float*) _getInput(0)->getOutput()->getData();
+		*(bool*)(getOutput()->getData()) = out;
+		return false;
+	}
+};
+
 
 
 
@@ -184,9 +198,12 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR ;\
 		*(T*)(getOutput()->getData()) = out;\
+		std::cout << "Copying\n";\
 		return false;\
 	}\
 };
+
+
 
 /*
  * Create classes for standard functions (operators)

@@ -6,7 +6,8 @@ bool If::operator()(RunStatus& stat)
 	if((*expr)(stat)) return true;
 
 	//expr.getOutput().value
-	bool first = true;
+	// fixed on 2017/12/15
+	bool first = *(bool*) expr->getOutput()->getData();
 	// evaluate
 	if(first)
 		return (*paths[0])(stat);
