@@ -84,3 +84,7 @@ find_package(glm REQUIRED)
 add_executable(pyramide examples/pyramide.cpp)
 target_link_libraries(pyramide procedural)
 target_link_libraries(pyramide glm)
+
+add_executable(stochasticpyramide examples/stochasticpyramide.cpp)
+target_link_libraries(stochasticpyramide procedural)
+target_link_libraries(stochasticpyramide glm)
