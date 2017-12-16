@@ -381,7 +381,7 @@ void inspectResultSymbols(TypeId floor, const std::vector<std::shared_ptr<Resour
 			float width = *(float*) floorObject->getComponent(0)->getData();
 			float heigth = *(float*) floorObject->getComponent(1)->getData();
 			std::cout << "Floor object: " << width << " " << heigth << std::endl;
-			o.addPrimitive(glm::vec3(0.0f,heigth,0.0f),glm::vec3(width,20.0f,width));
+			o.addPrimitive(glm::vec3(0.0f,0.0f,heigth),glm::vec3(width,width,20.0f));
 		} else {
 			auto floorObject = std::dynamic_pointer_cast<CompositeResource>(x);
 			float width = *(float*) floorObject->getComponent(0)->getData();
