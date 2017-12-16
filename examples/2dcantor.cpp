@@ -7,18 +7,20 @@
  * 	float x
  * 	float y
  * 	float width
+ * 	float heigth 
  * PRIMITIVE:
  * 	float x
  * 	float y
  * 	float width
+ * 	float heigth 
  *
  * RULES:
  * 	rule 1 (cantor)(always):
- * 		append(PRIMITIVE(cantor.x,cantor.y,cantor.width)
+ * 		append(PRIMITIVE(cantor.x,cantor.y,cantor.width,cantor.heigth)
  * 		append(CANTOR(cantor.x-(2/3)*cantor.width,
- * 			cantor.y+20,cantor.width/3)
+ * 			cantor.y+20,cantor.width/3,cantor.heigth/3)
  * 		append(CANTOR(cantor.x+(2/3)*cantor.width,
- * 			cantor.y+20,cantor.width/3)
+ * 			cantor.y+20,cantor.width/3,cantor.heigth/3)
  *
  */
 #include "derivation.h"
@@ -29,7 +31,7 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 {
 
 	auto floatType = tr->getTypeId("float");
-	auto floatVector = {floatType, floatType,floatType};
+	auto floatVector = {floatType, floatType,floatType,floatType};
 
 	tr->addComposite("cantor", floatVector);
 	tr->addComposite("primitive", floatVector);
@@ -75,6 +77,10 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 	cantorWidthget->bindInput(0, fr->getHandler(ruleInput));
 	cantorWidthget->bindInput(1, fr->getHandler(constTwo));
 
+	auto cantorHeigthget = std::make_shared<CompositeGet>();
+	cantorHeigthget->bindInput(0, fr->getHandler(ruleInput));
+	cantorHeigthget->bindInput(1, fr->getHandler(constThree));
+
 
 /*
  *
@@ -95,6 +101,12 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 	primitiveWidthset->bindInput(0, fr->getHandler(primitiveOut));
 	primitiveWidthset->bindInput(1, fr->getHandler(constTwo));
 	primitiveWidthset->bindInput(2, cantorWidthget);
+
+	auto primitiveHeigthset = std::make_shared<CompositeSet>();	
+	primitiveHeigthset->bindInput(0, fr->getHandler(primitiveOut));
+	primitiveHeigthset->bindInput(1, fr->getHandler(constThree));
+	primitiveHeigthset->bindInput(2, cantorHeigthget);
+
 
 
 	auto appendPrimitive= std::make_shared<AppendSymbol>(der);
@@ -134,21 +146,35 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 
 
 	auto yOffset= tr->sharedResource("float");
-	*(float*) yOffset->getData() = 20.0f;
+	*(float*) yOffset->getData() = 1.0f;
+	auto offsetYresult= tr->sharedResource("float");
+	auto offsetY = fr->getFunc("Add:float");
+	offsetY->bindInput(0, fr->getHandler(yOffset));
+	offsetY->bindInput(1, cantorHeigthget);
+	offsetY->bindOutput(offsetYresult);
+
 
 	auto newYresult= tr->sharedResource("float");
 	auto newY = fr->getFunc("Add:float");
 	newY->bindInput(0, cantorYget);
-	newY->bindInput(1, fr->getHandler(yOffset));
+	newY->bindInput(1, offsetY);
 	newY->bindOutput(newYresult);
 
 	auto constFloatThree= tr->sharedResource("float");
 	*(float*) constFloatThree->getData() = 3.0f;
+
 	auto newWidthresult= tr->sharedResource("float");
 	auto newWidth = fr->getFunc("Div:float");
 	newWidth->bindInput(0, cantorWidthget);
 	newWidth->bindInput(1, fr->getHandler(constFloatThree));
 	newWidth->bindOutput(newWidthresult);
+
+	auto newHeigthresult= tr->sharedResource("float");
+	auto newHeigth = fr->getFunc("Div:float");
+	newHeigth->bindInput(0, cantorHeigthget);
+	newHeigth->bindInput(1, fr->getHandler(constFloatThree));
+	newHeigth->bindOutput(newHeigthresult);
+
 
 	
 	auto setCantorX = std::make_shared<CompositeSet>();
@@ -166,6 +192,11 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 	setCantorWidth->bindInput(1, fr->getHandler(constTwo));
 	setCantorWidth->bindInput(2, fr->getHandler(newWidthresult));
 
+	auto setCantorHeigth = std::make_shared<CompositeSet>();
+	setCantorHeigth->bindInput(0, fr->getHandler(outCantor));
+	setCantorHeigth->bindInput(1, fr->getHandler(constThree));
+	setCantorHeigth->bindInput(2, fr->getHandler(newHeigthresult));
+
 	auto appendCantor= std::make_shared<AppendSymbol>(der);
 	appendCantor->bindInput(0, fr->getHandler(outCantor));
 
@@ -180,16 +211,19 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 	ruleBody->append(primitiveXset);
 	ruleBody->append(primitiveYset);
 	ruleBody->append(primitiveWidthset);
+	ruleBody->append(primitiveHeigthset);
 	ruleBody->append(appendPrimitive);
 
 	ruleBody->append(newX);
 	ruleBody->append(newX2);
 	ruleBody->append(newY);
 	ruleBody->append(newWidth);
+	ruleBody->append(newHeigth);
 
 	ruleBody->append(setCantorX);
 	ruleBody->append(setCantorY);
 	ruleBody->append(setCantorWidth);
+	ruleBody->append(setCantorHeigth);
 	ruleBody->append(appendCantor);
 
 	ruleBody->append(setCantorX2);
@@ -215,19 +249,21 @@ void inspectResultSymbols(TypeId primitive, const std::vector<std::shared_ptr<Re
 			float x= *(float*) primitiveObject->getComponent(0)->getData();
 			float y= *(float*) primitiveObject->getComponent(1)->getData();
 			float width = *(float*) primitiveObject->getComponent(2)->getData();
-			std::cout << "Primitive object: " << x << " " << y <<  " " << width <<std::endl;
-			o.addPrimitive(glm::vec3(x,y,0.0),glm::vec3(width,8.0,10.0f));
+			float heigth= *(float*) primitiveObject->getComponent(3)->getData();
+			std::cout << "Primitive object: " << x << " " << y <<  " " << width << " " << heigth <<std::endl;
+			o.addPrimitive(glm::vec3(x,y,0.0),glm::vec3(width,heigth*0.5,10.0f));
 		} else {
 			auto cantorObject = std::dynamic_pointer_cast<CompositeResource>(x);
 			float x= *(float*) cantorObject->getComponent(0)->getData();
 			float y= *(float*) cantorObject->getComponent(1)->getData();
 			float width= *(float*) cantorObject->getComponent(2)->getData();
-			std::cout << "Cantor object: " << x << " " << y <<  " " << width <<std::endl;
+			float heigth = *(float*) cantorObject->getComponent(3)->getData();
+			std::cout << "Cantor object: " << x << " " << y <<  " " << width << " " << heigth<<std::endl;
 			
 		}
 	}
 
-	o.dumpVertices("pyramide.obj");
+	o.dumpVertices("2dcantor.obj");
 
 }
 
@@ -274,8 +310,18 @@ int main(int argc, char **argv)
 	*(float*) startcantor->getComponent(0)->getData() = 0;
 	*(float*) startcantor->getComponent(1)->getData() = 0;
 	*(float*) startcantor->getComponent(2)->getData() = 100;
+	*(float*) startcantor->getComponent(3)->getData() = 100;
 
-	std::vector<std::shared_ptr<Resource>> symbols = {startcantor};
+	auto start2cantor = std::dynamic_pointer_cast<CompositeResource>(tr->sharedResource("cantor"));
+	assert(start2cantor);
+
+	*(float*) start2cantor->getComponent(0)->getData() = 0;
+	*(float*) start2cantor->getComponent(1)->getData() = -250;
+	*(float*) start2cantor->getComponent(2)->getData() = 100;
+	*(float*) start2cantor->getComponent(3)->getData() = -100;
+
+
+	std::vector<std::shared_ptr<Resource>> symbols = {startcantor,start2cantor};
 
 	derivation->setStartSymbols(symbols);
 
