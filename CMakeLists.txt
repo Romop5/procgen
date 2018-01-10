@@ -88,3 +88,11 @@ target_link_libraries(pyramide glm)
 add_executable(stochasticpyramide examples/stochasticpyramide.cpp)
 target_link_libraries(stochasticpyramide procedural)
 target_link_libraries(stochasticpyramide glm)
+
+add_executable(2dcantor examples/2dcantor.cpp)
+target_link_libraries(2dcantor procedural)
+target_link_libraries(2dcantor glm)
+
+add_executable(3dcantor examples/3dcantor.cpp)
+target_link_libraries(3dcantor procedural)
+target_link_libraries(3dcantor glm)
