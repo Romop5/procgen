@@ -1,2 +1,31 @@
-1. finish compiler
-2. search for TODOs in code
+TODO List for 2018
+=================
+1. Clean the code
+	- properly handled getters/setters
+	- adding comments
+
+2. Implement control-mechanism
+	- add checks for return values
+
+3. Possibly rewrite function / composite block defintion to
+	- allow paralel condition evaluation in derivation system
+
+4. Refactor
+	- CMake system in order to create a properly make-able library
+		which would be comfortable to work with 
+	- See point #1 Clean code
+
+5. Imperative language translation
+	- decide whether to use Bison/Flex or handcrafted parser
+		- try to compile Bison/Flex under Windows (using win_bison)
+6. Prepare examples
+	- classic procedural techniques 
+		- Cantor set fractal	- DONE
+
+	- Incorporate library in real-world scenario
+	- examples proposed by supervisor:
+		- mosaic - generate some old-fashion moisaic
+	
+	
+
+

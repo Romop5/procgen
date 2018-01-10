@@ -1,0 +1,10 @@
+How to see something interesting
+================================
+1. Create build dir
+2. cmake 
+3. make
+4. Run pyramide / cantor .exe
+	=> outputs .obj files
+5. Enjoy obj
+
+
