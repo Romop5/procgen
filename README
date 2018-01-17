@@ -1,10 +1,34 @@
-How to see something interesting
+ProcGen
 ================================
-1. Create build dir
-2. cmake 
-3. make
-4. Run pyramide / cantor .exe
-	=> outputs .obj files
-5. Enjoy obj
+
+## About
+
+*ProcGen* is a C++ library which can be used for procedural generation. It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures**.
+
+The generation is similar to parametric L-systems, thus it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**.
+
+## Compilation 
+
+The aim of this project is to be a CMake-complaint library. 
+
+In order to compile the core of library, create a new directory `build` and run following command inside:
+> cmake ../
+
+Then use standard *make* pipeline.
+
+> make
+
+### Examples & Tests
+
+Additionaly, you can compile examples and/or tests by specifing their presence *explicitly* in CMake command:
+
+> cmake ../ -DBUILD_EXAMPLES  
+
+or both:
+> cmake ../ -DBUILD_EXAMPLES -DBUILD_TESTS
+
+If tests are compiled, following command can be used to run them all:
+
+> make test
 
 
