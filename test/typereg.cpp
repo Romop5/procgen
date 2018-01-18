@@ -1,23 +1,60 @@
-#include "typereg.h"
-#include <iostream>
+#include "catch.hpp"
+#include "interpret.h"
 
-using namespace std;
-int main()
+TEST_CASE("TypeRegister - standard types presence")
 {
-	TypeRegister tr;
-	#define REG_TYPE(type,typeName)\
-		tr.add<type>(typeName);
-	// Register all built int types
-	FORALL_ATOMICTYPES(REG_TYPE);
 
-	cout << tr.add<int>("int") << std::endl;
+    auto tr = std::make_shared<TypeRegister>();
+    registerStandardTypes(tr.get());
 
-	cout << tr.getTypeId("int") << std::endl;
-	cout << tr.getTypeId("int8") << std::endl;
-	cout << tr.getTypeId(keyword<int>()) << std::endl;
-	using newint = int;
-	cout << tr.getTypeId(keyword<newint>()) << std::endl;
-	cout << tr.getTypeId(keyword<double>()) << std::endl;
-	cout << tr.getTypeId(keyword<float>()) << std::endl;
-	
+
+    REQUIRE(tr->getTypeId("int") != 0);
+    REQUIRE(tr->getTypeId("float") != 0);
+    REQUIRE(tr->getTypeId("char") != 0);
+
+    REQUIRE(tr->getTypeId("int") == tr->getTypeId(keyword<int>()));
 }
+
+
+TEST_CASE("TypeRegister - adding new type")
+{
+
+    auto tr = std::make_shared<TypeRegister>();
+    registerStandardTypes(tr.get());
+
+	TypeId intType = tr->getTypeId("int");
+    REQUIRE(intType != 0);
+	TypeId floatType  = tr->getTypeId("float");
+    REQUIRE(floatType != 0);
+
+
+	std::vector<TypeId> types = {intType, floatType};
+
+	auto structType = tr->addComposite("struct test", types);
+	REQUIRE(structType != 0);
+
+	auto structVal = tr->sharedResource("struct test");
+	REQUIRE(structVal != nullptr);
+}
+
+
+
+TEST_CASE("TypeRegister - creating a structured type from invalid types")
+{
+
+    auto tr = std::make_shared<TypeRegister>();
+    registerStandardTypes(tr.get());
+
+	TypeId intType = 0;
+	TypeId floatType  = -1;
+
+	std::vector<TypeId> types = {intType, floatType};
+
+    // This must fail due to invalid types
+	auto structType = tr->addComposite("struct test", types);
+	REQUIRE(structType == false);
+
+	auto structVal = tr->sharedResource("struct test");
+	REQUIRE(structVal == nullptr);
+}
+
