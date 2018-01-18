@@ -24,7 +24,8 @@ class FunctionReg
 		template<class X>
 		bool addFunction(std::string name)
 		{
-			this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
+       
+		    return this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
 		}
 
 
@@ -54,6 +55,6 @@ class FunctionReg
 		std::shared_ptr<TypeRegister> getTypeRegister() {return tr;}
 	private:
 		std::shared_ptr<TypeRegister> tr;
-		//std::map<std::string, func_constr> func;
+
 		std::map<std::string, std::function<std::shared_ptr<Function>()>> func;
 };

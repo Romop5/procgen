@@ -24,6 +24,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	}
 	bool addComposite(const std::string& typeName,std::vector<TypeId> types)
 	{
+        // Fail on invalid type
+        for(auto type: types)
+        {
+            if(hasTypeWithID(type) == false)
+                return false;
+        }
+
 		TypeId id = highest++;
 		unsigned int size = 0;
 		for(auto &x: types)
@@ -36,7 +43,16 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	}
 	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
 	{
+        // Fail on invalid type
+        for(auto type: types)
+        {
+            if(hasTypeWithID(type) == false)
+                return false;
+        }
+        // Increment type count
 		TypeId id = highest++;
+        // TODO
+        // Compute the size of structure
 		unsigned int size = 0;
 		for(auto &x: types)
 			size += this->getType(x)->getAlignedSize();
@@ -123,6 +139,15 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		}
 		return types[UNKWNOWN];	
 	}
+
+    bool hasTypeWithID(TypeId id) const
+    {
+        if(id == 0)
+            return false;
+        if(id >= highest)
+            return false;
+        return true;
+    }
 	private:
 	TypeId highest;
 	std::map<std::string,TypeId> names;

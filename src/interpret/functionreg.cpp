@@ -1,10 +1,15 @@
 #include "functionreg.h"
 #include <iostream>
 
-//bool FunctionReg::addFunction(std::string name,func_constr c)
 bool FunctionReg::addFunction(std::string name,std::function<std::shared_ptr<Function>()> c)
 {
-	this->func[name] = c;	
+    // if there isn't any function with name @name
+    if(this->func.find(name) == func.end())
+    {
+        this->func[name] = c;	
+        return false;
+    }
+    return false;
 }
 
 std::shared_ptr<Function> FunctionReg::getFunc(std::string name)
@@ -17,7 +22,6 @@ std::shared_ptr<Function> FunctionReg::getFunc(std::string name)
 	return nullptr;
 }
 
-// Print out all info
 void FunctionReg::_debug()
 {
 	for(auto &x: this->func)
@@ -26,11 +30,4 @@ void FunctionReg::_debug()
 	}
 
 }
-/*
-template<class X>
-bool FunctionReg::addFunction(std::string name)
-{
-	// create a constructor for class
-	this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
-}
-*/
+
