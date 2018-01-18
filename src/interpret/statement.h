@@ -34,10 +34,13 @@ class If:public Statement
 
 class While:public Statement
 {
+	private:
+	std::shared_ptr<Function> _expression;
+	std::shared_ptr<Statement> _statement;
 	public:
-	std::shared_ptr<Function> expr;
-	std::shared_ptr<Statement> stat;
-	public:
+    void bindCondition(std::shared_ptr<Function> expression) { this->_expression = expression; }
+    void bindStatement(std::shared_ptr<Statement> statement) { this->_statement = statement; }
+
 	virtual bool operator()(RunStatus&);
 };
 
@@ -47,7 +50,7 @@ class Body: public Statement
 	public:
 	std::vector<std::shared_ptr<Statement>> stats;
 	public:
-	void append(std::shared_ptr<Statement> stat) {this->stats.push_back(stat);}
+	void appendStatement(std::shared_ptr<Statement> stat) {this->stats.push_back(stat);}
 	virtual bool operator()(RunStatus&);
 };
 

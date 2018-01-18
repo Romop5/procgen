@@ -28,12 +28,12 @@ bool While::operator()(RunStatus& stat)
 {
 	while(true)
 	{
-		if((*this->expr)(stat)) return true;
-		bool isTrue = *(bool*) expr->getOutput()->getData();
+		if((*this->_expression)(stat)) return true;
+		bool isTrue = *(bool*) this->_expression->getOutput()->getData();
 		if(!isTrue)
 			break;
 		// eval statement
-		if((*this->stat)(stat)) return true;
+		if((*this->_statement)(stat)) return true;
 	}
 	return false;
 }

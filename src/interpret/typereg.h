@@ -40,6 +40,8 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,componentNames);
 		names[typeName] = id;
 
+        return true;
+
 	}
 	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
 	{
@@ -126,7 +128,9 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	std::shared_ptr<Resource> sharedResource(std::string name)
 	{
 		auto id = this->getTypeId(name);
-		return this->sharedResource(id);
+        if(hasTypeWithID(id))
+            return this->sharedResource(id);
+        return nullptr;
 	}
 	
 

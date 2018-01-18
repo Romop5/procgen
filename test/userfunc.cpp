@@ -108,8 +108,8 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	bodywhile->stats.push_back(cp2); // second = tmp;
 
 	auto wh = std::make_shared<While>();
-	wh->expr = expr;
-	wh->stat = bodywhile;
+	wh->bindCondition(expr);
+	wh->bindStatement(bodywhile);
 
 	auto body = std::make_shared<Body>();
 	/*

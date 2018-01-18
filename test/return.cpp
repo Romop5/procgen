@@ -52,8 +52,8 @@ TEST_CASE("Testing return")
 	expr->bindOutput(output);
 	auto wh= std::make_shared<While>();
 	REQUIRE(wh != nullptr);
-	wh->expr = expr;
-	wh->stat = body;
+    wh->bindCondition(expr);
+    wh->bindStatement(body);
 
 	RunStatus stat;
 	(*wh)(stat);
