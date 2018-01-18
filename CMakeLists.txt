@@ -53,6 +53,13 @@ if (BUILD_TESTS)
     target_link_libraries(boxesTest procedural)
 
 
+    add_executable(typereg test/typereg.cpp)
+    target_link_libraries(typereg procedural)
+
+    add_executable(functionreg test/functionreg.cpp)
+    target_link_libraries(functionreg procedural)
+
+
     add_executable(variabletest test/variablereg.cpp)
     target_link_libraries(variabletest procedural)
     add_executable(compositeType test/composite.cpp)
