@@ -202,24 +202,24 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 	auto ruleBody = std::make_shared<Body>();
 
 	/* Calculate new data */
-	ruleBody->append(newX);
-	ruleBody->append(newX2);
+	ruleBody->appendStatement(newX);
+	ruleBody->appendStatement(newX2);
 
-	ruleBody->append(newY);
-	ruleBody->append(newY2);
+	ruleBody->appendStatement(newY);
+	ruleBody->appendStatement(newY2);
 
-	ruleBody->append(newZ);
-	ruleBody->append(newZ2);
-	ruleBody->append(newMeasure);
+	ruleBody->appendStatement(newZ);
+	ruleBody->appendStatement(newZ2);
+	ruleBody->appendStatement(newMeasure);
 
-	ruleBody->append(setCantorMeasure);
+	ruleBody->appendStatement(setCantorMeasure);
 	/* Combine 8 times*/
 
 #define CANTOR_CUBE(X,Y,Z)\
-	ruleBody->append(setCantor##X);\
-	ruleBody->append(setCantor##Y);\
-	ruleBody->append(setCantor##Z);\
-	ruleBody->append(appendCantor);
+	ruleBody->appendStatement(setCantor##X);\
+	ruleBody->appendStatement(setCantor##Y);\
+	ruleBody->appendStatement(setCantor##Z);\
+	ruleBody->appendStatement(appendCantor);
 
 	CANTOR_CUBE(X,Y,Z);
 	CANTOR_CUBE(X2,Y,Z);

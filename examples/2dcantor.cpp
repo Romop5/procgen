@@ -208,26 +208,26 @@ void cantor_define(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister
 
 	auto ruleBody = std::make_shared<Body>();
 
-	ruleBody->append(primitiveXset);
-	ruleBody->append(primitiveYset);
-	ruleBody->append(primitiveWidthset);
-	ruleBody->append(primitiveHeigthset);
-	ruleBody->append(appendPrimitive);
+	ruleBody->appendStatement(primitiveXset);
+	ruleBody->appendStatement(primitiveYset);
+	ruleBody->appendStatement(primitiveWidthset);
+	ruleBody->appendStatement(primitiveHeigthset);
+	ruleBody->appendStatement(appendPrimitive);
 
-	ruleBody->append(newX);
-	ruleBody->append(newX2);
-	ruleBody->append(newY);
-	ruleBody->append(newWidth);
-	ruleBody->append(newHeigth);
+	ruleBody->appendStatement(newX);
+	ruleBody->appendStatement(newX2);
+	ruleBody->appendStatement(newY);
+	ruleBody->appendStatement(newWidth);
+	ruleBody->appendStatement(newHeigth);
 
-	ruleBody->append(setCantorX);
-	ruleBody->append(setCantorY);
-	ruleBody->append(setCantorWidth);
-	ruleBody->append(setCantorHeigth);
-	ruleBody->append(appendCantor);
+	ruleBody->appendStatement(setCantorX);
+	ruleBody->appendStatement(setCantorY);
+	ruleBody->appendStatement(setCantorWidth);
+	ruleBody->appendStatement(setCantorHeigth);
+	ruleBody->appendStatement(appendCantor);
 
-	ruleBody->append(setCantorX2);
-	ruleBody->append(appendCantor);
+	ruleBody->appendStatement(setCantorX2);
+	ruleBody->appendStatement(appendCantor);
 
 	fr->addCompositeFunction("cantor_rule", ruleBody,{ruleInput}, nullptr);
 

@@ -45,8 +45,8 @@ void ruleInt(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister> tr, 
 
 
 	auto body = std::make_shared<Body>();
-	body->stats.push_back(appendA);
-	body->stats.push_back(appendB);
+	body->appendStatement(appendA);
+	body->appendStatement(appendB);
 
 	fr->addCompositeFunction("ruleInt", body,{typeInt}, nullptr);
 }
@@ -63,7 +63,7 @@ void ruleFloat(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister> tr
 	append->bindInput(0, fr->getHandler(typeInt));
 
 	auto body = std::make_shared<Body>();
-	body->stats.push_back(append);
+	body->appendStatement(append);
 
 	fr->addCompositeFunction("ruleFloat", body,{typeFloat}, nullptr);
 }

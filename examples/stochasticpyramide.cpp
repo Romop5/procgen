@@ -226,12 +226,12 @@ void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegi
 /*
  * Finally, put it together & register as func
  */
-	body->append(setPyramideWidth);
-	body->append(setPyramideHeigth);
-	body->append(appendPyramide);
-	body->append(setFloorWidth);
-	body->append(setFloorHeigth);
-	body->append(appendFloor);
+	body->appendStatement(setPyramideWidth);
+	body->appendStatement(setPyramideHeigth);
+	body->appendStatement(appendPyramide);
+	body->appendStatement(setFloorWidth);
+	body->appendStatement(setFloorHeigth);
+	body->appendStatement(appendFloor);
 
 	fr->addCompositeFunction("pyramideProcedure", body,{inputProcPyramide}, nullptr);
 
@@ -356,12 +356,12 @@ void pyramide_language_second_rule(std::shared_ptr<Derivation> der, std::shared_
 /*
  * Finally, put it together & register as func
  */
-	body->append(setPyramideWidth);
-	body->append(setPyramideHeigth);
-	body->append(appendPyramide);
-	body->append(setFloorWidth);
-	body->append(setFloorHeigth);
-	body->append(appendFloor);
+	body->appendStatement(setPyramideWidth);
+	body->appendStatement(setPyramideHeigth);
+	body->appendStatement(appendPyramide);
+	body->appendStatement(setFloorWidth);
+	body->appendStatement(setFloorHeigth);
+	body->appendStatement(appendFloor);
 
 	fr->addCompositeFunction("pyramideProcedureSecond", body,{inputProcPyramide}, nullptr);
 
