@@ -47,35 +47,27 @@ if (BUILD_TESTS)
 
     enable_testing()
 
-    add_test(NAME MyAwesomeTest COMMAND ibp-test)
-    # Interpret tests
-    add_executable(boxesTest test/test.cpp)
-    target_link_libraries(boxesTest procedural)
+    set(TEST_SOURCES 
+        test/catch.cpp
+        test/collection.cpp
+        test/compositeComponents.cpp
+        test/composite.cpp
+        test/dynamicboxes.cpp
+        test/functionreg.cpp
+        test/return.cpp
+        test/test.cpp
+        test/typereg.cpp
+        test/variablereg.cpp
+    )
 
 
-    add_executable(typereg test/typereg.cpp)
-    target_link_libraries(typereg procedural)
-
-    add_executable(functionreg test/functionreg.cpp)
-    target_link_libraries(functionreg procedural)
-
-
-    add_executable(variabletest test/variablereg.cpp)
-    target_link_libraries(variabletest procedural)
-    add_executable(compositeType test/composite.cpp)
-    target_link_libraries(compositeType procedural)
+    add_executable(test_exe ${TEST_SOURCES})
+    target_link_libraries(test_exe procedural)
+    add_test(NAME unit_test COMMAND test_exe)
 
     add_executable(userfunc test/userfunc.cpp)
     target_link_libraries(userfunc procedural)
 
-    add_executable(return test/return.cpp )
-    target_link_libraries(return procedural)
-    add_executable(collection test/collection.cpp )
-    target_link_libraries(collection procedural)
-    add_executable(composite test/composite.cpp )
-    target_link_libraries(composite procedural)
-    add_executable(compositeComponents test/compositeComponents.cpp )
-    target_link_libraries(compositeComponents procedural)
 
 endif(BUILD_TESTS)
 ################################################################################
@@ -108,3 +100,4 @@ if (BUILD_EXAMPLES)
     target_link_libraries(3dcantor glm)
 
 endif(BUILD_EXAMPLES)
+

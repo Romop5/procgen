@@ -1,21 +1,19 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 //#include "../src/function.h"
 //#include "../src/statement.h"
-#include "../src/single.h"
 
-#include "../src/typereg.h"
-#include "../src/types.h"
+#include "interpret.h"
 #include "std.h"
 
-
+/*
 TEST_CASE("Testing new TypeRegister")
 {
 	auto tr = TypeRegister();
 	registerStandardTypes(&tr);	
 	
 	auto a = tr.sharedResource(tr.getTypeId(keyword<int>()));
-	auto box = tAdd<int>();
+    auto f_a = fr
+	auto box = Add<int>();
 	box.inputs.push_back(a);
 	box.inputs.push_back(a);
 	auto res = tr.sharedResource(tr.getTypeId(keyword<int>()));
@@ -260,3 +258,4 @@ TEST_CASE("Fibbonaci")
 	REQUIRE(fib(7) == 13);
 	REQUIRE(fib(44) == 701408733);
 }
+*/
