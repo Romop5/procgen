@@ -102,10 +102,10 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 
 	// finish it !
 	auto bodywhile = std::make_shared<Body>();
-	bodywhile->stats.push_back(inc); // cntr++
-	bodywhile->stats.push_back(sum); // int tmp = ...
-	bodywhile->stats.push_back(cp1); // first = second;
-	bodywhile->stats.push_back(cp2); // second = tmp;
+	bodywhile->appendStatement(inc); // cntr++
+	bodywhile->appendStatement(sum); // int tmp = ...
+	bodywhile->appendStatement(cp1); // first = second;
+	bodywhile->appendStatement(cp2); // second = tmp;
 
 	auto wh = std::make_shared<While>();
 	wh->bindCondition(expr);
@@ -116,16 +116,16 @@ void fib(std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)
 	 * Function intro
 	 */
 	// n = nth
-	body->stats.push_back(copyFirst);	// int first = 1;
-	body->stats.push_back(copySecond);	// int second = 1;
-	body->stats.push_back(copyResult);	// int result = 1;
-	body->stats.push_back(copyCnt);		// int cntr = 2;
+	body->appendStatement(copyFirst);	// int first = 1;
+	body->appendStatement(copySecond);	// int second = 1;
+	body->appendStatement(copyResult);	// int result = 1;
+	body->appendStatement(copyCnt);		// int cntr = 2;
 	
 	/*
 	 * Real body of function
 	 */
-	body->stats.push_back(wh);	// while(cntr < n) ...	
-	body->stats.push_back(cp3);	// result = second;
+	body->appendStatement(wh);	// while(cntr < n) ...	
+	body->appendStatement(cp3);	// result = second;
 	
 	//body();
 	//return *(long*)result->getData();

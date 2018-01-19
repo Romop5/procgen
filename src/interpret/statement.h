@@ -47,16 +47,16 @@ class While:public Statement
 
 class Body: public Statement
 {
+	private:
+	std::vector<std::shared_ptr<Statement>> statements;
 	public:
-	std::vector<std::shared_ptr<Statement>> stats;
-	public:
-	void appendStatement(std::shared_ptr<Statement> stat) {this->stats.push_back(stat);}
+	void appendStatement(std::shared_ptr<Statement> stat) {this->statements.push_back(stat);}
 	virtual bool operator()(RunStatus&);
 };
 
 class Return: public Statement
 {
-	public:
+	private:
 	std::shared_ptr<Statement> input;
 	std::shared_ptr<Statement> output;
 	public:

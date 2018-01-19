@@ -42,8 +42,7 @@ TEST_CASE("Testing return")
 	REQUIRE(ret != nullptr);
 	auto body = std::make_shared<Body>();
 	REQUIRE(body != nullptr);
-	body->stats.push_back(dec);
-	//body->stats.push_back(ret);
+	body->appendStatement(dec);
 
 	auto expr = fr.getFunc("Greater:int");
 	REQUIRE(expr != nullptr);

@@ -39,7 +39,7 @@ bool While::operator()(RunStatus& stat)
 }
 bool Body::operator()(RunStatus& stat)
 {
-	for(auto x: stats)
+	for(auto x: statements)
 	{
 		if((*x)(stat)) return true;
 	}
