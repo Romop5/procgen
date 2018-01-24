@@ -1,29 +1,72 @@
-program:
-	declarations
-declarations:
-	declaration declarations
-	EMPTY
-
-declaration:
-	type-declaration
-	rule-declaration
-	init
+#
+# ProcLang BNF grammar
+#
 
 
-type-declaration:
-	struct NAME { subtypes } ;
+# Program is a collection of declarations
+<program>       ::= <declarations>
+<declarations>  ::= <declaration> <declarations> | ""
 
-subtypes:
-	subtype optional-subtypes
+#A declaration is either a using declaration, param declaration, or function declaration
+<declaration>   ::= <using-declaration> | <parameter-declaration> | <function-declaration>
 
-optional-subtypes:
-	EMPTY	
-	subtype optional-subtypes
+# Using declaration either declares a new type, type alias or defines a rules
+<using-declaration> ::= using <name> = <using-variant> ;
 
-subtype:
-	type NAME ;
+<using-variant>     ::= struct { <structure-declaration> }
+                    |   <type>
+                    |   rule { <statements> } { <statements> } 
 
-rule-declaration:
-	
+
+<parameter-declaration>  ::= parameter <type> <name> <assign>
+
+<assign>                 ::= = <literal> ; | ;
+
+
+<function-declaration>   ::= <type> <name> ( <type-list> ) { <statements> } ;
+
+
+<structure-declaration>     ::= <type-declaration> ; | <structure-declaration> <type-declaration> ;
+
+
+<type-list>                 ::= <type-declaration> | <type-list> , <type-declaration>
+
+<type-declaration>          ::= <type> <name> 
+
+
+<statements>                ::= <statement> <statements> | 
+
+<statement>                 ::= <function-call> ; | <declaration> | <assignment>
+                                | <if-statement> | <while-statement> 
+
+<declaration>               ::= <type> <name> <declaration-end>
+
+<declaration-end>           ::= ; | = <expression> ;
+
+<function-call>             ::= <name> ( <argument-list> ) 
+
+<argument-list>             ::= <argument> | <argument-list> , <argument>
+
+<argument>                  ::= <expression>
+
+<assignment>                ::= <name> = <expression>
+
+
+<if-statement>              ::= if ( <expression> ) { <statements> } <else-clause>
+<else-clause>               ::= else { statements }
+
+<while-statement>           ::= while ( <expression> ) { <statements> }
+
+<expression>                ::= <literal> | <function-call> 
+                            |   ( <expression> ) 
+                            |   <expression> * <expression>
+                            |   <expression> / <expression>
+                            |   <expression> + <expression>
+                            |   <expression> - <expression>
+
+# Terminals
+
+<literal>                   ::= INTEGER | STRING
+<type>                      ::= TYPE
 
 
