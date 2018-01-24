@@ -158,7 +158,7 @@ statements:
 	{
 		auto id = interpret.topBody();
 		auto body = std::static_pointer_cast<Body>(interpret.getNode(id));
-		body->stats.push_back(interpret.getNode($1));
+		body->appendStatement(interpret.getNode($1));
 		std::cout << "Adding node " << $1 << std::endl;
 	}
 	statements

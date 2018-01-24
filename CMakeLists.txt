@@ -39,6 +39,25 @@ add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
 target_compile_features(procedural PUBLIC cxx_auto_type)
 target_include_directories(procedural PUBLIC src/interpret src/derivation)
 
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+
+# Translate parser / lexer with Bison/Flex
+BISON_TARGET(Parser src/parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS -d)
+FLEX_TARGET(Scanner src/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
+
+add_executable(parser
+    ${BISON_Parser_OUTPUTS}
+    ${FLEX_Scanner_OUTPUTS}
+)
+
+target_link_libraries(parser procedural)
+
+
+
+
+
 ###############################################################################
 ############    TESTS                                      ####################
 ###############################################################################
