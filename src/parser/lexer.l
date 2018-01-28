@@ -14,26 +14,20 @@ using namespace std;
 
 %%
 [ \t\n]           ;
-"struct"	{cout << "Keyword: struct" << endl; return KEYWORD_STRUCT;}
-"int"		{cout << "Keyword: int" << endl; return KEYWORD_INT;}
-"bool"		{cout << "Keyword: bool" << endl; return KEYWORD_BOOL;}
-"char"		{cout << "Keyword: char" << endl; return KEYWORD_CHAR;}
-"float"		{cout << "Keyword: char" << endl; return KEYWORD_FLOAT;}
-"while"		{cout << "Keyword: while" << endl; return KEYWORD_WHILE;}
-"print"		{cout << "Keyword: print" << endl; return KEYWORD_PRINT;}
-"return"	{cout << "Keyword: return" << endl; return KEYWORD_RETURN;}
-"if"		{cout << "Keyword: if" << endl; return KEYWORD_IF;}
-"="		{cout << "Keyword: =" << endl; return KEYWORD_ASSIGN;}
+"STRUCT"	{cout << "Keyword: struct" << endl; return STRUCT;}
+"WHILE"		{cout << "Keyword: while" << endl; return WHILE;}
+"IF"		{cout << "Keyword: if" << endl; return IF;}
+"="		{cout << "Keyword: =" << endl; return ASSIGN;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
-[0-9]+            { yylval.ival = atoi(yytext); return INT; }
+[0-9]+            { yylval.ival = atoi(yytext); return INTEGER; }
 [a-zA-Z0-9]+      {
 	// we have to copy because we can't rely on yytext not changing underneath us:
 	cout << "Got string: " << yytext << endl;
 	yylval.sval = strdup(yytext);
 	return STRING;
 }
-":"		{cout << "Keyword: :" << endl; return KEYWORD_SPLITER;}
+":"		{cout << "Keyword: :" << endl; return SPLITER;}
 ","		{cout << "Keyword: ," << endl; return COMMA;}
 "["		{cout << "Keyword: [" << endl; return LANGL;}
 "]"		{cout << "Keyword: ]" << endl; return RANGL;}
