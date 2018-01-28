@@ -34,7 +34,7 @@
 <type-declaration>          ::= <type> <name> 
 
 
-<statements>                ::= <statement> <statements> | 
+<statements>                ::= <statement> <statements> | "" 
 
 <statement>                 ::= <function-call> ; | <declaration> | <assignment>
                                 | <if-statement> | <while-statement> 
@@ -58,11 +58,11 @@
 <while-statement>           ::= while ( <expression> ) { <statements> }
 
 <expression>                ::= <literal> | <function-call> 
-                            |   ( <expression> ) 
-                            |   <expression> * <expression>
-                            |   <expression> / <expression>
-                            |   <expression> + <expression>
                             |   <expression> - <expression>
+                            |   <expression> + <expression>
+                            |   <expression> / <expression>
+                            |   <expression> * <expression>
+                            |   ( <expression> ) 
 
 # Terminals
 
