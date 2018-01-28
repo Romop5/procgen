@@ -11,58 +11,58 @@
 <declaration>   ::= <using-declaration> | <parameter-declaration> | <function-declaration>
 
 # Using declaration either declares a new type, type alias or defines a rules
-<using-declaration> ::= using <name> = <using-variant> ;
+<using-declaration> ::= USING <name> "=" <using-variant> ";" 
 
-<using-variant>     ::= struct { <structure-declaration> }
+<using-variant>     ::= STRUCT "{" <structure-declaration> "}"
                     |   <type>
-                    |   rule { <statements> } { <statements> } 
+                    |   RULE "{" <statements> "}" "{" <statements> "}" 
 
 
-<parameter-declaration>  ::= parameter <type> <name> <assign>
+<parameter-declaration>  ::= PARAMETER <type> <name> <assign>
 
-<assign>                 ::= = <literal> ; | ;
-
-
-<function-declaration>   ::= <type> <name> ( <type-list> ) { <statements> } ;
+<assign>                 ::= "=" <literal> ";" | ";" 
 
 
-<structure-declaration>     ::= <type-declaration> ; | <structure-declaration> <type-declaration> ;
+<function-declaration>   ::= <type> <name> "(" <type-list> ")" "{" <statements> "}" ";" 
 
 
-<type-list>                 ::= <type-declaration> | <type-list> , <type-declaration>
+<structure-declaration>     ::= <type-declaration> ";" | <structure-declaration> <type-declaration> ";" 
+
+
+<type-list>                 ::= <type-declaration> | <type-list> "," <type-declaration>
 
 <type-declaration>          ::= <type> <name> 
 
 
 <statements>                ::= <statement> <statements> | "" 
 
-<statement>                 ::= <function-call> ; | <declaration> | <assignment>
+<statement>                 ::= <function-call> ";" | <declaration> | <assignment>
                                 | <if-statement> | <while-statement> 
 
 <declaration>               ::= <type> <name> <declaration-end>
 
-<declaration-end>           ::= ; | = <expression> ;
+<declaration-end>           ::= ";" | "=" <expression> ";" 
 
-<function-call>             ::= <name> ( <argument-list> ) 
+<function-call>             ::= <name> "(" <argument-list> ")" 
 
-<argument-list>             ::= <argument> | <argument-list> , <argument>
+<argument-list>             ::= <argument> | <argument-list> "," <argument>
 
 <argument>                  ::= <expression>
 
-<assignment>                ::= <name> = <expression>
+<assignment>                ::= <name> "=" <expression>
 
 
-<if-statement>              ::= if ( <expression> ) { <statements> } <else-clause>
-<else-clause>               ::= else { statements }
+<if-statement>              ::= IF "(" <expression> ")" "{" <statements> "}" <else-clause>
+<else-clause>               ::= ELSE "{" <statements> "}" 
 
-<while-statement>           ::= while ( <expression> ) { <statements> }
+<while-statement>           ::= WHILE "(" <expression> ")" "{" <statements> "}"
 
 <expression>                ::= <literal> | <function-call> 
-                            |   <expression> - <expression>
-                            |   <expression> + <expression>
-                            |   <expression> / <expression>
-                            |   <expression> * <expression>
-                            |   ( <expression> ) 
+                            |   <expression> "-" <expression>
+                            |   <expression> "+" <expression>
+                            |   <expression> "/" <expression>
+                            |   <expression> "*" <expression>
+                            |   "(" <expression> ")" 
 
 # Terminals
 
