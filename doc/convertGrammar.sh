@@ -17,9 +17,9 @@ until [ "$DIFF" = "" ]; do
     NEW=`echo "$NEW" \
         | sed 's/-\(.\)/\u\1/           #convert <sth-sth> to <sthSth>'\
         | sed 's/::=/:/                 #::= to :'\
-        | sed 's/\#\(.*\)/\/\*\1\*\//   #convert commentaries'\ 
+        | sed 's/<\([^>]*\)>/\1/        #convert <sth> to sth>'\
         | sed 's/\"\"/%empty/           #replace double doublequotes with %empty (empty symbol string)'\
-        | sed 's/<\([^>]*\)>/\1/        #convert <sth> to sth>'`
+        | sed 's/\#\(.*\)/\/\*\1\*\//   #convert commentaries'` 
 
     DIFF=`diff <(echo "$OLD") <(echo "$NEW")`
 done
