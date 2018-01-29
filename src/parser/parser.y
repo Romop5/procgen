@@ -17,12 +17,17 @@ extern "C" FILE *yyin;
 const std::string typeToString(size_t type);
 //void yyerror(Interpret& interpret, const char *s);
 void yyerror(const char *s);
+
 %}
 
 /*%code requires {
 	class Interpret;
 }
 */
+
+%debug 
+
+%define parse.error verbose
 
 %union {
 	int ival;
@@ -48,13 +53,18 @@ void yyerror(const char *s);
 %token SEMICOL  ";"
 %token COMMA    ","
 %token EQ       "="
+%token MINUS    "-"
+%token PLUS     "+"
+%token DIV      "/"
+%token MUL      "*"
 // Operators
-%left EQ
+%left "=" 
 %left GREATER LESS
-%left MINUS 
-%left PLUS 
-%left DIV 
-%left MUL 
+
+%left "-" 
+%left "+" 
+%left "/" 
+%left "*" 
 
 /*%parse-param {Interpret& interpret}*/
 %locations
@@ -160,11 +170,25 @@ int main(int argc, char** argv) {
 		std::cerr << "main() missing" << std::endl;
 	
 */
+
+// note 
+    //yy_scan_buffer("using a: struct { };");
+    yydebug = 1;
+    if(argc < 2)
+		error(1,0,"./parser <FILE>");
+	yyin = fopen(argv[1],"r");
+	if(yyin == NULL)
+		error(1,0,"Failed to open file ...");
+
+    do {
+        yyparse();
+    } while (!feof(yyin));
+
 }
 
 //void yyerror(Interpret& inter, const char *s) {
 void yyerror(const char *s) {
-	cout << "Parse error!  Message: " << s << yylloc.first_line << "-" << yylloc.first_column <<  endl;
+	cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  endl;
 	// might as well halt now:
 	exit(-1);
 }
