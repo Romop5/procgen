@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 option(BUILD_TESTS "Build tests - use make test" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_PARSER "Build example parser" OFF)
 
 project(ibp)
 
@@ -47,15 +48,24 @@ BISON_TARGET(Parser src/parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc CO
 FLEX_TARGET(Scanner src/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
-add_executable(parser
+add_library(procgen
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
 )
 
-target_include_directories(parser PUBLIC src/parser)
-target_link_libraries(parser procedural)
+target_include_directories(procgen PUBLIC src/parser)
+target_link_libraries(procgen procedural)
 
+###############################################################################
+############    PARSER EXAMPLE 				   ####################
+###############################################################################
 
+if (BUILD_PARSER)
+
+add_executable(parser test/parser.cpp)
+target_link_libraries(parser procgen)
+
+endif(BUILD_PARSER)
 
 
 
