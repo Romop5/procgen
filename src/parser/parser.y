@@ -88,6 +88,7 @@ declaration   : usingDeclaration | parameterDeclaration | functionDeclaration
 usingDeclaration : USING NAME "=" usingVariant ";" 
 
 usingVariant     : STRUCT "{" structureDeclaration "}"
+		   { std::cout << "Name '" << $<sval>-1 << "'" <<  std::endl; }
                     |   TYPE
                     |   RULE "{" statements "}" "{" statements "}" 
 

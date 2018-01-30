@@ -30,47 +30,44 @@ using namespace std;
 
 %%
 %{
-    printf("Nigga\n");
     LOC_STEP(yylloc);
 %}
 
 [\n+]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
 [ \t]        
 
-"parameter"	{cout << "Keyword: param" << endl; return USING;}
-"using"	{cout << "Keyword: using" << endl; return USING;}
-"struct"	{cout << "Keyword: struct" << endl; return STRUCT;}
-"while"		{cout << "Keyword: while" << endl; return WHILE;}
-"if"		{cout << "Keyword: if" << endl; return IF;}
-"="		{cout << "Keyword: =" << endl; return EQ;}
+"parameter"	{ return USING;}
+"using"	{ return USING;}
+"struct"	{ return STRUCT;}
+"while"		{ return WHILE;}
+"if"		{ return IF;}
+"="		{ return EQ;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INTEGER; }
 [a-zA-Z0-9]+      {
-	// we have to copy because we can't rely on yytext not changing underneath us:
 	cout << "Got string: " << yytext << endl;
 	yylval.sval = strdup(yytext);
-    // detect if it is type or identifier
-    
-    if(strcmp(yylval.sval,"int") == 0)
-        return TYPE;
+	// detect if it is type or identifier
+	if(strcmp(yylval.sval,"int") == 0)
+		return TYPE;
 	return NAME;
 }
-","		{cout << "Keyword: ," << endl; return COMMA;}
-"["		{cout << "Keyword: [" << endl; return LANGL;}
-"]"		{cout << "Keyword: ]" << endl; return RANGL;}
-"{"		{cout << "Keyword: {" << endl; return LBRAC;}
-"}"		{cout << "Keyword: }" << endl; return RBRAC;}
-"("		{cout << "Keyword: (" << endl; return LPAR;}
-")"		{cout << "Keyword: )" << endl; return RPAR;}
-";"		{cout << "Keyword: ;" << endl; return SEMICOL;}
-"=="		{cout << "Keyword: =" << endl; return EQ;}
-"+"		{cout << "Keyword: +" << endl; return PLUS;}
-"-"		{cout << "Keyword: -" << endl; return MINUS;}
-"*"		{cout << "Keyword: *" << endl; return MUL;}
-"/"		{cout << "Keyword: /" << endl; return DIV;}
-">"		{cout << "Keyword: >" << endl; return GREATER;}
-"<"		{cout << "Keyword: <" << endl; return LESS;}
+","		{ return COMMA;}
+"["		{ return LANGL;}
+"]"		{ return RANGL;}
+"{"		{ return LBRAC;}
+"}"		{ return RBRAC;}
+"("		{ return LPAR;}
+")"		{ return RPAR;}
+";"		{ return SEMICOL;}
+"=="		{ return EQ;}
+"+"		{ return PLUS;}
+"-"		{ return MINUS;}
+"*"		{ return MUL;}
+"/"		{ return DIV;}
+">"		{ return GREATER;}
+"<"		{ return LESS;}
 .                ;
 
 %%
