@@ -52,6 +52,7 @@ add_executable(parser
     ${FLEX_Scanner_OUTPUTS}
 )
 
+target_include_directories(parser PUBLIC src/parser)
 target_link_libraries(parser procedural)
 
 
