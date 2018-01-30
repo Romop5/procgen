@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 #define YY_DECL extern "C" int yylex()
-
+#include "derivation.h"
 #include "parser.hh"  // to get the token types that we return
 #include <memory>
 
@@ -54,7 +54,7 @@ using namespace std;
     
     if(strcmp(yylval.sval,"int") == 0)
         return TYPE;
-	return name;
+	return NAME;
 }
 ","		{cout << "Keyword: ," << endl; return COMMA;}
 "["		{cout << "Keyword: [" << endl; return LANGL;}

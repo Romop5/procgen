@@ -6,7 +6,11 @@
 //#include "interpret.h"
 #include <memory> 
 #include <error.h>
+#include "compilation.h"
+#include "derivation.h"
+
 using namespace std;
+using namespace procGen;
 
 // stuff from flex that bison needs to know about:
 extern "C" int yylex();
@@ -16,7 +20,7 @@ extern "C" FILE *yyin;
 
 const std::string typeToString(size_t type);
 //void yyerror(Interpret& interpret, const char *s);
-void yyerror(const char *s);
+void yyerror(Derivation* derivation, const char *s);
 
 %}
 
@@ -29,6 +33,8 @@ void yyerror(const char *s);
 
 %define parse.error verbose
 
+%parse-param {Derivation* derivation}
+
 %union {
 	int ival;
 	float fval;
@@ -40,7 +46,7 @@ void yyerror(const char *s);
 %token <sval> STRING
 
 %token <sval> TYPE
-%token <sval> name 
+%token <sval> NAME 
 
 /* Keywords */
 %token IF STRUCT USING RULE PARAMETER  ELSE WHILE
@@ -66,6 +72,7 @@ void yyerror(const char *s);
 %left "/" 
 %left "*" 
 
+
 /*%parse-param {Interpret& interpret}*/
 %locations
 
@@ -78,19 +85,19 @@ declarations  : declaration declarations | %empty
 declaration   : usingDeclaration | parameterDeclaration | functionDeclaration
 
 /* Using declaration either declares a new type, type alias or defines a rules*/
-usingDeclaration : USING name "=" usingVariant ";" 
+usingDeclaration : USING NAME "=" usingVariant ";" 
 
 usingVariant     : STRUCT "{" structureDeclaration "}"
-                    |   type
+                    |   TYPE
                     |   RULE "{" statements "}" "{" statements "}" 
 
 
-parameterDeclaration  : PARAMETER type name assign
+parameterDeclaration  : PARAMETER TYPE NAME assign
 
 assign                 : "=" literal ";" | ";" 
 
 
-functionDeclaration   : type name "(" typeList ")" "{" statements "}" ";" 
+functionDeclaration   : TYPE NAME "(" typeList ")" "{" statements "}" ";" 
 
 
 structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclaration ";" 
@@ -98,7 +105,7 @@ structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclar
 
 typeList                 : typeDeclaration | typeList "," typeDeclaration
 
-typeDeclaration          : type name 
+typeDeclaration          : TYPE NAME 
 
 
 statements                : statement statements | %empty 
@@ -106,17 +113,17 @@ statements                : statement statements | %empty
 statement                 : functionCall ";" | declaration | assignment
                                 | ifStatement | whileStatement 
 
-declaration               : type name declarationEnd
+declaration               : TYPE NAME declarationEnd
 
 declarationEnd           : ";" | "=" expression ";" 
 
-functionCall             : name "(" argumentList ")" 
+functionCall             : NAME "(" argumentList ")" 
 
 argumentList             : argument | argumentList "," argument
 
 argument                  : expression
 
-assignment                : name "=" expression
+assignment                : NAME "=" expression
 
 
 ifStatement              : IF "(" expression ")" "{" statements "}" elseClause
@@ -134,7 +141,6 @@ expression                : literal | functionCall
 /* Terminals*/
 
 literal                   : INTEGER | STRING
-type                      : TYPE
 
 %%
 
@@ -180,14 +186,17 @@ int main(int argc, char** argv) {
 	if(yyin == NULL)
 		error(1,0,"Failed to open file ...");
 
+	auto typereg = std::make_shared<TypeRegister>();
+	auto funcreg = std::make_shared<FunctionReg>(typereg);
+	auto derivation = std::make_shared<Derivation>(typereg,funcreg);
     do {
-        yyparse();
+        yyparse(derivation.get());
     } while (!feof(yyin));
 
 }
 
 //void yyerror(Interpret& inter, const char *s) {
-void yyerror(const char *s) {
+void yyerror(Derivation* derivation, const char *s) {
 	cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  endl;
 	// might as well halt now:
 	exit(-1);
