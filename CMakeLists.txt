@@ -51,8 +51,10 @@ ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 add_library(procgen
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
+    src/parser/procgen.cpp
 )
 
+target_include_directories(procgen PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(procgen PUBLIC src/parser)
 target_link_libraries(procgen procedural)
 

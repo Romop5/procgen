@@ -15,6 +15,19 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	TypeRegister():highest(0){
 		add<char>("unknown");
 	};
+	// TODO: test + add conditions to other add* functions
+	bool addAlias(const std::string& alias, const std::string& aliased)
+	{
+		// if aliased type exists and alias doesn't
+		if(names.find(aliased) != names.end()
+				&& names.find(alias) == names.end())
+		{
+			names[alias] = names[aliased]; 
+			return true;
+		}
+		return false;
+	}
+
 	template<typename T>
 	bool add(const std::string& typeName)
 	{

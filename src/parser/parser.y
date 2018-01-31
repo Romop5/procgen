@@ -1,39 +1,38 @@
+%code requires {
+
+#include "procgen.h"
+using namespace ProcGen;
+
+}
+
 %{
 
 #include <cstdio>
 #include <iostream>
-
-//#include "interpret.h"
 #include <memory> 
 #include <error.h>
-#include "compilation.h"
-#include "derivation.h"
 
-using namespace std;
-using namespace procGen;
-
+#include "procgen.h"
+using namespace ProcGen;
 // stuff from flex that bison needs to know about:
 extern "C" int yylex();
-extern "C" int yyparse();
-extern "C" FILE *yyin;
+//extern "C" int yyparse();
+//extern "C" FILE *yyin;
 
 
 const std::string typeToString(size_t type);
 //void yyerror(Interpret& interpret, const char *s);
-void yyerror(Derivation* derivation, const char *s);
+void yyerror(Generation* proc, const char *s);
 
 %}
 
-/*%code requires {
-	class Interpret;
-}
-*/
+
 
 %debug 
 
 %define parse.error verbose
 
-%parse-param {Derivation* derivation}
+%parse-param {Generation* proc}
 
 %union {
 	int ival;
@@ -58,7 +57,8 @@ void yyerror(Derivation* derivation, const char *s);
 %token RBRAC    "}"
 %token SEMICOL  ";"
 %token COMMA    ","
-%token EQ       "="
+%token ASSIGN	"="
+%token EQ       "=="
 %token MINUS    "-"
 %token PLUS     "+"
 %token DIV      "/"
@@ -87,15 +87,18 @@ declaration   : usingDeclaration | parameterDeclaration | functionDeclaration
 /* Using declaration either declares a new type, type alias or defines a rules*/
 usingDeclaration : USING NAME "=" usingVariant ";" 
 
-usingVariant     : STRUCT "{" structureDeclaration "}"
-		   { std::cout << "Name '" << $<sval>-1 << "'" <<  std::endl; }
+usingVariant        : 	STRUCT "{" structureDeclaration "}"
+		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
                     |   TYPE
+			{ proc->registerAlias($<sval>-1, $1);}
                     |   RULE "{" statements "}" "{" statements "}" 
 
 
 parameterDeclaration  : PARAMETER TYPE NAME assign
 
-assign                 : "=" literal ";" | ";" 
+assign                 : "=" literal ";"
+		      	{ proc->registerParameter($<sval>0,$<sval>-1);}
+			 | ";" 
 
 
 functionDeclaration   : TYPE NAME "(" typeList ")" "{" statements "}" ";" 
@@ -107,6 +110,7 @@ structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclar
 typeList                 : typeDeclaration | typeList "," typeDeclaration
 
 typeDeclaration          : TYPE NAME 
+			 {proc->typeList.push_back(sTypeDeclaration($1,$2));}
 
 
 statements                : statement statements | %empty 
@@ -134,10 +138,15 @@ whileStatement           : WHILE "(" expression ")" "{" statements "}"
 
 expression                : literal | functionCall 
                             |   expression "-" expression
+				{ $$ = proc->createExpressionOperation('-', $1,$3); }
                             |   expression "+" expression
+				{ $$ = proc->createExpressionOperation('-', $1,$3); }
                             |   expression "/" expression
+				{ $$ = proc->createExpressionOperation('-', $1,$3); }
                             |   expression "*" expression
+				{ $$ = proc->createExpressionOperation('-', $1,$3); }
                             |   "(" expression ")" 
+				{ $$ = $2; }
 
 /* Terminals*/
 
@@ -145,7 +154,7 @@ literal                   : INTEGER | STRING
 
 %%
 
-int main(int argc, char** argv) {
+//int main(int argc, char** argv) {
 /*
 	if(argc < 2)
 		error(1,0,"./parser <FILE>");
@@ -180,7 +189,7 @@ int main(int argc, char** argv) {
 
 // note 
     //yy_scan_buffer("using a: struct { };");
-    yydebug = 1;
+/*    yydebug = 1;
     if(argc < 2)
 		error(1,0,"./parser <FILE>");
 	yyin = fopen(argv[1],"r");
@@ -195,11 +204,10 @@ int main(int argc, char** argv) {
     } while (!feof(yyin));
 
 }
-
+*/
 //void yyerror(Interpret& inter, const char *s) {
-void yyerror(Derivation* derivation, const char *s) {
-	cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  endl;
-	// might as well halt now:
+void yyerror(Generation* proc, const char *s) {
+	std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
 	exit(-1);
 }
 

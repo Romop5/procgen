@@ -41,7 +41,7 @@ using namespace std;
 "struct"	{ return STRUCT;}
 "while"		{ return WHILE;}
 "if"		{ return IF;}
-"="		{ return EQ;}
+"="		{ return ASSIGN;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INTEGER; }
