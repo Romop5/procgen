@@ -41,7 +41,8 @@ void yyerror(Generation* proc, const char *s);
 	size_t nodeId;
 }
 
-%token <ival> INTEGER CHAR FLOAT BOOL
+%token <ival> INTEGER CHAR BOOL
+%token <fval> FLOAT 
 %token <sval> STRING
 
 %token <sval> TYPE
@@ -119,14 +120,17 @@ statement                 : functionCall ";" | declaration | assignment
                                 | ifStatement | whileStatement 
 
 declaration               : TYPE NAME declarationEnd
+			  { proc->registerLocalVariable($1,$2); }
 
 declarationEnd           : ";" | "=" expression ";" 
 
 functionCall             : NAME "(" argumentList ")" 
+			 { proc->createFunctionCall($1); }
 
 argumentList             : argument | argumentList "," argument
 
 argument                  : expression
+			  { proc->createArgument(); }
 
 assignment                : NAME "=" expression
 
@@ -136,21 +140,27 @@ elseClause               : ELSE "{" statements "}"
 
 whileStatement           : WHILE "(" expression ")" "{" statements "}"
 
-expression                : literal | functionCall 
+expression                : literal
+			    | functionCall 
+			  
                             |   expression "-" expression
-				{ $$ = proc->createExpressionOperation('-', $1,$3); }
+				{ auto result = proc->createExpressionOperation('-'); }
                             |   expression "+" expression
-				{ $$ = proc->createExpressionOperation('-', $1,$3); }
+				{ auto result = proc->createExpressionOperation('+'); }
                             |   expression "/" expression
-				{ $$ = proc->createExpressionOperation('-', $1,$3); }
+				{ auto result = proc->createExpressionOperation('/'); }
                             |   expression "*" expression
-				{ $$ = proc->createExpressionOperation('-', $1,$3); }
+				{ auto result = proc->createExpressionOperation('*'); }
                             |   "(" expression ")" 
-				{ $$ = $2; }
+				{  }
 
 /* Terminals*/
 
-literal                   : INTEGER | STRING
+literal                   : INTEGER 
+				{ proc->createLiteralInteger($1); } 
+			  | FLOAT
+				{ proc->createLiteralFloat($1); } 
+			  | STRING
 
 %%
 

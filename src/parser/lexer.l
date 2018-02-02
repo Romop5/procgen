@@ -37,7 +37,8 @@ using namespace std;
 [ \t]        
 
 "parameter"	{ return USING;}
-"using"	{ return USING;}
+"rule"		{ return RULE;}
+"using"		{ return USING;}
 "struct"	{ return STRUCT;}
 "while"		{ return WHILE;}
 "if"		{ return IF;}

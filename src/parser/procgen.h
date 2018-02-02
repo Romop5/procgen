@@ -22,6 +22,9 @@ namespace ProcGen {
 	class Generation {
 		std::shared_ptr<TypeRegister>	typeregister;
 		std::shared_ptr<FunctionReg>	functionregister;
+		// Stores all local variables (local to function, rule)
+		std::shared_ptr<VariableReg> 	localStackFrame;
+		std::shared_ptr<VariableReg> 	globalVariables;
 		std::shared_ptr<Derivation> 	der;
 		bool	flagIsParsed;
 		public:
@@ -44,12 +47,28 @@ namespace ProcGen {
 		// Register global parameter
 		bool registerParameter(char* name, char* type);
 
-		std::shared_ptr<Function> createExpressionOperation(char operation, 
-				std::shared_ptr<Function> first, std::shared_ptr<Function> second);
+		std::shared_ptr<Function> createExpressionOperation(char operation);
 
+		void createLiteralInteger(int value);
+		void createLiteralFloat(float value);
+
+		bool createFunctionCall(const char* functionName);
+				
+
+		// Replace expression with argument
+		bool createArgument();
+
+
+		bool registerLocalVariable(const char* type, const char* name);
 		
 		/* Compilation utilities*/
 		std::vector<sTypeDeclaration> typeList;
+
+		std::stack<std::shared_ptr<Function>> expressionsStack;
+
+
+		// Function argument list 
+		std::vector<std::shared_ptr<Function>> argumentVector;
 	};
 }
 #endif

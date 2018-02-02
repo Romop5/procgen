@@ -8,7 +8,12 @@ namespace ProcGen {
 	{
 		typeregister = std::make_shared<TypeRegister>();
 		functionregister = std::make_shared<FunctionReg>(typeregister);
+		localStackFrame = std::make_shared<VariableReg>(typeregister);	
+		globalVariables = std::make_shared<VariableReg>(typeregister);	
 		der = std::make_shared<Derivation>(typeregister,functionregister);
+
+		registerStandardTypes(typeregister.get());
+		registerStandardFunctions(functionregister.get());
 	}
 	
 	bool Generation::parseFile(const std::string& file)
@@ -53,18 +58,21 @@ namespace ProcGen {
 	}
 
 
-	std::shared_ptr<Function> Generation::createExpressionOperation(char operation, 
-			std::shared_ptr<Function> first, std::shared_ptr<Function> second)
+	std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
 	{
 		// TODO: produce common type
+		std::shared_ptr<Function> first= this->expressionsStack.top();
+		this->expressionsStack.pop();
+		std::shared_ptr<Function> second = this->expressionsStack.top();
+		this->expressionsStack.pop();
 
 		TypeId a = 0;
 		if(first->getOutput() != nullptr)
-			a = first->getOutput().getBaseId();
+			a = first->getOutput()->getBaseId();
 
 		TypeId b = 0;
 		if(second->getOutput() != nullptr)
-			a = second->getOutput().getBaseId();
+			b = second->getOutput()->getBaseId();
 
 		// TODO: determien if types are compatible
 		// and which type we should use
@@ -82,17 +90,18 @@ namespace ProcGen {
 		std::string operationName = "";
 		switch(operation)
 		{
-			case "+": operationName = "Add"; break;
-			case "-": operationName = "Sub"; break;
-			case "/": operationName = "Div"; break;
-			case "*": operationName = "Mul"; break;
+			case '+': operationName = "Add"; break;
+			case '-': operationName = "Sub"; break;
+			case '/': operationName = "Div"; break;
+			case '*': operationName = "Mul"; break;
 			default:
 				  error(0,0,"Undefined operation");
 		}
 
 		// Create operation function
 
-		auto operationBox = functionregister->getFunc(type+":"+operationName);
+		std::cout << type+":"+operationName<< " je kunda" << std::endl;
+		auto operationBox = functionregister->getFunc(operationName+":"+type);
 		if(!operationBox)
 		{
 			error(0,0,"Failed to create an instance for operation");
@@ -102,7 +111,68 @@ namespace ProcGen {
 		operationBox->bindInput(0,first);
 		operationBox->bindInput(1,second);
 		operationBox->bindOutput(tmpResult);
+
+		this->expressionsStack.push(operationBox);
 		return operationBox;	
 	}
 
+	void Generation::createLiteralInteger(int value)
+	{
+		auto val = typeregister->sharedResource("int");
+		if(!val)
+			error(0,0,"Unexpected error while creating int resource");
+
+		*(int*) val->getData() = value;
+		this->expressionsStack.push(functionregister->getHandler(val));
+	}
+
+	void Generation::createLiteralFloat(float value)
+	{
+		auto val = typeregister->sharedResource("float");
+		if(!val)
+			error(0,0,"Unexpected error while creating flaot resource");
+
+		*(float*) val->getData() = value;
+		this->expressionsStack.push(functionregister->getHandler(val));
+	}
+
+	bool Generation::createFunctionCall(const char* functionName)
+	{
+		auto functionPointer = functionregister->getFunc(functionName);
+		if(functionPointer == nullptr)
+		{
+			// if functionName doesn't exist
+			error(0,0,"Failed to get function '%s'", functionName);
+			return false;
+		}
+
+		// For all given parameters 
+		for(unsigned param = 0; param < argumentVector.size(); param++)
+		{
+			// TODO: semantic control / implicit conversion
+			functionPointer->bindInput(param,argumentVector[param]);
+		}
+
+		// Clear arguments 
+		this->argumentVector.clear();
+
+		// Push new expression(function call) to expression stack
+		this->expressionsStack.push(functionPointer);
+		return true;
+	}
+
+	bool Generation::createArgument()
+	{
+		std::shared_ptr<Function> expr= this->expressionsStack.top();
+		this->expressionsStack.pop();
+		this->argumentVector.push_back(expr);
+	}
+
+	bool Generation::registerLocalVariable(const char* type, const char* name)
+	{
+		auto resource = typeregister->sharedResource(type);
+		if(resource == nullptr)
+			return false;
+		return this->localStackFrame->addVar(name,resource);
+	}
 }
