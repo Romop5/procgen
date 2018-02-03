@@ -57,6 +57,30 @@ namespace ProcGen {
 
 	}
 
+	bool Generation::registerFunction(char* type, char* name)
+	{
+		// Create output resource
+		auto resource = typeregister->sharedResource(type);
+		if(resource == nullptr)
+		{
+			error(0,0,"Unknown type: %s\n", type);
+		}
+
+		// Get the top of statement stack
+		auto statementTop = this->stackedBodies.top();
+		this->stackedBodies.pop();
+
+		// Create a vector of input parameters
+		std::vector<std::shared_ptr<Resource>> inputResources;
+	
+		// type list
+		for(auto &typeDesc: typeList)
+			inputResources.push_back(typeregister->sharedResource(typeDesc.mType));
+
+		return functionregister->addCompositeFunction(name, 
+			statementTop, inputResources,resource);	
+	}
+
 
 	std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
 	{
@@ -174,5 +198,79 @@ namespace ProcGen {
 		if(resource == nullptr)
 			return false;
 		return this->localStackFrame->addVar(name,resource);
+	}
+
+	bool Generation::pushBody()
+	{
+		this->stackedBodies.push(std::make_shared<Body>());
+	}
+
+	std::shared_ptr<Body> Generation::popBody()
+	{
+		auto top = this->stackedBodies.top();
+		this->stackedBodies.pop();
+		return top;
+	}
+
+	bool Generation::makeAssignment(const char* name)
+	{
+		// get resourse
+		auto resource = localStackFrame->getVar(name);
+		auto typeName = typeregister->getTypeName(resource->getBaseId());
+		auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
+		if(function == nullptr)
+		{
+			error(0,0,"Failed to create assignment for type %s, variable %s\n",
+					typeName.c_str(), name);
+		}
+
+		// Register 
+		this->stackedBodies.top()->appendStatement(function);
+	}
+
+	bool Generation::makeWhile()
+	{
+		// Remove the top of expression stack
+		auto expressionTop= this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		// Get the top of statement stack
+		auto statementTop = this->stackedBodies.top();
+		this->stackedBodies.pop();
+
+		auto whileStatement = std::make_shared<While>();
+		whileStatement->bindCondition(expressionTop);
+		whileStatement->bindStatement(statementTop);
+
+		// Append while to body
+		this->stackedBodies.top()->appendStatement(whileStatement);
+	}
+
+	bool Generation::makeIfStatement(bool hasElseBranch)
+	{
+		// Remove the top of expression stack
+		auto expressionTop= this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		std::shared_ptr<Statement> elseBranch = nullptr;
+		if(hasElseBranch)
+		{
+			// Get the top of statement stack
+			auto elseBranch= this->stackedBodies.top();
+			this->stackedBodies.pop();
+		}
+
+		// Get the top of statement stack
+		auto statementTop = this->stackedBodies.top();
+		this->stackedBodies.pop();
+
+		auto ifStatement = std::make_shared<If>();
+		ifStatement->setExpression(expressionTop);
+		ifStatement->setPath(0,statementTop);
+		ifStatement->setPath(1,elseBranch);
+
+		// Append while to body
+		this->stackedBodies.top()->appendStatement(ifStatement);
+	
 	}
 }

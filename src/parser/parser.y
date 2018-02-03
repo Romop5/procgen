@@ -92,7 +92,7 @@ usingVariant        : 	STRUCT "{" structureDeclaration "}"
 		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
                     |   TYPE
 			{ proc->registerAlias($<sval>-1, $1);}
-                    |   RULE "{" statements "}" "{" statements "}" 
+                    |   RULE compoundStatement compoundStatement 
 
 
 parameterDeclaration  : PARAMETER TYPE NAME assign
@@ -102,7 +102,8 @@ assign                 : "=" literal ";"
 			 | ";" 
 
 
-functionDeclaration   : TYPE NAME "(" typeList ")" "{" statements "}" ";" 
+functionDeclaration   : TYPE NAME "(" typeList ")" compoundStatement ";" 
+		      	{ }
 
 
 structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclaration ";" 
@@ -113,6 +114,8 @@ typeList                 : typeDeclaration | typeList "," typeDeclaration
 typeDeclaration          : TYPE NAME 
 			 {proc->typeList.push_back(sTypeDeclaration($1,$2));}
 
+
+compoundStatement	  : "{" {proc->pushBody();} statements "}" 
 
 statements                : statement statements | %empty 
 
@@ -133,15 +136,20 @@ argument                  : expression
 			  { proc->createArgument(); }
 
 assignment                : NAME "=" expression
+			  { proc->makeAssignment($1); }
 
 
-ifStatement              : IF "(" expression ")" "{" statements "}" elseClause
-elseClause               : ELSE "{" statements "}" 
+ifStatement              : IF "(" expression ")" compoundStatement elseClause
+elseClause               : ELSE compoundStatement 
+			  { proc->makeIfStatement(true);}
+			  | %empty
+			  { proc->makeIfStatement(false);}
 
-whileStatement           : WHILE "(" expression ")" "{" statements "}"
+whileStatement           : WHILE "(" expression ")" compoundStatement
+			  { proc->makeWhile();}
 
 expression                : literal
-			    | functionCall 
+			    | 	functionCall 
 			  
                             |   expression "-" expression
 				{ auto result = proc->createExpressionOperation('-'); }

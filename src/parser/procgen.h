@@ -47,6 +47,8 @@ namespace ProcGen {
 		// Register global parameter
 		bool registerParameter(char* name, char* type);
 
+		bool registerFunction(char* type, char* name);
+
 		std::shared_ptr<Function> createExpressionOperation(char operation);
 
 		void createLiteralInteger(int value);
@@ -69,6 +71,17 @@ namespace ProcGen {
 
 		// Function argument list 
 		std::vector<std::shared_ptr<Function>> argumentVector;
+
+		bool makeAssignment(const char* name);
+
+		bool makeWhile();
+
+		bool makeIfStatement(bool hasElseBranch);
+
+		bool pushBody();
+		std::shared_ptr<Body> popBody();
+		// This stacked structure is used to handle N-anry 
+		std::stack<std::shared_ptr<Body>> stackedBodies;
 	};
 }
 #endif
