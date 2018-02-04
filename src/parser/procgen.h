@@ -37,6 +37,8 @@ namespace ProcGen {
 		 *	Utility functions, called by parser
 		 */
 
+		bool registerRule(char* name,char* type);
+
 		// Register a new name for type.
 		// May fail on missing aliasedType or alias name collision
 		bool registerAlias(char* alias, char* aliasedType);
@@ -45,7 +47,7 @@ namespace ProcGen {
 		bool registerStruct(char* name, std::vector<sTypeDeclaration>& types);
 
 		// Register global parameter
-		bool registerParameter(char* name, char* type);
+		bool registerParameter(char* name, char* type,bool hasLiteral);
 
 		bool registerFunction(char* type, char* name);
 

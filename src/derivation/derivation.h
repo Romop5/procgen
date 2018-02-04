@@ -65,7 +65,7 @@ class Derivation
 	}
 
 	// Add rule for symbol
-	void addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure);
+	bool addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure);
 
 	bool hasAnyRule(TypeId type) const;
 

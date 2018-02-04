@@ -1,5 +1,6 @@
 #include "procgen.h"
 #include "parser.hh"
+#include <sstream>
 
 extern FILE* yyin;
 namespace ProcGen {
@@ -28,6 +29,36 @@ namespace ProcGen {
 		return true;
 	}
 
+
+	bool Generation::registerRule(char* name,char* type)
+	{
+		static int ruleID = 0;
+		ruleID++;
+
+		// Get procedure
+		auto procedure= this->stackedBodies.top();
+		this->stackedBodies.pop();
+
+		std::stringstream ruleName;
+	       	ruleName << "rule" << ruleID;
+		auto typeResource = typeregister->sharedResource(type);
+		functionregister->addCompositeFunction(
+				ruleName.str(), procedure,{typeResource}, nullptr);
+
+		// Get condition
+		auto boolResult= typeregister->sharedResource("bool");
+		auto condition= this->stackedBodies.top();
+		this->stackedBodies.pop();
+
+		std::stringstream conditionName;
+	       	conditionName	<< "condition" << ruleID;
+		functionregister->addCompositeFunction(
+				conditionName.str(), condition,{typeResource}, boolResult);
+
+		TypeId typeId = typeregister->getTypeId(type);
+		return der->addRule(typeId,functionregister->getFunc(conditionName.str()),
+					functionregister->getFunc(ruleName.str()));
+	}
 	bool Generation::registerAlias(char* alias, char* aliasedType)
 	{
 		return typeregister->addAlias(alias,aliasedType);			
@@ -52,8 +83,22 @@ namespace ProcGen {
 		return typeregister->addCompositeWithNames(name, types,names);
 	}
 
-	bool Generation::registerParameter(char* name, char* type)
+	bool Generation::registerParameter(char* name, char* type,bool hasLiteral)
 	{
+		// Get type
+		auto resource = typeregister->sharedResource(type);
+		if(resource == nullptr)
+		{
+			error(0,0,"Unk type %s\n", type);
+		}
+
+		globalVariables->addVar(name,resource);
+
+		// TODO: check types and do implicit converion if neccesary
+		// TODO: use hasLiteral and literal
+		auto literal = this->expressionsStack.top();
+		if(hasLiteral)
+			this->expressionsStack.pop();
 
 	}
 

@@ -42,6 +42,7 @@ using namespace std;
 "struct"	{ return STRUCT;}
 "while"		{ return WHILE;}
 "if"		{ return IF;}
+"else"		{ return ELSE;}
 "="		{ return ASSIGN;}
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 

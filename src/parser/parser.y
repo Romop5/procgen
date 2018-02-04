@@ -92,18 +92,20 @@ usingVariant        : 	STRUCT "{" structureDeclaration "}"
 		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
                     |   TYPE
 			{ proc->registerAlias($<sval>-1, $1);}
-                    |   RULE compoundStatement compoundStatement 
+                    |   RULE TYPE compoundStatement compoundStatement 
+			{ proc->registerRule($<sval>-1, $2); }
 
 
 parameterDeclaration  : PARAMETER TYPE NAME assign
 
 assign                 : "=" literal ";"
-		      	{ proc->registerParameter($<sval>0,$<sval>-1);}
+		      	{ proc->registerParameter($<sval>0,$<sval>-1,true);}
 			 | ";" 
+		      	{ proc->registerParameter($<sval>0,$<sval>-1,false);}
 
 
 functionDeclaration   : TYPE NAME "(" typeList ")" compoundStatement ";" 
-		      	{ }
+		      	{ proc->registerFunction($1,$2);}
 
 
 structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclaration ";" 

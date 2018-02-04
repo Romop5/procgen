@@ -1,6 +1,6 @@
 #include "derivation.h"
 
-void Derivation::addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure)
+bool Derivation::addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure)
 {
 	auto rule = std::make_tuple(predicate,procedure);
 	this->rules[type].push_back(rule);
