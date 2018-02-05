@@ -80,6 +80,8 @@ class Derivation
 	// Run generation
 	void generate(size_t steps = -1);
 
+    // Move next to current
+    void shiftBuffers();
 	// Print the status into stdout
 	void _debug();
 

@@ -42,8 +42,11 @@ using namespace std;
 "struct"	{ return STRUCT;}
 "while"		{ return WHILE;}
 "if"		{ return IF;}
+"return"	{ return RETURN;}
 "else"		{ return ELSE;}
-"="		{ return ASSIGN;}
+"="		    { return ASSIGN;}
+"true"      { yylval.boolean = true; return BOOL;} 
+"false"     { yylval.boolean = false; return BOOL;} 
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
 
 [0-9]+            { yylval.ival = atoi(yytext); return INTEGER; }

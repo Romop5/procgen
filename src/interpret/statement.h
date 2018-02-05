@@ -60,6 +60,7 @@ class Return: public Statement
 	std::shared_ptr<Statement> input;
 	std::shared_ptr<Statement> output;
 	public:
+    void bindInput(std::shared_ptr<Function> function ) { input = std::dynamic_pointer_cast<Statement>(function); } 
 	virtual bool operator()(RunStatus&);
 };
 

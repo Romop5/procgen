@@ -35,21 +35,23 @@ void yyerror(Generation* proc, const char *s);
 %parse-param {Generation* proc}
 
 %union {
-	int ival;
-	float fval;
-	char *sval;
-	size_t nodeId;
+	int     ival;
+	float   fval;
+	char    *sval;
+	size_t  nodeId;
+    bool    boolean;
 }
 
-%token <ival> INTEGER CHAR BOOL
+%token <ival> INTEGER CHAR 
 %token <fval> FLOAT 
+%token <boolean> BOOL
 %token <sval> STRING
 
 %token <sval> TYPE
 %token <sval> NAME 
 
 /* Keywords */
-%token IF STRUCT USING RULE PARAMETER  ELSE WHILE
+%token IF STRUCT USING RULE PARAMETER  ELSE WHILE RETURN
 %token LPAR     "("
 %token RPAR     ")"
 %token LANGL    "["
@@ -104,7 +106,7 @@ assign                 : "=" literal ";"
 		      	{ proc->registerParameter($<sval>0,$<sval>-1,false);}
 
 
-functionDeclaration   : TYPE NAME "(" typeList ")" compoundStatement ";" 
+functionDeclaration   : TYPE NAME "(" typeList ")" compoundStatement 
 		      	{ proc->registerFunction($1,$2);}
 
 
@@ -112,6 +114,7 @@ structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclar
 
 
 typeList                 : typeDeclaration | typeList "," typeDeclaration
+                            | %empty
 
 typeDeclaration          : TYPE NAME 
 			 {proc->typeList.push_back(sTypeDeclaration($1,$2));}
@@ -121,14 +124,16 @@ compoundStatement	  : "{" {proc->pushBody();} statements "}"
 
 statements                : statement statements | %empty 
 
-statement                 : functionCall ";" | declaration | assignment
-                                | ifStatement | whileStatement 
+statement                 : callStatement | declaration | assignment
+                                | ifStatement | whileStatement | return
 
 declaration               : TYPE NAME declarationEnd
 			  { proc->registerLocalVariable($1,$2); }
 
 declarationEnd           : ";" | "=" expression ";" 
 
+callStatement           : functionCall ";" 
+                         { proc->makeCallStatement(); } 
 functionCall             : NAME "(" argumentList ")" 
 			 { proc->createFunctionCall($1); }
 
@@ -150,6 +155,14 @@ elseClause               : ELSE compoundStatement
 whileStatement           : WHILE "(" expression ")" compoundStatement
 			  { proc->makeWhile();}
 
+return                  :  RETURN returnEnd ";"
+
+returnEnd               :  %empty 
+                        { proc->makeReturn(false); } 
+                        |  expression
+                        { proc->makeReturn(true); } 
+
+
 expression                : literal
 			    | 	functionCall 
 			  
@@ -170,7 +183,10 @@ literal                   : INTEGER
 				{ proc->createLiteralInteger($1); } 
 			  | FLOAT
 				{ proc->createLiteralFloat($1); } 
-			  | STRING
+			  | STRING 
+              | BOOL
+				{ proc->createLiteralBool($1); } 
+                
 
 %%
 

@@ -31,6 +31,12 @@ namespace ProcGen {
 		Generation();
 		bool parseFile(const std::string& file);
 
+        // Run inicialization
+        bool runInit();
+
+        // Run real derivation
+        bool run(int maximumSteps);
+
 		bool isReady()	{ return flagIsParsed; }
 
 		/*
@@ -53,6 +59,7 @@ namespace ProcGen {
 
 		std::shared_ptr<Function> createExpressionOperation(char operation);
 
+		void createLiteralBool(bool value);
 		void createLiteralInteger(int value);
 		void createLiteralFloat(float value);
 
@@ -64,6 +71,8 @@ namespace ProcGen {
 
 
 		bool registerLocalVariable(const char* type, const char* name);
+
+        bool makeReturn(bool hasExpression);
 		
 		/* Compilation utilities*/
 		std::vector<sTypeDeclaration> typeList;
@@ -79,6 +88,8 @@ namespace ProcGen {
 		bool makeWhile();
 
 		bool makeIfStatement(bool hasElseBranch);
+
+        bool makeCallStatement();
 
 		bool pushBody();
 		std::shared_ptr<Body> popBody();

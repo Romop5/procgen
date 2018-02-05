@@ -15,7 +15,11 @@ int main(int argc, char** argv)
 	pg.parseFile(argv[1]);
 	if(pg.isReady())
 	{
+        if(pg.runInit() == false)
+            return 1;
 		std::cout << "It's dones" << std::endl;
-		//pg.run();
-	}
+		pg.run(3);
+	} else {
+        std::cout << "Failed...\n";
+    }
 }

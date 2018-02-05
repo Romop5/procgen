@@ -1,6 +1,7 @@
 #include "procgen.h"
 #include "parser.hh"
 #include <sstream>
+#include "appender.h"
 
 extern FILE* yyin;
 namespace ProcGen {
@@ -15,6 +16,13 @@ namespace ProcGen {
 
 		registerStandardTypes(typeregister.get());
 		registerStandardFunctions(functionregister.get());
+
+        // Add derivation standards
+        auto derivation = this->der;
+		functionregister->addFunction("appendSymbol",
+             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<AppendSymbol>(derivation));});
+
+        flagIsParsed = true;
 	}
 	
 	bool Generation::parseFile(const std::string& file)
@@ -29,6 +37,25 @@ namespace ProcGen {
 		return true;
 	}
 
+    bool Generation::runInit()
+    {
+        auto initFunction = functionregister->getFunc("init");
+        if(initFunction == nullptr)
+        {
+            error(0,0,"Missing init() function");
+            return false;
+        }
+        RunStatus rs;
+        (*initFunction)(rs);
+        std::cout << "Initialized...\n";
+        return true;
+    }
+    
+    bool Generation::run(int maximumSteps)
+    {
+        der->generate(maximumSteps);
+        std::cout << "Done...\n";
+    }
 
 	bool Generation::registerRule(char* name,char* type)
 	{
@@ -185,6 +212,17 @@ namespace ProcGen {
 		return operationBox;	
 	}
 
+    void Generation::createLiteralBool(bool value)
+	{
+		auto val = typeregister->sharedResource("bool");
+		if(!val)
+			error(0,0,"Unexpected error while creating bool resource");
+
+		*(bool*) val->getData() = value;
+		this->expressionsStack.push(functionregister->getHandler(val));
+	}
+
+
 	void Generation::createLiteralInteger(int value)
 	{
 		auto val = typeregister->sharedResource("int");
@@ -257,6 +295,19 @@ namespace ProcGen {
 		return top;
 	}
 
+    bool Generation::makeReturn(bool hasExpression)
+    {
+        auto box = std::make_shared<Return>();
+        if(hasExpression)
+        {
+            auto expr = this->expressionsStack.top(); 
+            this->expressionsStack.pop();
+            box->bindInput(expr);
+        }
+		// Register return
+		this->stackedBodies.top()->appendStatement(box); 
+
+    }
 	bool Generation::makeAssignment(const char* name)
 	{
 		// get resourse
@@ -290,6 +341,15 @@ namespace ProcGen {
 		// Append while to body
 		this->stackedBodies.top()->appendStatement(whileStatement);
 	}
+
+    bool Generation::makeCallStatement()
+    {
+		// Get expression
+		auto expressionTop= this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+        this->stackedBodies.top()->appendStatement(expressionTop);
+    }
 
 	bool Generation::makeIfStatement(bool hasElseBranch)
 	{

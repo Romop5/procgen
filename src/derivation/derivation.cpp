@@ -15,9 +15,12 @@ void Derivation::generate(size_t maxSteps)
 {
 	bool shouldContinue = false;
 	size_t step = 0;
+    // Move next to current buffer
+    this->shiftBuffers();
 	do {
 	std::cout << "Step: " <<step++ <<std::endl;
 	shouldContinue = false;
+	std::cout << "Current string size: " << this->currentString.size() <<std::endl;
 	for(size_t i = 0; i < this->currentString.size(); i++)
 	{
 		// Find a rule for current symbols
@@ -53,9 +56,8 @@ void Derivation::generate(size_t maxSteps)
 			this->appendNextSymbol(sym);
 		}
 	}
-	std::cout << this->nextString.size() << std::endl;
-	this->currentString = this->nextString;
-	this->nextString.clear();
+        // Move next to current buffer
+        this->shiftBuffers();
 	} while (shouldContinue && step < maxSteps);
 }
 
@@ -92,6 +94,14 @@ void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 	std::cout << "Appended\n";
 	std::cout << this->nextString.size() << "\n";
 	std::cout << this << std::endl;
+}
+
+void Derivation::shiftBuffers()
+{
+    std::cout << this->nextString.size() << std::endl;
+	this->currentString = this->nextString;
+	this->nextString.clear();
+
 }
 
 void Derivation::_debug()
