@@ -115,3 +115,14 @@ void Derivation::_debug()
 	std::cout << "Elements count: " << this->currentString.size() << std::endl;
 }
 
+json11::Json Derivation::to_json() const
+{
+    json11::Json::array subjson;
+    
+    for(auto &x : this->currentString)
+    {
+        subjson.push_back(x->to_json());
+    }
+    return subjson;
+}
+

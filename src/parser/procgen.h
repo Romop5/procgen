@@ -8,6 +8,7 @@
 
 #include <string>
 #include <stack>
+#include "json11.hpp"
 
 namespace ProcGen {
 	
@@ -37,11 +38,16 @@ namespace ProcGen {
         // Run real derivation
         bool run(int maximumSteps);
 
+        json11::Json serialize() const;
+
 		bool isReady()	{ return flagIsParsed; }
 
 		/*
 		 *	Utility functions, called by parser
 		 */
+
+        // Prepare local stack
+        bool initializeFunction(char* type);
 
 		bool registerRule(char* name,char* type);
 
@@ -62,6 +68,7 @@ namespace ProcGen {
 		void createLiteralBool(bool value);
 		void createLiteralInteger(int value);
 		void createLiteralFloat(float value);
+        bool createLiteralFromVariable(char* name); 
 
 		bool createFunctionCall(const char* functionName);
 				

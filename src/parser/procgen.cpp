@@ -57,6 +57,21 @@ namespace ProcGen {
         std::cout << "Done...\n";
     }
 
+    
+    bool Generation::initializeFunction(char* type)
+    {
+        this->localStackFrame->clear();
+        auto returnResource = typeregister->sharedResource(type);
+        if(returnResource == nullptr)
+        {
+            error(0,0,"Failed to create %s resource. \n",type);
+            return false;  
+        }
+        // Add special local variable for returning function value
+        this->localStackFrame->addVar("_return", returnResource);
+        return true;
+    }
+
 	bool Generation::registerRule(char* name,char* type)
 	{
 		static int ruleID = 0;
@@ -73,7 +88,10 @@ namespace ProcGen {
 				ruleName.str(), procedure,{typeResource}, nullptr);
 
 		// Get condition
-		auto boolResult= typeregister->sharedResource("bool");
+		//
+		//auto boolResult= typeregister->sharedResource("bool");
+		//TODO
+        auto boolResult = this->localStackFrame->getVar("_return");
 		auto condition= this->stackedBodies.top();
 		this->stackedBodies.pop();
 
@@ -243,6 +261,18 @@ namespace ProcGen {
 		this->expressionsStack.push(functionregister->getHandler(val));
 	}
 
+    bool Generation::createLiteralFromVariable(char* name)
+    {
+        auto res = localStackFrame->getVar(name);
+        if(res == nullptr)
+        {
+            error(0,0,"Undefined variable %s\n", name);
+            return false;
+        }
+        this->expressionsStack.push(functionregister->getHandler(res));
+        return true;
+    }
+
 	bool Generation::createFunctionCall(const char* functionName)
 	{
 		auto functionPointer = functionregister->getFunc(functionName);
@@ -300,9 +330,20 @@ namespace ProcGen {
         auto box = std::make_shared<Return>();
         if(hasExpression)
         {
+
+            // get resourse
+            auto resource = localStackFrame->getVar("_return");
+            auto typeName = typeregister->getTypeName(resource->getBaseId());
+            auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
+
             auto expr = this->expressionsStack.top(); 
             this->expressionsStack.pop();
-            box->bindInput(expr);
+
+            // Bind return box with resources
+            function->bindInput(0,expr);
+            function->bindOutput(resource);
+    
+            box->bindInput(function);
         }
 		// Register return
 		this->stackedBodies.top()->appendStatement(box); 
@@ -319,6 +360,14 @@ namespace ProcGen {
 			error(0,0,"Failed to create assignment for type %s, variable %s\n",
 					typeName.c_str(), name);
 		}
+
+        // Get expression
+		auto expressionTop= this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+        // resource = expressionTop
+        function->bindInput(0,expressionTop);
+        function->bindOutput(resource);
 
 		// Register 
 		this->stackedBodies.top()->appendStatement(function);
@@ -378,4 +427,9 @@ namespace ProcGen {
 		this->stackedBodies.top()->appendStatement(ifStatement);
 	
 	}
+
+    json11::Json Generation::serialize() const
+    {
+        return der->to_json();
+    }    
 }

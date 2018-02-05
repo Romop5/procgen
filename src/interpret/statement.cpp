@@ -48,6 +48,10 @@ bool Body::operator()(RunStatus& stat)
 
 bool Return::operator()(RunStatus& stat)
 {
+    // If provided expression 
+    if(this->input != nullptr) 
+        (*this->input)(stat);
+
 	stat.setStatus(RunStatus::RETURN_REACHED);
 	return true;
 }

@@ -13,6 +13,8 @@
 #include <vector>
 #include <map>
 
+#include "json11.hpp"
+
 class TypeRegister;
 
 enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION};
@@ -33,7 +35,7 @@ class Resource
 	virtual ~Resource() {}
 
 	// Virtual data accessor
-	virtual void* getData() = 0;
+	virtual void* getData() const = 0;
 
 	// Get base type id (registered in TypeRegister)
 	size_t getBaseId() {return baseType;}
@@ -49,6 +51,8 @@ class Resource
 	}
 	*/
 	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
+    
+    virtual json11::Json to_json() const { return json11::Json("UnkResource"); }
 
 };
 
@@ -70,7 +74,7 @@ class AtomicResource : public Resource
 		if(value)
 			delete[] value;
 	}
-	virtual void* getData() {return value;}
+	virtual void* getData() const override {return value;}
 	void setData(void* dt) { this->value = (unsigned char*) dt;}
 	
 	//template<typename T>
@@ -85,7 +89,8 @@ class AtomicResource : public Resource
 	bool copy(const std::shared_ptr<Resource> src);
 	*/
 
-	virtual bool copy(const std::shared_ptr<Resource> src);
+	virtual bool copy(const std::shared_ptr<Resource> src) override;
+    virtual json11::Json to_json() const override;
 
 };
 
@@ -104,9 +109,9 @@ class CompositeResource : public Resource
 
 	std::shared_ptr<Resource> getComponent(size_t index) { return components[index]; }
 	// TODO
-	virtual bool copy(const std::shared_ptr<Resource> src);
-	virtual void* getData(){};
-
+	virtual bool copy(const std::shared_ptr<Resource> src) override;
+	virtual void* getData() const override {};
+    virtual json11::Json to_json() const override;
 };
 
 class CollectionResource : public Resource
@@ -133,9 +138,9 @@ class CollectionResource : public Resource
 	size_t length() {return this->collection.size();}
 	size_t getArrayType() {return this->arrayType;}
 
-	virtual void* getData(){};
+	virtual void* getData() const override {};
 	// TODO
-	virtual bool copy(const std::shared_ptr<Resource> src);
+	virtual bool copy(const std::shared_ptr<Resource> src) override;
 };
 
 #endif

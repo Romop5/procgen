@@ -1,6 +1,7 @@
 #ifndef DERIVATION_H
 #define DERIVATION_H
 #include "interpret.h"
+#include "json11.hpp"
 #include <map>
 
 class DomNode {
@@ -84,6 +85,8 @@ class Derivation
     void shiftBuffers();
 	// Print the status into stdout
 	void _debug();
+
+    json11::Json to_json() const;
 
 	const std::vector<std::shared_ptr<Resource>> getCurrentSymbolList() const
 	{

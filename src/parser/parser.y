@@ -94,7 +94,7 @@ usingVariant        : 	STRUCT "{" structureDeclaration "}"
 		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
                     |   TYPE
 			{ proc->registerAlias($<sval>-1, $1);}
-                    |   RULE TYPE compoundStatement compoundStatement 
+                    |   RULE TYPE { proc->initializeFunction("bool"); } compoundStatement compoundStatement 
 			{ proc->registerRule($<sval>-1, $2); }
 
 
@@ -106,7 +106,7 @@ assign                 : "=" literal ";"
 		      	{ proc->registerParameter($<sval>0,$<sval>-1,false);}
 
 
-functionDeclaration   : TYPE NAME "(" typeList ")" compoundStatement 
+functionDeclaration   : TYPE NAME { proc->initializeFunction($1);} "(" typeList ")" compoundStatement 
 		      	{ proc->registerFunction($1,$2);}
 
 
@@ -124,15 +124,15 @@ compoundStatement	  : "{" {proc->pushBody();} statements "}"
 
 statements                : statement statements | %empty 
 
-statement                 : callStatement | declaration | assignment
-                                | ifStatement | whileStatement | return
+statement                 : callStatement ";" | declaration ";" | assignment ";"
+                                | ifStatement  | whileStatement | return ";"
 
 declaration               : TYPE NAME declarationEnd
 			  { proc->registerLocalVariable($1,$2); }
 
 declarationEnd           : ";" | "=" expression ";" 
 
-callStatement           : functionCall ";" 
+callStatement           : functionCall
                          { proc->makeCallStatement(); } 
 functionCall             : NAME "(" argumentList ")" 
 			 { proc->createFunctionCall($1); }
@@ -155,7 +155,7 @@ elseClause               : ELSE compoundStatement
 whileStatement           : WHILE "(" expression ")" compoundStatement
 			  { proc->makeWhile();}
 
-return                  :  RETURN returnEnd ";"
+return                  :  RETURN returnEnd 
 
 returnEnd               :  %empty 
                         { proc->makeReturn(false); } 
@@ -164,7 +164,7 @@ returnEnd               :  %empty
 
 
 expression                : literal
-			    | 	functionCall 
+			                | 	functionCall 
 			  
                             |   expression "-" expression
 				{ auto result = proc->createExpressionOperation('-'); }
@@ -186,6 +186,8 @@ literal                   : INTEGER
 			  | STRING 
               | BOOL
 				{ proc->createLiteralBool($1); } 
+              | NAME 
+                { proc->createLiteralFromVariable($1); } 
                 
 
 %%

@@ -18,7 +18,10 @@ int main(int argc, char** argv)
         if(pg.runInit() == false)
             return 1;
 		std::cout << "It's dones" << std::endl;
-		pg.run(3);
+		pg.run(5);
+        json11::Json result = pg.serialize();
+        std::cout << "Result" << result.dump() << "\n";
+        
 	} else {
         std::cout << "Failed...\n";
     }
