@@ -130,7 +130,7 @@ statement                 : callStatement ";" | declaration ";" | assignment ";"
 declaration               : TYPE NAME declarationEnd
 			  { proc->registerLocalVariable($1,$2); }
 
-declarationEnd           : ";" | "=" expression ";" 
+declarationEnd           : %empty | "=" expression 
 
 callStatement           : functionCall
                          { proc->makeCallStatement(); } 

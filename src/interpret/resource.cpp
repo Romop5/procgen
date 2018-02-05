@@ -1,5 +1,6 @@
 #include "resource.h"
 #include "typereg.h"
+#include <sstream>
 
 bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 {
@@ -79,12 +80,14 @@ bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 
 json11::Json CompositeResource::to_json() const
 {
-    json11::Json::array arrayOfJsons;
+    json11::Json::object object;
 	for(size_t i = 0; i < this->components.size(); i++)
 	{
-		arrayOfJsons.push_back(this->components.at(i)->to_json());
+        std::stringstream objectName;
+        objectName << i;
+		object[objectName.str()] = (this->components.at(i)->to_json());
     }
-    return json11::Json(arrayOfJsons);
+    return json11::Json(object);
 }
 
 

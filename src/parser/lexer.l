@@ -33,7 +33,7 @@ using namespace std;
     LOC_STEP(yylloc);
 %}
 
-[\n+]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
+[[\n]+]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
 [ \t]        
 
 "parameter"	{ return USING;}
