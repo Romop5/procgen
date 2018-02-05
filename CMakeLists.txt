@@ -66,12 +66,12 @@ target_link_libraries(procgen procedural)
 ############    PARSER EXAMPLE 				   ####################
 ###############################################################################
 
-if (BUILD_PARSER)
+if (PROCGEN_PARSER)
 
 add_executable(parser test/parser.cpp)
 target_link_libraries(parser procgen)
 
-endif(BUILD_PARSER)
+endif(PROCGEN_PARSER)
 
 
 
@@ -79,7 +79,7 @@ endif(BUILD_PARSER)
 ############    TESTS                                      ####################
 ###############################################################################
 
-if (BUILD_TESTS)
+if (PROCGEN_TESTS)
 
     enable_testing()
 
@@ -105,12 +105,12 @@ if (BUILD_TESTS)
     target_link_libraries(userfunc procedural)
 
 
-endif(BUILD_TESTS)
+endif(PROCGEN_TESTS)
 ################################################################################
 ############    EXAMPLES                                    ####################
 ###############################################################################
 
-if (BUILD_EXAMPLES)
+if (PROCGEN_EXAMPLES)
 
     add_executable(algae examples/algae.cpp)
     target_link_libraries(algae procedural)
@@ -135,5 +135,5 @@ if (BUILD_EXAMPLES)
     target_link_libraries(3dcantor procedural)
     target_link_libraries(3dcantor glm)
 
-endif(BUILD_EXAMPLES)
+endif(PROCGEN_EXAMPLES)
 
