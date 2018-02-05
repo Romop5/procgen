@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
-option(BUILD_TESTS "Build tests - use make test" OFF)
-option(BUILD_EXAMPLES "Build examples" OFF)
-option(BUILD_PARSER "Build example parser" OFF)
+option(PROCGEN_TESTS "Build tests - use make test" OFF)
+option(PROCGEN_EXAMPLES "Build examples" OFF)
+option(PROCGEN_PARSER "Build example parser" OFF)
 
-project(ibp)
+project(ProcGen)
 
+# Add vendors (3rd libraries)
+
+add_subdirectory(vendors)
 
 ###############################################################################
 ############    DEFINE SOURCE FILES 			   ####################
@@ -37,6 +40,7 @@ set(DERIVATION_SOURCE
 )
 
 add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+target_link_libraries(procedural json11)
 target_compile_features(procedural PUBLIC cxx_auto_type)
 target_include_directories(procedural PUBLIC src/interpret src/derivation)
 

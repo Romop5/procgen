@@ -1,0 +1,3 @@
+[submodule "vendor/json11"]
+	path = vendor/json11
+	url = https://github.com/dropbox/json11
