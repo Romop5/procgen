@@ -77,7 +77,7 @@ namespace ProcGen {
 		bool createArgument();
 
 
-		bool registerLocalVariable(const char* type, const char* name);
+		bool registerLocalVariable(const char* type, const char* name,bool hasExp);
 
         bool makeReturn(bool hasExpression);
 		
@@ -102,6 +102,8 @@ namespace ProcGen {
 		std::shared_ptr<Body> popBody();
 		// This stacked structure is used to handle N-anry 
 		std::stack<std::shared_ptr<Body>> stackedBodies;
+    
+        bool hasType(const char* name);
 	};
 }
 #endif

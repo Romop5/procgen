@@ -165,6 +165,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
             return false;
         return true;
     }
+    
+    bool hasType(const std::string& name)
+    {
+        auto it = getTypeId(name);
+        return hasTypeWithID(it);
+    }
+
 	private:
 	TypeId highest;
 	std::map<std::string,TypeId> names;

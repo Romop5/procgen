@@ -12,6 +12,10 @@ class AppendSymbol : public Function
 	
 		bool operator()(RunStatus& rs)
 		{
+            if(_getInput(0) != nullptr)
+            {
+                (*_getInput(0))(rs);
+            }
 
 			std::shared_ptr<Resource> src = derivation->tr->sharedResource(_getInput(0)->getOutput()->getBaseId());
 			src->copy(_getInput(0)->getOutput());

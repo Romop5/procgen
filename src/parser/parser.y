@@ -15,7 +15,8 @@ using namespace ProcGen;
 #include "procgen.h"
 using namespace ProcGen;
 // stuff from flex that bison needs to know about:
-extern "C" int yylex();
+//extern "C" int yylex();
+extern int yylex(ProcGen::Generation* proc);
 //extern "C" int yyparse();
 //extern "C" FILE *yyin;
 
@@ -33,6 +34,7 @@ void yyerror(Generation* proc, const char *s);
 %define parse.error verbose
 
 %parse-param {Generation* proc}
+%lex-param {proc}
 
 %union {
 	int     ival;
@@ -128,9 +130,11 @@ statement                 : callStatement ";" | declaration ";" | assignment ";"
                                 | ifStatement  | whileStatement | return ";"
 
 declaration               : TYPE NAME declarationEnd
-			  { proc->registerLocalVariable($1,$2); }
 
-declarationEnd           : %empty | "=" expression 
+declarationEnd           :      %empty 
+			  { proc->registerLocalVariable($<sval>-1,$<sval>0,false); }
+                            |   "=" expression 
+			  { proc->registerLocalVariable($<sval>-1,$<sval>0,true); }
 
 callStatement           : functionCall
                          { proc->makeCallStatement(); } 

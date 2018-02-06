@@ -83,11 +83,15 @@ json11::Json CompositeResource::to_json() const
     json11::Json::object object;
 	for(size_t i = 0; i < this->components.size(); i++)
 	{
-        std::stringstream objectName;
-        objectName << i;
-		object[objectName.str()] = (this->components.at(i)->to_json());
+		object[getComponentName(i)] = (this->components.at(i)->to_json());
     }
     return json11::Json(object);
 }
 
 
+const std::string CompositeResource::getComponentName(size_t index) const
+{
+    auto typeDesc = tr->getType(baseType);    
+    auto compositeDescription = std::dynamic_pointer_cast<CompositeType>(typeDesc);
+    return compositeDescription->getComponentName(index);
+}

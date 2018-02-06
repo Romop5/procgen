@@ -53,3 +53,8 @@ size_t CompositeType::getComponentPositionByName(const std::string name)
 	return -1;
 
 }
+
+const std::string CompositeType::getComponentName(size_t componentID)
+{
+   return this->componentsNames[componentID]; 
+}

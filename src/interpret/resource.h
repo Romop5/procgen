@@ -112,6 +112,7 @@ class CompositeResource : public Resource
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
 	virtual void* getData() const override {};
     virtual json11::Json to_json() const override;
+    const std::string getComponentName(size_t index) const;
 };
 
 class CollectionResource : public Resource

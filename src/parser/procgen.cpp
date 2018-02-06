@@ -305,12 +305,22 @@ namespace ProcGen {
 		this->argumentVector.push_back(expr);
 	}
 
-	bool Generation::registerLocalVariable(const char* type, const char* name)
+    bool Generation::registerLocalVariable(const char* type, const char* name,bool hasExp)
 	{
 		auto resource = typeregister->sharedResource(type);
 		if(resource == nullptr)
-			return false;
-		return this->localStackFrame->addVar(name,resource);
+        {
+            error(0,0,"Invalid type %s\n", type);
+            return false;
+        }
+		this->localStackFrame->addVar(name,resource);
+
+        // if has = expression
+        if(hasExp)
+        {
+            return this->makeAssignment(name);
+        }
+        return true;
 	}
 
 	bool Generation::pushBody()
@@ -432,4 +442,8 @@ namespace ProcGen {
     {
         return der->to_json();
     }    
+    bool Generation::hasType(const char* name)
+    {
+        return typeregister->hasType(name);
+    }
 }

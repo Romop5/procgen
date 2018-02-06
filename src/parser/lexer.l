@@ -2,8 +2,8 @@
 #include <cstdio>
 #include <iostream>
 using namespace std;
-#define YY_DECL extern "C" int yylex()
-#include "derivation.h"
+#define YY_DECL int yylex(ProcGen::Generation* proc)
+//#define YY_DECL extern "C" int yylex()
 #include "parser.hh"  // to get the token types that we return
 #include <memory>
 
@@ -22,6 +22,7 @@ using namespace std;
     (name).first_column = (name).last_column+len;     \
 
 #define YY_USER_ACTION LOC_MOVEBY(yylloc,yyleng)
+//#define YY_DECL int yylex(ProcGen::Generation* proc)
 
 %}
 
@@ -33,7 +34,7 @@ using namespace std;
     LOC_STEP(yylloc);
 %}
 
-[[\n]+]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
+[\n]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
 [ \t]        
 
 "parameter"	{ return USING;}
@@ -54,7 +55,7 @@ using namespace std;
 	cout << "Got string: " << yytext << endl;
 	yylval.sval = strdup(yytext);
 	// detect if it is type or identifier
-	if(strcmp(yylval.sval,"int") == 0)
+    if(proc->hasType(yytext))
 		return TYPE;
 	return NAME;
 }

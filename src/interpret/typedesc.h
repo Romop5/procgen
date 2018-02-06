@@ -47,6 +47,7 @@ class CompositeType : public AbstractType
 
 	bool hasComponentWithName(const std::string name);
 	size_t getComponentPositionByName(const std::string name);
+    const std::string getComponentName(size_t componentID);
 		
 };
 class CollectionType : public AbstractType
