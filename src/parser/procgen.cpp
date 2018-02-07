@@ -3,6 +3,8 @@
 #include <sstream>
 #include "appender.h"
 
+#include <cstdarg>
+
 extern FILE* yyin;
 namespace ProcGen {
 
@@ -23,14 +25,15 @@ namespace ProcGen {
              [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<AppendSymbol>(derivation));});
 
         flagIsParsed = true;
+        hasAnyError = false;;
 	}
 	
 	bool Generation::parseFile(const std::string& file)
 	{
-		yydebug = 1;
+		////yydebug = 1;/
 		yyin = fopen(file.c_str(),"r");
 		if(yyin == NULL)
-			error(1,0,"Failed to open file ...");
+			errorMessage("Failed to open file ...");
 		do {
 			yyparse(this);
 		} while (!feof(yyin));
@@ -42,7 +45,7 @@ namespace ProcGen {
         auto initFunction = functionregister->getFunc("init");
         if(initFunction == nullptr)
         {
-            error(0,0,"Missing init() function");
+            errorMessage("Missing init() function");
             return false;
         }
         RunStatus rs;
@@ -64,7 +67,7 @@ namespace ProcGen {
         auto returnResource = typeregister->sharedResource(type);
         if(returnResource == nullptr)
         {
-            error(0,0,"Failed to create %s resource. \n",type);
+            errorMessage("Failed to create %s resource. \n",type);
             return false;  
         }
         // Add special local variable for returning function value
@@ -117,10 +120,9 @@ namespace ProcGen {
 		for(auto &x: typelist)
 		{
 			//TODO: check if type exists
-			std::cout << "registerStruct" << x.mType << std::endl;
-			std::string str = x.mType;
-			types.push_back(typeregister->getTypeId(str));
-			names.push_back(x.mName);
+            std::cout << "registerStruct" << std::endl;
+            types.push_back(x.resource->getBaseId());
+			names.push_back(x.name);
 		}
 		// Clear types
 		typelist.clear();
@@ -134,7 +136,7 @@ namespace ProcGen {
 		auto resource = typeregister->sharedResource(type);
 		if(resource == nullptr)
 		{
-			error(0,0,"Unk type %s\n", type);
+			errorMessage("Unk type %s\n", type);
 		}
 
 		globalVariables->addVar(name,resource);
@@ -149,11 +151,10 @@ namespace ProcGen {
 
 	bool Generation::registerFunction(char* type, char* name)
 	{
-		// Create output resource
-		auto resource = typeregister->sharedResource(type);
+        auto resource = localStackFrame->getVar("_return");
 		if(resource == nullptr)
 		{
-			error(0,0,"Unknown type: %s\n", type);
+			errorMessage("Unknown type: %s\n", type);
 		}
 
 		// Get the top of statement stack
@@ -164,8 +165,14 @@ namespace ProcGen {
 		std::vector<std::shared_ptr<Resource>> inputResources;
 	
 		// type list
+        std::cout << "Registering function " << name << "with num. of params:"
+            << typeList.size() << "\n";
 		for(auto &typeDesc: typeList)
-			inputResources.push_back(typeregister->sharedResource(typeDesc.mType));
+        {
+			inputResources.push_back(typeDesc.resource);
+        }
+
+        typeList.clear();
 
 		return functionregister->addCompositeFunction(name, 
 			statementTop, inputResources,resource);	
@@ -195,7 +202,7 @@ namespace ProcGen {
 		if(a != b)
 		{
 			//TODO
-			error(0,0,"Semantic error: types don't match");
+			errorMessage("Semantic error: types don't match");
 		}
 
 		// TODO: watch out for aliases
@@ -209,7 +216,7 @@ namespace ProcGen {
 			case '/': operationName = "Div"; break;
 			case '*': operationName = "Mul"; break;
 			default:
-				  error(0,0,"Undefined operation");
+				  errorMessage("Undefined operation");
 		}
 
 		// Create operation function
@@ -218,7 +225,7 @@ namespace ProcGen {
 		auto operationBox = functionregister->getFunc(operationName+":"+type);
 		if(!operationBox)
 		{
-			error(0,0,"Failed to create an instance for operation");
+			errorMessage("Failed to create an instance for operation");
 		}
 
 		auto tmpResult = typeregister->sharedResource(a);
@@ -234,7 +241,7 @@ namespace ProcGen {
 	{
 		auto val = typeregister->sharedResource("bool");
 		if(!val)
-			error(0,0,"Unexpected error while creating bool resource");
+			errorMessage("Unexpected error while creating bool resource");
 
 		*(bool*) val->getData() = value;
 		this->expressionsStack.push(functionregister->getHandler(val));
@@ -245,7 +252,7 @@ namespace ProcGen {
 	{
 		auto val = typeregister->sharedResource("int");
 		if(!val)
-			error(0,0,"Unexpected error while creating int resource");
+			errorMessage("Unexpected error while creating int resource");
 
 		*(int*) val->getData() = value;
 		this->expressionsStack.push(functionregister->getHandler(val));
@@ -255,7 +262,7 @@ namespace ProcGen {
 	{
 		auto val = typeregister->sharedResource("float");
 		if(!val)
-			error(0,0,"Unexpected error while creating flaot resource");
+			errorMessage("Unexpected error while creating flaot resource");
 
 		*(float*) val->getData() = value;
 		this->expressionsStack.push(functionregister->getHandler(val));
@@ -266,7 +273,7 @@ namespace ProcGen {
         auto res = localStackFrame->getVar(name);
         if(res == nullptr)
         {
-            error(0,0,"Undefined variable %s\n", name);
+            errorMessage("Undefined variable %s\n", name);
             return false;
         }
         this->expressionsStack.push(functionregister->getHandler(res));
@@ -281,11 +288,11 @@ namespace ProcGen {
         auto resource = compositeFunction->getOutput();
         if(resource == nullptr)
         {
-            error(0,0,"Failed to get resource");
+            errorMessage("Failed to get resource");
         }
         if(resource->getResourceType() != ResourceType::COMPOSITE)
         {
-            error(0,0,"Isn't composite at all.");
+            errorMessage("Isn't composite at all.");
         }
         auto compositeResource = 
                 std::dynamic_pointer_cast<CompositeResource>(resource);
@@ -293,7 +300,7 @@ namespace ProcGen {
         auto position = compositeResource->getComponentPosition(member);
         if(position < 0)
         {
-            error(0,0,"The structure doesn't contain the name");
+            errorMessage("The structure doesn't contain the name");
         }
 
         TypeId memberType = compositeResource->getComponentType(position);
@@ -320,7 +327,7 @@ namespace ProcGen {
 		if(functionPointer == nullptr)
 		{
 			// if functionName doesn't exist
-			error(0,0,"Failed to get function '%s'", functionName);
+			errorMessage("Failed to get function '%s'", functionName);
 			return false;
 		}
 
@@ -351,7 +358,7 @@ namespace ProcGen {
 		auto resource = typeregister->sharedResource(type);
 		if(resource == nullptr)
         {
-            error(0,0,"Invalid type %s\n", type);
+            errorMessage("Invalid type %s\n", type);
             return false;
         }
 		this->localStackFrame->addVar(name,resource);
@@ -359,6 +366,8 @@ namespace ProcGen {
         // if has = expression
         if(hasExp)
         {
+            // create expression with name
+            this->expressionsStack.push(functionregister->getHandler(resource));
             return this->makeAssignment(name);
         }
         return true;
@@ -384,17 +393,24 @@ namespace ProcGen {
 
             // get resourse
             auto resource = localStackFrame->getVar("_return");
-            auto typeName = typeregister->getTypeName(resource->getBaseId());
+      /*      auto typeName = typeregister->getTypeName(resource->getBaseId());
             auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
 
-            auto expr = this->expressionsStack.top(); 
-            this->expressionsStack.pop();
 
             // Bind return box with resources
             function->bindInput(0,expr);
             function->bindOutput(resource);
+*/
+
+            auto expr = this->expressionsStack.top(); 
+            this->expressionsStack.pop();
+
+            auto genericCopy = std::make_shared<GenericCopy>();
+            genericCopy->bindInput(0,functionregister->getHandler(resource));
+            genericCopy->bindInput(1,expr);
+            
     
-            box->bindInput(function);
+            box->bindInput(genericCopy);
         }
 		// Register return
 		this->stackedBodies.top()->appendStatement(box); 
@@ -408,7 +424,7 @@ namespace ProcGen {
 		auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
 		if(function == nullptr)
 		{
-			error(0,0,"Failed to create assignment for type %s, variable %s\n",
+			errorMessage("Failed to create assignment for type %s, variable %s\n",
 					typeName.c_str(), name);
 		}
 
@@ -492,4 +508,34 @@ namespace ProcGen {
     {
         return typeregister->hasType(name);
     }
+
+
+    bool Generation::registerFormalParameter(sTypeDeclaration& parameter)
+    {
+        this->localStackFrame->addVar(parameter.name,parameter.resource);
+        return true;
+    }
+
+    bool Generation::errorMessage(const char* message, ...)
+    {
+        va_list parameters;
+        fprintf(stderr,"[Parser]");
+        vfprintf(stderr, message, parameters);
+        this->hasAnyError = true;
+    }
+    void Generation::setDebugOn(bool state)
+    {
+        yydebug = 0;
+        if(state)
+            yydebug = 1;
+    }
+
+    sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
+    {
+        sTypeDeclaration result;
+        result.name = name;
+        result.resource = typeregister->sharedResource(type);
+        return result;
+    }
 }
+

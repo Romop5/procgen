@@ -57,10 +57,26 @@ class FunctionCall : public Function
 		for(int i=0; i < cf->inputs.size();i++)
 		{
 
+            std::string dmp = this->_getInput(i)->getOutput()->to_json().dump();
+            std::cout << "Argument[in] " << i << "'" << dmp  << "'" << std::endl;
 			cf->inputs[i]->copy(this->_getInput(i)->getOutput());
+            dmp = cf->inputs[i]->to_json().dump();
+            std::cout << "Argument[inside] " << i << "'" << dmp  << "'" << std::endl;
 		}
 		// process function
+		if(this->getOutput() != nullptr)
+        {
+            std::string dmp = this->getOutput()->to_json().dump();
+            std::cout << "Output[before] '" << dmp << "'" << std::endl;
+        }
+
 		bool result = (*cf->core)(stat);
+
+        if(this->getOutput() != nullptr)
+        {
+            std::string dmp = this->getOutput()->to_json().dump();
+            std::cout << "Output[after] '" << dmp << "'" << std::endl;
+        }
 
 		// copy result
 		//if(this->getOutput() != nullptr)

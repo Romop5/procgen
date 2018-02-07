@@ -11,6 +11,7 @@ int main(int argc, char** argv)
 	}
 
 	ProcGen::Generation pg;
+    pg.setDebugOn(false);
 
 	pg.parseFile(argv[1]);
 	if(pg.isReady())

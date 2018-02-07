@@ -120,7 +120,12 @@ typeList                 : typeDeclaration | typeList "," typeDeclaration
                             | %empty
 
 typeDeclaration          : TYPE NAME 
-			 {proc->typeList.push_back(sTypeDeclaration($1,$2));}
+			 {sTypeDeclaration temp = proc->fillTypeDeclaration($1,$2);
+              proc->typeList.push_back(temp);
+              proc->registerFormalParameter(temp);
+              std::cout << "typeList " << proc->typeList.size() << std::endl;
+             }
+
 
 
 compoundStatement	  : "{" {proc->pushBody();} statements "}" 

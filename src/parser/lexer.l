@@ -37,7 +37,7 @@ using namespace std;
 [\n]        { LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  }
 [ \t]        
 "//"[^\n]* 
-"//"[^\\]*"\\\\" 
+"/*"[^*]*"*/" 
 
 "parameter"	{ return USING;}
 "rule"		{ return RULE;}

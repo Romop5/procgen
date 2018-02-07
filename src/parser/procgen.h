@@ -11,13 +11,10 @@
 #include "json11.hpp"
 
 namespace ProcGen {
-	
 	class sTypeDeclaration {
 		public:
-		sTypeDeclaration(char* type, char* name)
-			: mType(type), mName(name) {}
-		std::string mType;
-		std::string mName;
+		std::shared_ptr<Resource>   resource;
+		std::string                 name;
 	};
 
 	class Generation {
@@ -28,6 +25,7 @@ namespace ProcGen {
 		std::shared_ptr<VariableReg> 	globalVariables;
 		std::shared_ptr<Derivation> 	der;
 		bool	flagIsParsed;
+        bool    hasAnyError;
 		public:
 		Generation();
 		bool parseFile(const std::string& file);
@@ -42,6 +40,10 @@ namespace ProcGen {
 
 		bool isReady()	{ return flagIsParsed; }
 
+        // Error report
+        bool errorMessage(const char* message, ...);
+
+        void setDebugOn(bool state);
 		/*
 		 *	Utility functions, called by parser
 		 */
@@ -105,6 +107,12 @@ namespace ProcGen {
 		std::stack<std::shared_ptr<Body>> stackedBodies;
     
         bool hasType(const char* name);
+        
+        bool registerFormalParameter(sTypeDeclaration& parameter);
+
+        sTypeDeclaration fillTypeDeclaration(char* type, char* name);
 	};
+
+
 }
 #endif
