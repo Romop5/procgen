@@ -21,7 +21,6 @@ extern int yylex(ProcGen::Generation* proc);
 //extern "C" FILE *yyin;
 
 
-const std::string typeToString(size_t type);
 //void yyerror(Interpret& interpret, const char *s);
 void yyerror(Generation* proc, const char *s);
 
@@ -64,13 +63,17 @@ void yyerror(Generation* proc, const char *s);
 %token COMMA    ","
 %token ASSIGN	"="
 %token EQ       "=="
+%token NOTEQ   "!="
 %token MINUS    "-"
 %token PLUS     "+"
 %token DIV      "/"
 %token MUL      "*"
 %token DOT      "."
+
+%token GREATER ">"
+%token LESS    "<"
 // Operators
-%left "=" 
+%left EQ NOTEQ
 %left GREATER LESS
 
 %left "-" 
@@ -97,7 +100,8 @@ usingVariant        : 	STRUCT "{" structureDeclaration "}"
 		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
                     |   TYPE
 			{ proc->registerAlias($<sval>-1, $1);}
-                    |   RULE TYPE { proc->initializeFunction("bool"); } compoundStatement compoundStatement 
+                    |   RULE TYPE { proc->initializeRule($2); } compoundStatement 
+                        { proc->ruleProcedure($2); } compoundStatement 
 			{ proc->registerRule($<sval>-1, $2); }
 
 
@@ -176,6 +180,14 @@ returnEnd               :  %empty
 expression                : literal
 			                | 	functionCall 
 			  
+                            |   expression "<" expression
+				{ auto result = proc->createExpressionOperation('<'); }
+                            |   expression ">" expression
+				{ auto result = proc->createExpressionOperation('>'); }
+                            |   expression "==" expression
+				{ auto result = proc->createExpressionOperation('='); }
+                            |   expression "!=" expression
+				{ auto result = proc->createExpressionOperation('!'); }
                             |   expression "-" expression
 				{ auto result = proc->createExpressionOperation('-'); }
                             |   expression "+" expression
@@ -263,20 +275,4 @@ void yyerror(Generation* proc, const char *s) {
 	std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
 	exit(-1);
 }
-
-const std::string typeToString(size_t type)
-{
-	switch(type)
-	{
-		case INTEGER:
-			return "int";
-		case FLOAT: 
-			return "float";
-		case CHAR:
-			return "char";
-		default:
-			return "unk";
-	}
-}
-
 

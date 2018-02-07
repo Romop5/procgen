@@ -170,6 +170,21 @@ class FloatToBool:public Function
 
 
 
+// Define a binary logic operatorion OPNAME<type> 
+#define DEF_BINARY_LOGIC_OP(OPNAME,OPERATOR)\
+template<typename T>\
+class OPNAME: public Function\
+{\
+	public:\
+	virtual bool operator()(RunStatus& stat)\
+	{\
+		if(_doInputs(stat)) return true;\
+		bool out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
+		*(bool*)(getOutput()->getData()) = out;\
+		return false;\
+	}\
+};
+
 
 
 // Define a binary operatorion OPNAME<type> 
@@ -228,7 +243,8 @@ DEF_BINARY_OP(Add,+);
 DEF_BINARY_OP(Sub,-);
 DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
-DEF_BINARY_OP(Greater,>);
-DEF_BINARY_OP(Less,<);
-DEF_BINARY_OP(Eq,==);
+DEF_BINARY_LOGIC_OP(Greater,>);
+DEF_BINARY_LOGIC_OP(Less,<);
+DEF_BINARY_LOGIC_OP(Eq,==);
+DEF_BINARY_LOGIC_OP(NotEq,!=);
 #endif

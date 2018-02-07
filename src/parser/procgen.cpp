@@ -86,7 +86,8 @@ namespace ProcGen {
 
 		std::stringstream ruleName;
 	       	ruleName << "rule" << ruleID;
-		auto typeResource = typeregister->sharedResource(type);
+		//auto typeResource = typeregister->sharedResource(type);
+		auto typeResource = localStackFrame->getVar("this"); 
 		functionregister->addCompositeFunction(
 				ruleName.str(), procedure,{typeResource}, nullptr);
 
@@ -94,10 +95,11 @@ namespace ProcGen {
 		//
 		//auto boolResult= typeregister->sharedResource("bool");
 		//TODO
-        auto boolResult = this->localStackFrame->getVar("_return");
+        auto boolResult = ruleDefinition.conditionReturn;
 		auto condition= this->stackedBodies.top();
 		this->stackedBodies.pop();
 
+        typeResource = this->ruleDefinition.conditionReturn;
 		std::stringstream conditionName;
 	       	conditionName	<< "condition" << ruleID;
 		functionregister->addCompositeFunction(
@@ -215,6 +217,10 @@ namespace ProcGen {
 			case '-': operationName = "Sub"; break;
 			case '/': operationName = "Div"; break;
 			case '*': operationName = "Mul"; break;
+			case '>': operationName = "Greater"; break;
+			case '<': operationName = "Less"; break;
+			case '=': operationName = "Eq"; break;
+			case '!': operationName = "NotEq"; break;
 			default:
 				  errorMessage("Undefined operation");
 		}
@@ -236,6 +242,7 @@ namespace ProcGen {
 		this->expressionsStack.push(operationBox);
 		return operationBox;	
 	}
+
 
     void Generation::createLiteralBool(bool value)
 	{
@@ -523,8 +530,11 @@ namespace ProcGen {
     bool Generation::errorMessage(const char* message, ...)
     {
         va_list parameters;
+        va_start(parameters,message); 
         fprintf(stderr,"[Parser]");
         vfprintf(stderr, message, parameters);
+        fprintf(stderr,"Position: %d.%d\n", yylloc.first_line,yylloc.first_column);
+        va_end(parameters);
         this->hasAnyError = true;
     }
     void Generation::setDebugOn(bool state)
@@ -540,6 +550,24 @@ namespace ProcGen {
         result.name = name;
         result.resource = typeregister->sharedResource(type);
         return result;
+    }
+
+    bool Generation::initializeRule(char* typeName)
+    {
+        this->initializeFunction("bool");
+        auto thisResource = typeregister->sharedResource(typeName);
+        this->localStackFrame->addVar("this", thisResource);        
+        // save return condition resource
+        this->ruleDefinition.conditionReturn = 
+                this->localStackFrame->getVar("_return");
+    }
+
+    bool Generation::ruleProcedure(char* typeName)
+    {
+        this->localStackFrame->clear();
+        auto thisResource = typeregister->sharedResource(typeName);
+        this->localStackFrame->addVar("this", thisResource);        
+
     }
 }
 

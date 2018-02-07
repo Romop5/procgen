@@ -17,6 +17,11 @@ namespace ProcGen {
 		std::string                 name;
 	};
 
+    struct Rule {
+        std::shared_ptr<Resource>   conditionReturn;
+        TypeId                      thisTypeId;
+    };
+
 	class Generation {
 		std::shared_ptr<TypeRegister>	typeregister;
 		std::shared_ptr<FunctionReg>	functionregister;
@@ -66,6 +71,7 @@ namespace ProcGen {
 		bool registerFunction(char* type, char* name);
 
 		std::shared_ptr<Function> createExpressionOperation(char operation);
+		std::shared_ptr<Function> createExpressionLogicOperation(char operation);
 
 		void createLiteralBool(bool value);
 		void createLiteralInteger(int value);
@@ -111,6 +117,11 @@ namespace ProcGen {
         bool registerFormalParameter(sTypeDeclaration& parameter);
 
         sTypeDeclaration fillTypeDeclaration(char* type, char* name);
+
+        bool initializeRule(char* typeName);
+        bool ruleProcedure(char* rulename);
+        
+        Rule ruleDefinition;
 	};
 
 
