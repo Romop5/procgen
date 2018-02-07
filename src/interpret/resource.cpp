@@ -88,10 +88,26 @@ json11::Json CompositeResource::to_json() const
     return json11::Json(object);
 }
 
+std::shared_ptr<CompositeType>  CompositeResource::getCompositeTypeDescription() const
+{
+    auto typeDesc = tr->getType(baseType);    
+    return std::dynamic_pointer_cast<CompositeType>(typeDesc);
+}
 
 const std::string CompositeResource::getComponentName(size_t index) const
 {
-    auto typeDesc = tr->getType(baseType);    
-    auto compositeDescription = std::dynamic_pointer_cast<CompositeType>(typeDesc);
+    auto compositeDescription = this->getCompositeTypeDescription();
     return compositeDescription->getComponentName(index);
+}
+
+size_t CompositeResource::getComponentPosition(const std::string name) const
+{
+    auto compositeDescription = this->getCompositeTypeDescription();
+    return compositeDescription->getComponentPositionByName(name);
+}
+
+TypeId CompositeResource::getComponentType(size_t index) const
+{
+    auto compositeDescription = this->getCompositeTypeDescription();
+    return compositeDescription->getComponentTypeId(index);
 }

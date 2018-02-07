@@ -69,6 +69,7 @@ namespace ProcGen {
 		void createLiteralInteger(int value);
 		void createLiteralFloat(float value);
         bool createLiteralFromVariable(char* name); 
+        bool createStructuredLiteral(char* member); 
 
 		bool createFunctionCall(const char* functionName);
 				

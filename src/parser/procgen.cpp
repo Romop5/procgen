@@ -273,6 +273,47 @@ namespace ProcGen {
         return true;
     }
 
+    bool Generation::createStructuredLiteral(char* member)
+    {
+        auto compositeFunction = this->expressionsStack.top();
+        this->expressionsStack.pop();
+
+        auto resource = compositeFunction->getOutput();
+        if(resource == nullptr)
+        {
+            error(0,0,"Failed to get resource");
+        }
+        if(resource->getResourceType() != ResourceType::COMPOSITE)
+        {
+            error(0,0,"Isn't composite at all.");
+        }
+        auto compositeResource = 
+                std::dynamic_pointer_cast<CompositeResource>(resource);
+        
+        auto position = compositeResource->getComponentPosition(member);
+        if(position < 0)
+        {
+            error(0,0,"The structure doesn't contain the name");
+        }
+
+        TypeId memberType = compositeResource->getComponentType(position);
+
+        // set index
+        auto indexResoure = typeregister->sharedResource("int");
+        *(int*) indexResoure->getData() = position;
+        // create accessor
+        auto getter = std::make_shared<CompositeGet>();
+        getter->bindInput(0, compositeFunction);
+        getter->bindInput(1, functionregister->getHandler(indexResoure));
+
+        // This is actually useless for interpreter as it will replace
+        // output resource when operator() is run
+        // However, it's neccessary for parser to get base structure metadata
+        auto outputResource = typeregister->sharedResource(memberType);
+        getter->bindOutput(outputResource);
+        this->expressionsStack.push(getter);
+    }
+
 	bool Generation::createFunctionCall(const char* functionName)
 	{
 		auto functionPointer = functionregister->getFunc(functionName);
@@ -361,7 +402,7 @@ namespace ProcGen {
     }
 	bool Generation::makeAssignment(const char* name)
 	{
-		// get resourse
+		/*// get resourse
 		auto resource = localStackFrame->getVar(name);
 		auto typeName = typeregister->getTypeName(resource->getBaseId());
 		auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
@@ -371,16 +412,21 @@ namespace ProcGen {
 					typeName.c_str(), name);
 		}
 
+        */
+
         // Get expression
 		auto expressionTop= this->expressionsStack.top();
 		this->expressionsStack.pop();
 
-        // resource = expressionTop
-        function->bindInput(0,expressionTop);
-        function->bindOutput(resource);
+        // Get expression
+		auto assignedResource = this->expressionsStack.top();
+		this->expressionsStack.pop();
 
+        auto genericCopy= std::make_shared<GenericCopy>();
+        genericCopy->bindInput(0, assignedResource);
+        genericCopy->bindInput(1, expressionTop);
 		// Register 
-		this->stackedBodies.top()->appendStatement(function);
+		this->stackedBodies.top()->appendStatement(genericCopy);
 	}
 
 	bool Generation::makeWhile()

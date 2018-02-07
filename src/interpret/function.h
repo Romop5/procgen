@@ -203,6 +203,19 @@ class OPNAME: public Function\
 	}\
 };
 
+class GenericCopy: public Function\
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+		_getInput(0)->getOutput()->copy(_getInput(1)->getOutput());
+        this->bindOutput(_getInput(0)->getOutput());
+		return false;\
+	}
+};
+
+
 
 
 /*

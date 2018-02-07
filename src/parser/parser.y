@@ -68,6 +68,7 @@ void yyerror(Generation* proc, const char *s);
 %token PLUS     "+"
 %token DIV      "/"
 %token MUL      "*"
+%token DOT      "."
 // Operators
 %left "=" 
 %left GREATER LESS
@@ -146,8 +147,8 @@ argumentList             : argument | argumentList "," argument
 argument                  : expression
 			  { proc->createArgument(); }
 
-assignment                : NAME "=" expression
-			  { proc->makeAssignment($1); }
+assignment                : structuredMember "=" expression
+			  { proc->makeAssignment("TODO"); }
 
 
 ifStatement              : IF "(" expression ")" compoundStatement elseClause
@@ -181,6 +182,12 @@ expression                : literal
                             |   "(" expression ")" 
 				{  }
 
+
+structuredMember   :   structuredMember "." NAME
+                        { proc->createStructuredLiteral($3); }
+                   |    NAME 
+                        { proc->createLiteralFromVariable($1); } 
+
 /* Terminals*/
 
 literal                   : INTEGER 
@@ -190,8 +197,7 @@ literal                   : INTEGER
 			  | STRING 
               | BOOL
 				{ proc->createLiteralBool($1); } 
-              | NAME 
-                { proc->createLiteralFromVariable($1); } 
+              | structuredMember
                 
 
 %%

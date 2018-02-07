@@ -45,9 +45,10 @@ class CompositeType : public AbstractType
 
 	unsigned int getOffset(unsigned int componentID);
 
-	bool hasComponentWithName(const std::string name);
-	size_t getComponentPositionByName(const std::string name);
-    const std::string getComponentName(size_t componentID);
+	bool hasComponentWithName(const std::string name) const;
+	size_t getComponentPositionByName(const std::string name) const;
+    const std::string getComponentName(size_t componentID) const;
+    TypeId getComponentTypeId(size_t componentID) const;
 		
 };
 class CollectionType : public AbstractType

@@ -15,6 +15,8 @@
 
 #include "json11.hpp"
 
+using TypeId = size_t;
+class CompositeType;
 class TypeRegister;
 
 enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION};
@@ -53,6 +55,8 @@ class Resource
 	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
     
     virtual json11::Json to_json() const { return json11::Json("UnkResource"); }
+
+    ResourceType    getResourceType() const { return this->resourceType; }
 
 };
 
@@ -98,6 +102,7 @@ class CompositeResource : public Resource
 {
 	private:
 		std::map<size_t, std::shared_ptr<Resource>> components;
+        std::shared_ptr<CompositeType>  getCompositeTypeDescription() const;
 	public:
 	CompositeResource(std::shared_ptr<TypeRegister> typereg,size_t base, std::map<size_t, std::shared_ptr<Resource>> data)
 	{
@@ -113,6 +118,8 @@ class CompositeResource : public Resource
 	virtual void* getData() const override {};
     virtual json11::Json to_json() const override;
     const std::string getComponentName(size_t index) const;
+    size_t getComponentPosition(const std::string name) const;
+    TypeId getComponentType(size_t index) const;
 };
 
 class CollectionResource : public Resource

@@ -37,7 +37,7 @@ CollectionType::CollectionType(std::shared_ptr<TypeRegister>,
 }
 
 
-bool CompositeType::hasComponentWithName(const std::string name)
+bool CompositeType::hasComponentWithName(const std::string name) const
 {
 	for(auto &x: this->componentsNames)
 		if(x == name)
@@ -45,7 +45,7 @@ bool CompositeType::hasComponentWithName(const std::string name)
 	return false;
 }
 
-size_t CompositeType::getComponentPositionByName(const std::string name)
+size_t CompositeType::getComponentPositionByName(const std::string name) const
 {
 	for(size_t x = 0 ; x < this->componentsNames.size(); x++)
 		if(this->componentsNames[x] == name)
@@ -54,7 +54,14 @@ size_t CompositeType::getComponentPositionByName(const std::string name)
 
 }
 
-const std::string CompositeType::getComponentName(size_t componentID)
+const std::string CompositeType::getComponentName(size_t componentID) const
 {
    return this->componentsNames[componentID]; 
+}
+
+TypeId CompositeType::getComponentTypeId(size_t componentID) const
+{
+    if(componentID >= this->components.size())
+        return 0;
+    return this->components[componentID];
 }
