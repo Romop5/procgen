@@ -17,6 +17,10 @@ class AppendSymbol : public Function
                 (*_getInput(0))(rs);
             }
 
+            std::string dmp = _getInput(0)->getOutput()->to_json().dump();           
+            
+            std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
+
 			std::shared_ptr<Resource> src = derivation->tr->sharedResource(_getInput(0)->getOutput()->getBaseId());
 			src->copy(_getInput(0)->getOutput());
 			std::cout << "Appending id " << src->getBaseId() << "\n";

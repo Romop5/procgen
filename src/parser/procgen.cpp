@@ -367,7 +367,11 @@ namespace ProcGen {
         if(hasExp)
         {
             // create expression with name
+            auto swap = this->expressionsStack.top();
+            this->expressionsStack.pop();
+            // A = B, B must be at top, that's why we need to push it later
             this->expressionsStack.push(functionregister->getHandler(resource));
+            this->expressionsStack.push(swap);
             return this->makeAssignment(name);
         }
         return true;
