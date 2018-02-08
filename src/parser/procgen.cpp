@@ -172,6 +172,9 @@ namespace ProcGen {
 		for(auto &typeDesc: typeList)
         {
 			inputResources.push_back(typeDesc.resource);
+            std::cout << "Parameter: " << typeDesc.name << " with type: "
+                << typeregister->getTypeName(typeDesc.resource->getBaseId()) 
+                << std::endl;
         }
 
         typeList.clear();
@@ -204,7 +207,10 @@ namespace ProcGen {
 		if(a != b)
 		{
 			//TODO
-			errorMessage("Semantic error: types don't match");
+			errorMessage("Semantic error: types don't match. Types:\n\
+                    %s, %s\n",
+                     typeregister->getTypeName(a).c_str(),
+                     typeregister->getTypeName(b).c_str());
 		}
 
 		// TODO: watch out for aliases
@@ -283,6 +289,8 @@ namespace ProcGen {
             errorMessage("Undefined variable %s\n", name);
             return false;
         }
+        std::cout << "Pushing variable " << name << " with type " <<
+                typeregister->getTypeName(res->getBaseId()) << std::endl;
         this->expressionsStack.push(functionregister->getHandler(res));
         return true;
     }
@@ -325,6 +333,10 @@ namespace ProcGen {
         // However, it's neccessary for parser to get base structure metadata
         auto outputResource = typeregister->sharedResource(memberType);
         getter->bindOutput(outputResource);
+
+
+        std::cout << "Pushing structuremember" << member << " with type " <<
+                typeregister->getTypeName(outputResource->getBaseId()) << std::endl;
         this->expressionsStack.push(getter);
     }
 
@@ -524,6 +536,8 @@ namespace ProcGen {
     bool Generation::registerFormalParameter(sTypeDeclaration& parameter)
     {
         this->localStackFrame->addVar(parameter.name,parameter.resource);
+        std::cout << "Registering parameter " << parameter.name << " "
+                    << typeregister->getTypeName(parameter.resource->getBaseId()) << std::endl;
         return true;
     }
 
