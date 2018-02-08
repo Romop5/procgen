@@ -312,10 +312,11 @@ namespace ProcGen {
         auto compositeResource = 
                 std::dynamic_pointer_cast<CompositeResource>(resource);
         
+        auto structureName = typeregister->getTypeName(compositeResource->getBaseId());
         auto position = compositeResource->getComponentPosition(member);
-        if(position < 0)
+        if(position == -1)
         {
-            errorMessage("The structure doesn't contain the name");
+            errorMessage("'%s' doesn't contain name '%s'",structureName.c_str(),member);
         }
 
         TypeId memberType = compositeResource->getComponentType(position);
@@ -335,7 +336,7 @@ namespace ProcGen {
         getter->bindOutput(outputResource);
 
 
-        std::cout << "Pushing structuremember" << member << " with type " <<
+        std::cout << "Pushing structuremember '" << member << "' with type " <<
                 typeregister->getTypeName(outputResource->getBaseId()) << std::endl;
         this->expressionsStack.push(getter);
     }
