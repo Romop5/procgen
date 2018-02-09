@@ -241,8 +241,8 @@ namespace ProcGen {
 		}
 
 		auto tmpResult = typeregister->sharedResource(a);
-		operationBox->bindInput(0,first);
-		operationBox->bindInput(1,second);
+		operationBox->bindInput(0,second);
+		operationBox->bindInput(1,first);
 		operationBox->bindOutput(tmpResult);
 
 		this->expressionsStack.push(operationBox);
