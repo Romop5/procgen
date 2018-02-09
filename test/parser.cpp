@@ -20,8 +20,8 @@ int main(int argc, char** argv)
             return 1;
 		std::cout << "It's dones" << std::endl;
 		pg.run(5);
-        json11::Json result = pg.serialize();
-        std::cout << "Result" << result.dump() << "\n";
+        json result = pg.serialize();
+        std::cout << "Result" << result.dump(1) << "\n";
         
 	} else {
         std::cout << "Failed...\n";

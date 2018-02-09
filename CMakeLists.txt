@@ -40,7 +40,7 @@ set(DERIVATION_SOURCE
 )
 
 add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
-target_link_libraries(procedural json11)
+target_link_libraries(procedural json)
 target_compile_features(procedural PUBLIC cxx_auto_type)
 target_include_directories(procedural PUBLIC src/interpret src/derivation)
 

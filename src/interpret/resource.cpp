@@ -15,19 +15,19 @@ bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 	return true;
 }
 
-json11::Json AtomicResource::to_json() const
+json AtomicResource::to_json() const
 {
     std::string nameOfType = tr->getTypeName(baseType);
     if(nameOfType == "float")
-        return json11::Json( *(float*) this->getData()); 
+        return json( *(float*) this->getData()); 
 
     if(nameOfType == "int")
-        return json11::Json( *(int*) this->getData()); 
+        return json( *(int*) this->getData()); 
 
     if(nameOfType == "bool")
-        return json11::Json( *(bool*) this->getData()); 
+        return json( *(bool*) this->getData()); 
 
-    return json11::Json("unkAtomicValue");
+    return json("unkAtomicValue");
 }
 
 std::string Resource::getName()
@@ -78,14 +78,14 @@ bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 	}
 }
 
-json11::Json CompositeResource::to_json() const
+json CompositeResource::to_json() const
 {
-    json11::Json::object object;
+    json object;
 	for(size_t i = 0; i < this->components.size(); i++)
 	{
 		object[getComponentName(i)] = (this->components.at(i)->to_json());
     }
-    return json11::Json(object);
+    return json(object);
 }
 
 std::shared_ptr<CompositeType>  CompositeResource::getCompositeTypeDescription() const

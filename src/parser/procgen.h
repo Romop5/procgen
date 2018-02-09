@@ -8,7 +8,7 @@
 
 #include <string>
 #include <stack>
-#include "json11.hpp"
+#include "json.hpp"
 
 namespace ProcGen {
 	class sTypeDeclaration {
@@ -41,7 +41,7 @@ namespace ProcGen {
         // Run real derivation
         bool run(int maximumSteps);
 
-        json11::Json serialize() const;
+        json serialize() const;
 
 		bool isReady()	{ return flagIsParsed; }
 

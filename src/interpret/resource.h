@@ -13,13 +13,15 @@
 #include <vector>
 #include <map>
 
-#include "json11.hpp"
+#include "json.hpp"
 
 using TypeId = size_t;
 class CompositeType;
 class TypeRegister;
 
 enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION};
+
+using json = nlohmann::json;
 
 class Resource 
 {
@@ -54,7 +56,7 @@ class Resource
 	*/
 	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
     
-    virtual json11::Json to_json() const { return json11::Json("UnkResource"); }
+    virtual json to_json() const { return json("UnkResource"); }
 
     ResourceType    getResourceType() const { return this->resourceType; }
 
@@ -94,7 +96,7 @@ class AtomicResource : public Resource
 	*/
 
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
-    virtual json11::Json to_json() const override;
+    virtual json to_json() const override;
 
 };
 
@@ -116,7 +118,7 @@ class CompositeResource : public Resource
 	// TODO
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
 	virtual void* getData() const override {};
-    virtual json11::Json to_json() const override;
+    virtual json to_json() const override;
     const std::string getComponentName(size_t index) const;
     size_t getComponentPosition(const std::string name) const;
     TypeId getComponentType(size_t index) const;

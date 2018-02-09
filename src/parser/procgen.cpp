@@ -524,7 +524,7 @@ namespace ProcGen {
 	
 	}
 
-    json11::Json Generation::serialize() const
+    json Generation::serialize() const
     {
         return der->to_json();
     }    
