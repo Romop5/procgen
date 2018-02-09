@@ -7,7 +7,7 @@ ProcGen
 
 The generation is similar to parametric L-systems, thus it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**.
 
-[How does this tool work](HOWDOESITWORK)
+[How does this tool work](HOWDOESITWORK.md)
 ## Examples 
 See https://imgur.com/a/xdzYu
 
