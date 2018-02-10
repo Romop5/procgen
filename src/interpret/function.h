@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <exception>
 
 #include "statement.h"
 class Statement;
@@ -218,19 +219,54 @@ class OPNAME: public Function\
 	}\
 };
 
-class GenericCopy: public Function\
+// input(0) = input(1)
+class GenericCopy: public Function
 {
 	public:
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
 		_getInput(0)->getOutput()->copy(_getInput(1)->getOutput());
-        this->bindOutput(_getInput(0)->getOutput());
-		return false;\
+		this->bindOutput(_getInput(0)->getOutput());
+		return false;
 	}
 };
 
 
+// Run-time verification of type
+class Convert: public Function 
+{
+	private:
+	TypeId type;
+	public:
+	Convert(TypeId _type):type(_type) {};
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+		if(_getInput(0)->getOutput()->getBaseId() != type)
+		{
+			// error = types doesn't match
+			throw std::runtime_error("Convert<>: types don't match");
+		}
+		this->bindOutput(_getInput(0)->getOutput());
+		return false;
+	}
+
+};
+
+// Returns run-time TypeId for given resource
+// TypeId is int
+class GetTypeId: public Function 
+{
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+		// Write TypeId to output resource
+		*(int*) this->getOutput()->getData() = (_getInput(0)->getOutput()->getBaseId());
+		return false;
+	}
+
+};
 
 
 /*

@@ -502,11 +502,12 @@ namespace ProcGen {
 		auto expressionTop= this->expressionsStack.top();
 		this->expressionsStack.pop();
 
-		std::shared_ptr<Statement> elseBranch = nullptr;
+		// Create empty statement 
+		std::shared_ptr<Statement> elseBranch = std::make_shared<Body>();
 		if(hasElseBranch)
 		{
 			// Get the top of statement stack
-			auto elseBranch= this->stackedBodies.top();
+			elseBranch= this->stackedBodies.top();
 			this->stackedBodies.pop();
 		}
 
@@ -584,5 +585,35 @@ namespace ProcGen {
         this->localStackFrame->addVar("this", thisResource);        
 
     }
+
+	bool Generation::makeTypeid(char* name)
+	{
+		std::shared_ptr<Resource> nameResource = nullptr;
+		if(typeregister->hasType(name))
+		{
+			nameResource = typeregister->sharedResource(name);
+		} else {
+			nameResource = localStackFrame->getVar(name);
+		}
+
+		auto result = typeregister->sharedResource("int");
+		auto typexpr = std::make_shared<GetTypeId>();
+		typexpr->bindInput(0,functionregister->getHandler(nameResource));
+		typexpr->bindOutput(result);
+
+		this->expressionsStack.push(typexpr);
+	}
+
+	bool Generation::makeConvert(char* name)
+	{
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		auto convertexpr = std::make_shared<Convert>(typeregister->getTypeId(name));
+		convertexpr->bindInput(0,expr);
+		convertexpr->bindOutput(typeregister->sharedResource(name));
+
+		this->expressionsStack.push(convertexpr);
+	}
 }
 

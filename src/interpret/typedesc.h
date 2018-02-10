@@ -6,7 +6,7 @@
 #include <memory>
 //typedef int TypeId;
 using TypeId = size_t;
-enum descType {ATOMIC,COMPOSITE,COLLECTION,ABSTRACT};
+enum descType {ATOMIC,COMPOSITE,COLLECTION,ABSTRACT,ANY};
 
 class	TypeRegister;
 
@@ -61,5 +61,14 @@ class CollectionType : public AbstractType
 	virtual descType getType() { return COLLECTION;}
 	TypeId getBaseType() { return baseType;}
 };
+
+class AnyType: public AbstractType
+{
+	public:
+	AnyType() {};
+	virtual descType getType() { return ANY;}
+};
+
+
 
 #endif

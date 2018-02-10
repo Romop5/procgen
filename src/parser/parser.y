@@ -52,7 +52,7 @@ void yyerror(Generation* proc, const char *s);
 %token <sval> NAME 
 
 /* Keywords */
-%token IF STRUCT USING RULE PARAMETER  ELSE WHILE RETURN
+%token IF STRUCT USING RULE PARAMETER  ELSE WHILE RETURN CONVERT TYPEID
 %token LPAR     "("
 %token RPAR     ")"
 %token LANGL    "["
@@ -177,8 +177,15 @@ returnEnd               :  %empty
                         { proc->makeReturn(true); } 
 
 
+typeid			  : "<" TYPE ">" 
+				{ proc->makeTypeid($2);}
+	   		  | "(" NAME ")" 
+				{ proc->makeTypeid($2);}
 expression                : literal
-			                | 	functionCall 
+			    |   TYPEID typeid
+			    |   CONVERT "<" TYPE ">" "(" expression ")"
+				{ proc->makeConvert($3); }
+			    | 	functionCall 
 			  
                             |   expression "<" expression
 				{ auto result = proc->createExpressionOperation('<'); }
@@ -218,59 +225,6 @@ literal                   : INTEGER
                 
 
 %%
-
-//int main(int argc, char** argv) {
-/*
-	if(argc < 2)
-		error(1,0,"./parser <FILE>");
-	yyin = fopen(argv[1],"r");
-	if(yyin == NULL)
-		error(1,0,"Failed to open file ...");
-
-	auto tr = std::make_shared<TypeRegister>();
-	auto fr = std::make_shared<FunctionReg>(tr);
-	auto vr = std::make_shared<VariableReg>(tr);
-
-	registerStandardTypes(tr.get());
-	registerStandardFunctions(fr.get());
-
-	Interpret interpret(tr,fr,vr);
-	do {
-		yyparse(interpret);
-	} while (!feof(yyin));
-
-	RunStatus stat;
-	// get main()
-	auto main = interpret.fr->getFunc("main");
-	if(main != nullptr)
-	{
-		(*main)(stat);
-		std::cout << "Done" << std::endl;
-	}
-	else
-		std::cerr << "main() missing" << std::endl;
-	
-*/
-
-// note 
-    //yy_scan_buffer("using a: struct { };");
-/*    yydebug = 1;
-    if(argc < 2)
-		error(1,0,"./parser <FILE>");
-	yyin = fopen(argv[1],"r");
-	if(yyin == NULL)
-		error(1,0,"Failed to open file ...");
-
-	auto typereg = std::make_shared<TypeRegister>();
-	auto funcreg = std::make_shared<FunctionReg>(typereg);
-	auto derivation = std::make_shared<Derivation>(typereg,funcreg);
-    do {
-        yyparse(derivation.get());
-    } while (!feof(yyin));
-
-}
-*/
-//void yyerror(Interpret& inter, const char *s) {
 void yyerror(Generation* proc, const char *s) {
 	std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
 	exit(-1);

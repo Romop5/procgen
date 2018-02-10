@@ -19,7 +19,7 @@ using TypeId = size_t;
 class CompositeType;
 class TypeRegister;
 
-enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION};
+enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION,ANY};
 
 using json = nlohmann::json;
 
@@ -42,7 +42,7 @@ class Resource
 	virtual void* getData() const = 0;
 
 	// Get base type id (registered in TypeRegister)
-	size_t getBaseId() {return baseType;}
+	virtual size_t getBaseId() {return baseType;}
 	
 	ResourceType getResourceType() {return resourceType;}
 	// Get base type name
@@ -151,6 +151,31 @@ class CollectionResource : public Resource
 	virtual void* getData() const override {};
 	// TODO
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
+};
+
+
+class AnyResource : public Resource
+{
+	private:
+	std::shared_ptr<Resource> content;
+	public:
+	AnyResource(std::shared_ptr<TypeRegister> typereg)
+	{
+		this->tr = typereg;
+		this->resourceType = ResourceType::ANY;
+	}
+	virtual ~AnyResource() {}
+	virtual void* getData() const override 
+	{
+		if(content)
+			return content->getData();
+		return nullptr;
+	}
+	virtual size_t getBaseId();
+	std::shared_ptr<Resource> getContent() const { return content; }	
+	virtual bool copy(const std::shared_ptr<Resource> src) override;
+	virtual json to_json() const override;
+
 };
 
 #endif

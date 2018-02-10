@@ -47,6 +47,8 @@ using namespace std;
 "if"		{ return IF;}
 "return"	{ return RETURN;}
 "else"		{ return ELSE;}
+"typeid"	{ return TYPEID;}
+"convert"	{ return CONVERT;}
 "="		    { return ASSIGN;}
 "true"      { yylval.boolean = true; return BOOL;} 
 "false"     { yylval.boolean = false; return BOOL;} 

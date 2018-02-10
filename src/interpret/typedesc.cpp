@@ -31,11 +31,13 @@ unsigned int CompositeType::getOffset(unsigned int componentID)
 }
 
 
-CollectionType::CollectionType(std::shared_ptr<TypeRegister>,
+CollectionType::CollectionType(std::shared_ptr<TypeRegister> tr,
 			TypeId baseType)
 {
+	this->tr = tr;
 	this->baseType = baseType;
 }
+
 
 
 bool CompositeType::hasComponentWithName(const std::string name) const

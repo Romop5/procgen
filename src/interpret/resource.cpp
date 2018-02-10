@@ -6,11 +6,20 @@ bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 {
 	if(!value)
 		return false;
-	if(src->getBaseId() != baseType)
+	auto tmp = src;
+
+	// if src is ANY, then use it content
+	if(src->getResourceType() == ResourceType::ANY)
+		tmp = std::dynamic_pointer_cast<AnyResource>(src)->getContent();
+
+	if(tmp == nullptr)
+		return false;
+
+	if(tmp->getBaseId() != baseType)
 		return false;
 
 	size_t size = tr->getType(baseType)->getSize();
-	memcpy(this->value,src->getData(),size);
+	memcpy(this->value,tmp->getData(),size);
 
 	return true;
 }
@@ -37,11 +46,20 @@ std::string Resource::getName()
 
 bool CompositeResource::copy(const std::shared_ptr<Resource> src)
 {
-	auto srcComposite = std::dynamic_pointer_cast<CompositeResource>(src);
+	auto tmp = src;
+	// if src is ANY, then use it content
+	if(src->getResourceType() == ResourceType::ANY)
+		tmp = std::dynamic_pointer_cast<AnyResource>(src)->getContent();
+
+	if(tmp == nullptr)
+		return false;
+
+	auto srcComposite = std::dynamic_pointer_cast<CompositeResource>(tmp);
 	for(size_t i = 0; i < this->components.size(); i++)
 	{
 		this->getComponent(i)->copy(srcComposite->getComponent(i));
 	}
+	return true;
 }
 
 void CollectionResource::append(std::shared_ptr<Resource> item)
@@ -68,7 +86,15 @@ std::shared_ptr<Resource> CollectionResource::at(size_t index)
 bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 {
 
-	auto srcCollection = std::dynamic_pointer_cast<CollectionResource>(src);
+	auto tmp = src;
+	// if src is ANY, then use it content
+	if(src->getResourceType() == ResourceType::ANY)
+		tmp = std::dynamic_pointer_cast<AnyResource>(src)->getContent();
+
+	if(tmp == nullptr)
+		return false;
+
+	auto srcCollection = std::dynamic_pointer_cast<CollectionResource>(tmp);
 	this->collection.clear();
 	for(size_t i = 0; i < srcCollection->length(); i++)
 	{
@@ -76,6 +102,7 @@ bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 		res->copy(srcCollection->at(i));
 		this->collection.push_back(res);
 	}
+	return true;
 }
 
 json CompositeResource::to_json() const
@@ -110,4 +137,36 @@ TypeId CompositeResource::getComponentType(size_t index) const
 {
     auto compositeDescription = this->getCompositeTypeDescription();
     return compositeDescription->getComponentTypeId(index);
+}
+
+bool AnyResource::copy(const std::shared_ptr<Resource> src) 
+{
+	auto realsource = src;
+	if(src->getResourceType() == ResourceType::ANY)
+	{
+		realsource = std::dynamic_pointer_cast<AnyResource>(src)->getContent();
+	}
+	if(realsource == nullptr)
+		return false;
+
+	auto newContent = tr->sharedResource(realsource->getBaseId());
+	if(newContent == nullptr)
+		return false;
+	newContent->copy(realsource);
+	content = newContent;
+	return true;
+}
+
+json AnyResource::to_json() const 
+{
+	if(content)
+		return content->to_json();
+	return json("any");
+}
+
+size_t AnyResource::getBaseId()
+{
+	if(content == nullptr)
+		return 0;
+	return content->getBaseId();
 }

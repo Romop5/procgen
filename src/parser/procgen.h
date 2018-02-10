@@ -122,6 +122,9 @@ namespace ProcGen {
         bool ruleProcedure(char* rulename);
         
         Rule ruleDefinition;
+
+	bool makeTypeid(char* name);
+	bool makeConvert(char* name);
 	};
 
 
