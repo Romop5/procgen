@@ -151,7 +151,7 @@ callStatement           : functionCall
 functionCall             : NAME "(" argumentList ")" 
 			 { proc->createFunctionCall($1); }
 
-argumentList             : argument | argumentList "," argument
+argumentList             : %empty | argument | argumentList "," argument
 
 argument                  : expression
 			  { proc->createArgument(); }

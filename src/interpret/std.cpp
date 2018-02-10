@@ -46,4 +46,26 @@ void registerStandardFunctions(FunctionReg* fr)
 	
 	REG_REGULAR_FUNC("get",AccessComposite);
 	REG_REGULAR_FUNC("set",SetComposite);
+
+	fr->addFunction("random",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<GenerateRandom>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+
+	fr->addFunction("uniform",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<GenerateUniform>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+
+
 }

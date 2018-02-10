@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <exception>
+#include <climits>
 
 #include "statement.h"
 class Statement;
@@ -277,6 +278,38 @@ class GetTypeId: public Function
 	}
 
 };
+
+// Random in range <a,b)
+class GenerateUniform: public Function
+{
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		// a = 0
+		// b = 1
+
+		float a = *(float*) _getInput(0)->getOutput()->getData();
+		float b = *(float*) _getInput(1)->getOutput()->getData();
+
+		float x = random() / (float(UINT_MAX)+1.0);
+		x = x*(b-a)+a;
+		*(float*) this->getOutput()->getData() = x;
+	}
+};
+
+// Random in range <0,1)
+class GenerateRandom: public Function
+{
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		*(float*) this->getOutput()->getData() = random() / (float(UINT_MAX)+1.0);
+	}
+};
+
+
 
 
 /*
