@@ -15,6 +15,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	TypeRegister():highest(0){
 		add<char>("unknown");
 		addAny();
+		addCollection();
 	};
 	// TODO: test + add conditions to other add* functions
 	bool addAlias(const std::string& alias, const std::string& aliased)
@@ -79,11 +80,11 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 
 	}
 
-	bool addCollection(const std::string& typeName,TypeId baseType)
+	bool addCollection()
 	{
 		TypeId id = highest++;
-		types[id] = std::make_shared<CollectionType>(shared_from_this(),baseType);
-		names[typeName] = id;
+		types[id] = std::make_shared<CollectionType>();
+		names["collection"] = id;
 	}
 	bool addAny()
 	{
@@ -122,8 +123,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 					break;
 				case COLLECTION:
 					{
-					TypeId baseType = (std::dynamic_pointer_cast<CollectionType>(it->second))->getBaseType();
-					return std::make_shared<CollectionResource>(shared_from_this(),baseType, it->first);
+					return std::make_shared<CollectionResource>(shared_from_this(), it->first);
 					}
 					break;
 				case COMPOSITE:

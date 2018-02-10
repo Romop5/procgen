@@ -99,7 +99,7 @@ namespace ProcGen {
 		// Function argument list 
 		std::vector<std::shared_ptr<Function>> argumentVector;
 
-		bool makeAssignment(const char* name);
+		bool makeAssignment(const char* name,bool hasAssignment);
 
 		bool makeWhile();
 
@@ -125,6 +125,11 @@ namespace ProcGen {
 
 	bool makeTypeid(char* name);
 	bool makeConvert(char* name);
+
+	bool createCollectionInsert();
+	bool createCollectionAt();
+	bool createCollectionSize();
+	bool createCollectionDel();
 	};
 
 

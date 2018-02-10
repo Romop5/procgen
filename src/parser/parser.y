@@ -52,7 +52,7 @@ void yyerror(Generation* proc, const char *s);
 %token <sval> NAME 
 
 /* Keywords */
-%token IF STRUCT USING RULE PARAMETER  ELSE WHILE RETURN CONVERT TYPEID
+%token IF STRUCT USING RULE PARAMETER  ELSE WHILE RETURN CONVERT TYPEID SIZE AT DEL INSERT
 %token LPAR     "("
 %token RPAR     ")"
 %token LANGL    "["
@@ -156,8 +156,11 @@ argumentList             : argument | argumentList "," argument
 argument                  : expression
 			  { proc->createArgument(); }
 
-assignment                : structuredMember "=" expression
-			  { proc->makeAssignment("TODO"); }
+assignment                : structuredMember  assignmentEnd
+assignmentEnd		  : %empty
+			  { proc->makeAssignment("TODO",false); }
+		 	   | "=" expression
+			  { proc->makeAssignment("TODO",true); }
 
 
 ifStatement              : IF "(" expression ")" compoundStatement elseClause
@@ -207,10 +210,21 @@ expression                : literal
 				{  }
 
 
-structuredMember   :   structuredMember "." NAME
-                        { proc->createStructuredLiteral($3); }
+structuredMember   :   structuredMember "." structuredMemberEnd 
                    |    NAME 
                         { proc->createLiteralFromVariable($1); } 
+
+structuredMemberEnd :
+			NAME
+                        { proc->createStructuredLiteral($1); }
+		   |	INSERT "(" expression ")"
+			{ proc->createCollectionInsert(); } 
+		   |	AT "(" expression ")"
+			{ proc->createCollectionAt(); } 
+		   |	SIZE "(" ")"
+			{ proc->createCollectionSize(); } 
+		   |    DEL "(" expression ")"
+			{ proc->createCollectionDel(); } 
 
 /* Terminals*/
 

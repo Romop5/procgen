@@ -53,13 +53,9 @@ class CompositeType : public AbstractType
 };
 class CollectionType : public AbstractType
 {
-	std::shared_ptr<TypeRegister> tr;
-	TypeId baseType;
 	public:
-	CollectionType(std::shared_ptr<TypeRegister>,
-			TypeId baseType);
+	CollectionType();
 	virtual descType getType() { return COLLECTION;}
-	TypeId getBaseType() { return baseType;}
 };
 
 class AnyType: public AbstractType

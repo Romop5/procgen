@@ -130,11 +130,10 @@ class CollectionResource : public Resource
 		size_t arrayType;
 		std::vector<std::shared_ptr<Resource>> collection;
 	public:
-	CollectionResource(std::shared_ptr<TypeRegister> typereg, size_t baseType, size_t arrayType)
+	CollectionResource(std::shared_ptr<TypeRegister> typereg, size_t arrayType)
 	{
 		this->tr = typereg;
-		this->baseType = baseType;
-		this->arrayType = arrayType;
+		this->baseType = arrayType;
 		this->resourceType = ResourceType::COLLECTION;
 	}
 
@@ -146,11 +145,10 @@ class CollectionResource : public Resource
 	void remove(size_t index);
 	std::shared_ptr<Resource> at(size_t index);
 	size_t length() {return this->collection.size();}
-	size_t getArrayType() {return this->arrayType;}
-
 	virtual void* getData() const override {};
 	// TODO
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
+	    virtual json to_json() const override;
 };
 
 

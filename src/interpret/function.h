@@ -46,6 +46,16 @@ class DebugStatement:public Function
 	virtual bool operator()(RunStatus& stat);
 };
 
+class PrintJson: public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		std::cout << _getInput(0)->getOutput()->to_json().dump() << std::endl;
+		return false;
+	}
+};
+
 template<typename T>
 class PrintValue: public Function
 {

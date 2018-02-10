@@ -24,6 +24,9 @@ namespace ProcGen {
 		functionregister->addFunction("appendSymbol",
              [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<AppendSymbol>(derivation));});
 
+		functionregister->addFunction("print",
+             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<PrintJson>());});
+
         flagIsParsed = true;
         hasAnyError = false;;
 	}
@@ -392,7 +395,7 @@ namespace ProcGen {
             // A = B, B must be at top, that's why we need to push it later
             this->expressionsStack.push(functionregister->getHandler(resource));
             this->expressionsStack.push(swap);
-            return this->makeAssignment(name);
+            return this->makeAssignment(name,true);
         }
         return true;
 	}
@@ -440,7 +443,7 @@ namespace ProcGen {
 		this->stackedBodies.top()->appendStatement(box); 
 
     }
-	bool Generation::makeAssignment(const char* name)
+	bool Generation::makeAssignment(const char* name,bool hasAssignment)
 	{
 		/*// get resourse
 		auto resource = localStackFrame->getVar(name);
@@ -457,6 +460,12 @@ namespace ProcGen {
         // Get expression
 		auto expressionTop= this->expressionsStack.top();
 		this->expressionsStack.pop();
+
+	if(!hasAssignment)
+	{
+		this->stackedBodies.top()->appendStatement(expressionTop);
+		return true;
+	}
 
         // Get expression
 		auto assignedResource = this->expressionsStack.top();
@@ -614,6 +623,81 @@ namespace ProcGen {
 		convertexpr->bindOutput(typeregister->sharedResource(name));
 
 		this->expressionsStack.push(convertexpr);
+	}
+
+	bool Generation::createCollectionInsert()
+	{
+		auto element = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
+		{
+			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+		}
+		auto at = std::make_shared<CollectionAppend>();
+		at->bindInput(0, expr);
+		at->bindInput(1, element);
+
+		this->expressionsStack.push(at);
+		
+	}
+
+
+	bool Generation::createCollectionAt()
+	{
+		auto index = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
+		{
+			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+		}
+		auto at = std::make_shared<CollectionIndex>();
+		at->bindInput(0, expr);
+		at->bindInput(1, index);
+		at->bindOutput(typeregister->sharedResource("any"));
+
+		this->expressionsStack.push(at);
+		
+	}
+
+	bool Generation::createCollectionSize()
+	{
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
+		{
+			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+		}
+		auto at = std::make_shared<CollectionLength>();
+		at->bindInput(0, expr);
+		at->bindOutput(typeregister->sharedResource("int"));
+		this->expressionsStack.push(at);
+
+	}
+	bool Generation::createCollectionDel()
+	{
+		auto index = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
+		{
+			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+		}
+
+		auto at = std::make_shared<CollectionRemove>();
+		at->bindInput(0, expr);
+		at->bindInput(1, index);
+
+		this->expressionsStack.push(at);
+		
 	}
 }
 

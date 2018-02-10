@@ -64,12 +64,9 @@ bool CompositeResource::copy(const std::shared_ptr<Resource> src)
 
 void CollectionResource::append(std::shared_ptr<Resource> item)
 {
-	if(item->getBaseId() == this->getBaseId())
-	{
-		auto newElement = this->tr->sharedResource(item->getBaseId());
-		newElement->copy(item);
-		this->collection.push_back(newElement);
-	}
+	auto newElement = this->tr->sharedResource(item->getBaseId());
+	newElement->copy(item);
+	this->collection.push_back(newElement);
 }
 
 void CollectionResource::remove(size_t index)
@@ -103,6 +100,16 @@ bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 		this->collection.push_back(res);
 	}
 	return true;
+}
+
+json CollectionResource::to_json() const 
+{
+	json result;
+	for(size_t i = 0; i < collection.size(); i++)
+	{
+		result.push_back(collection[i]->to_json());
+	}
+	return result;
 }
 
 json CompositeResource::to_json() const

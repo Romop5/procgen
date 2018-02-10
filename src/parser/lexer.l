@@ -49,6 +49,10 @@ using namespace std;
 "else"		{ return ELSE;}
 "typeid"	{ return TYPEID;}
 "convert"	{ return CONVERT;}
+"at"		{ return AT;}
+"size"		{ return SIZE;}
+"del"		{ return DEL;}
+"insert"	{ return INSERT;}
 "="		    { return ASSIGN;}
 "true"      { yylval.boolean = true; return BOOL;} 
 "false"     { yylval.boolean = false; return BOOL;} 
