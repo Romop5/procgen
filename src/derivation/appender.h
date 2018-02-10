@@ -12,17 +12,18 @@ class AppendSymbol : public Function
 	
 		bool operator()(RunStatus& rs)
 		{
-            if(_getInput(0) != nullptr)
-            {
-                (*_getInput(0))(rs);
-            }
+		    if(_getInput(0) != nullptr)
+		    {
+			(*_getInput(0))(rs);
+		    }
 
-            std::string dmp = _getInput(0)->getOutput()->to_json().dump();           
-            
-            std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
+		    std::string dmp = _getInput(0)->getOutput()->to_json().dump();           
+		    
+		    std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
 
 			std::shared_ptr<Resource> src = derivation->tr->sharedResource(_getInput(0)->getOutput()->getBaseId());
-			src->copy(_getInput(0)->getOutput());
+			if(src->copy(_getInput(0)->getOutput()) == false)
+				return false;
 			std::cout << "Appending id " << src->getBaseId() << "\n";
 			derivation->appendNextSymbol(src);
 
