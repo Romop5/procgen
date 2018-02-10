@@ -92,7 +92,7 @@ namespace ProcGen {
 		//auto typeResource = typeregister->sharedResource(type);
 		auto typeResource = localStackFrame->getVar("this"); 
 		functionregister->addCompositeFunction(
-				ruleName.str(), procedure,{typeResource}, nullptr);
+				ruleName.str(), procedure,{typeResource}, localStackFrame->getVar("_return"));
 
 		// Get condition
 		//
@@ -423,11 +423,16 @@ namespace ProcGen {
       /*      auto typeName = typeregister->getTypeName(resource->getBaseId());
             auto function = functionregister->getFunc(std::string("Copy")+":"+typeName);
 
+	    
 
             // Bind return box with resources
             function->bindInput(0,expr);
             function->bindOutput(resource);
 */
+	    if(resource == nullptr)
+	    {
+		    errorMessage("Failed to get return resource");
+	    }
 
             auto expr = this->expressionsStack.top(); 
             this->expressionsStack.pop();
@@ -592,6 +597,7 @@ namespace ProcGen {
         this->localStackFrame->clear();
         auto thisResource = typeregister->sharedResource(typeName);
         this->localStackFrame->addVar("this", thisResource);        
+        this->localStackFrame->addVar("_return", typeregister->sharedResource("int"));        
 
     }
 

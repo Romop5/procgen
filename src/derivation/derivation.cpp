@@ -46,7 +46,9 @@ void Derivation::generate(size_t maxSteps)
 				size_t randomChoose = random() % availableRules.size();
 				std::cout << "Random no: "<< randomChoose << std::endl;
 				// apply rule on symbol
-				applyRule(availableRules[randomChoose], sym);
+				int howManytoSkip = applyRule(availableRules[randomChoose], sym);
+				// skip symbols
+				i += howManytoSkip;	
 			} else {
 				std::cerr << "No aplicable rule found for type: " << sym->getName() << std::endl;
 				this->appendNextSymbol(sym);
@@ -73,11 +75,18 @@ bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource
 	//return *(bool*) boolResource->getData();
 }
 
-bool Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol)
+int Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol)
 {
 	std::get<1>(rule)->bindInput(0, this->fr->getHandler(symbol));
+
+	auto result = std::get<1>(rule)->getOutput();
+	*(int*) result->getData() = 0;
+
 	RunStatus rs;
 	(*std::get<1>(rule))(rs);
+
+
+	std::cout << "Return skip number: " << *(int*) result->getData() << std::endl;
 }
 
 bool Derivation::hasAnyRule(TypeId type) const

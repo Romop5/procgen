@@ -70,7 +70,7 @@ class Derivation
 
 	bool hasAnyRule(TypeId type) const;
 
-	bool applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol);
+	int applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol);
 
 	bool isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol) const;
 
