@@ -20,6 +20,7 @@ namespace ProcGen {
     struct Rule {
         std::shared_ptr<Resource>   conditionReturn;
         TypeId                      thisTypeId;
+	std::shared_ptr<Resource>   thisValue;
     };
 
 	class Generation {
@@ -70,6 +71,7 @@ namespace ProcGen {
 
 		bool registerFunction(char* type, char* name);
 
+		std::shared_ptr<Function> createUnaryOperation(char operation);
 		std::shared_ptr<Function> createExpressionOperation(char operation);
 		std::shared_ptr<Function> createExpressionLogicOperation(char operation);
 
@@ -130,6 +132,21 @@ namespace ProcGen {
 	bool createCollectionAt();
 	bool createCollectionSize();
 	bool createCollectionDel();
+
+	bool isLogicOperator(char operatorName)
+	{
+		switch(operatorName)
+		{
+			case '>':
+			case '<':
+			case '=':
+			case '!':
+				return true;
+			default:
+				return false;
+		}
+		return false;
+	}
 	};
 
 

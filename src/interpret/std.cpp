@@ -33,6 +33,10 @@ void registerStandardFunctions(FunctionReg* fr)
 	FORALL_ATOMICTYPES(REG_PRINT);
 
 	REG_FUNC_FORALL("Copy",Copy);
+	REG_FUNC_FORALL("UnaryMinus",UnaryMinus);
+	REG_FUNC_FORALL("UnaryPlus",UnaryPlus);
+
+	REG_FUNC(bool, "Negation", Negation );
 
 	REG_FUNC_FORALL("Add",Add);
 	REG_FUNC_FORALL("Sub",Sub);

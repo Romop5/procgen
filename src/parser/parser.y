@@ -81,6 +81,9 @@ void yyerror(Generation* proc, const char *s);
 %left "/" 
 %left "*" 
 
+%left UMINUS  
+%left NEGATION "!"
+
 
 /*%parse-param {Interpret& interpret}*/
 %locations
@@ -207,7 +210,11 @@ expression                : literal
                             |   expression "*" expression
 				{ auto result = proc->createExpressionOperation('*'); }
                             |   "(" expression ")" 
-				{  }
+		            |   "-" expression %prec UMINUS
+				{ auto result = proc->createUnaryOperation('-'); }
+		            |   "+" expression %prec UPLUS
+		            |   "!" expression 
+				{ auto result = proc->createUnaryOperation('!'); }
 
 
 structuredMember   :   structuredMember "." structuredMemberEnd 

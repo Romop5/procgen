@@ -52,6 +52,7 @@ class PrintJson: public Function
 	public:
 	virtual bool operator()(RunStatus& stat)
 	{
+		if(_doInputs(stat)) return true;
 		std::cout << _getInput(0)->getOutput()->to_json().dump() << std::endl;
 		return false;
 	}
@@ -230,6 +231,41 @@ class OPNAME: public Function\
 	}\
 };
 
+// Define a unary operatorion OPNAME<type> 
+#define DEF_PREFIX_UNARY_OP(OPNAME,OPERATOR)\
+template<typename T>\
+class OPNAME: public Function\
+{\
+	public:\
+	virtual bool operator()(RunStatus& stat)\
+	{\
+		if(_doInputs(stat)) return true;\
+		T out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
+		*(T*)(getOutput()->getData()) = out;\
+		std::cout << #OPNAME << "\n";\
+		return false;\
+	}\
+};
+
+// Define a unary operatorion OPNAME<type> 
+#define DEF_PREFIX_BOOL_UNARY_OP(OPNAME,OPERATOR)\
+template<typename T>\
+class OPNAME: public Function\
+{\
+	public:\
+	virtual bool operator()(RunStatus& stat)\
+	{\
+		if(_doInputs(stat)) return true;\
+		bool out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
+		*(bool*)(getOutput()->getData()) = out;\
+		std::cout << #OPNAME << "\n";\
+		return false;\
+	}\
+};
+
+
+
+
 // input(0) = input(1)
 class GenericCopy: public Function
 {
@@ -317,6 +353,10 @@ class GenerateRandom: public Function
  */
 
 DEF_UNARY_OP(Copy,);
+
+DEF_PREFIX_BOOL_UNARY_OP(Negation, !);
+DEF_PREFIX_UNARY_OP(UnaryMinus, -);
+DEF_PREFIX_UNARY_OP(UnaryPlus, +);
 
 DEF_BINARY_OP(Add,+);
 DEF_BINARY_OP(Sub,-);

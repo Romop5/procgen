@@ -67,6 +67,7 @@ using namespace std;
 		return TYPE;
 	return NAME;
 }
+"!"		{ return NEGATION;}
 ","		{ return COMMA;}
 "["		{ return LANGL;}
 "]"		{ return RANGL;}

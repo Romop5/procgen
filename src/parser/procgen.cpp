@@ -102,11 +102,11 @@ namespace ProcGen {
 		auto condition= this->stackedBodies.top();
 		this->stackedBodies.pop();
 
-        typeResource = this->ruleDefinition.conditionReturn;
+		auto thisResource = this->ruleDefinition.thisValue;
 		std::stringstream conditionName;
 	       	conditionName	<< "condition" << ruleID;
 		functionregister->addCompositeFunction(
-				conditionName.str(), condition,{typeResource}, boolResult);
+				conditionName.str(), condition,{thisResource}, boolResult);
 
 		TypeId typeId = typeregister->getTypeId(type);
 		return der->addRule(typeId,functionregister->getFunc(conditionName.str()),
@@ -187,6 +187,38 @@ namespace ProcGen {
 	}
 
 
+	std::shared_ptr<Function> Generation::createUnaryOperation(char operation)
+	{
+		std::shared_ptr<Function> exp = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+		std::string operationName;
+		switch(operation)
+		{
+			case '-':
+				operationName= "UnaryMinus";
+				break;
+			case '!':
+				operationName= "Negation";
+				break;
+		}
+		auto type = typeregister->getTypeName(exp->getOutput()->getBaseId());
+		auto tmpResult = typeregister->sharedResource(type);
+		auto operationBox = functionregister->getFunc(operationName+":"+type);
+		if(operationBox == nullptr)
+		{
+			errorMessage("Failed to create semantic action for unary %c operator", operation);
+		}
+		if(this->isLogicOperator(operation))
+			tmpResult = typeregister->sharedResource("bool");
+
+		operationBox->bindInput(0,exp);
+		operationBox->bindOutput(tmpResult);
+
+		this->expressionsStack.push(operationBox);
+		return operationBox;	
+
+	}
 	std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
 	{
 		// TODO: produce common type
@@ -244,6 +276,9 @@ namespace ProcGen {
 		}
 
 		auto tmpResult = typeregister->sharedResource(a);
+		if(this->isLogicOperator(operation))
+			tmpResult = typeregister->sharedResource("bool");
+
 		operationBox->bindInput(0,second);
 		operationBox->bindInput(1,first);
 		operationBox->bindOutput(tmpResult);
@@ -587,6 +622,7 @@ namespace ProcGen {
         this->initializeFunction("bool");
         auto thisResource = typeregister->sharedResource(typeName);
         this->localStackFrame->addVar("this", thisResource);        
+	this->ruleDefinition.thisValue = this->localStackFrame->getVar("this");
         // save return condition resource
         this->ruleDefinition.conditionReturn = 
                 this->localStackFrame->getVar("_return");
