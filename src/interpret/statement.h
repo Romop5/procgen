@@ -6,6 +6,17 @@
 #include <memory>
 #include "resource.h"
 
+/**
+* @class RunStatus
+* @brief Helper class for execution flow controlling
+*
+* This class is responsible for alterning execution flow in both
+* special and usual cases.
+* The instance of classes is passed down through abstract tree
+* and it carries current execution state.
+* In case of run-time error or early function exit, the state
+* is alterned and leads to premature end of execution of statements.
+*/
 class RunStatus
 {
 	public:
@@ -13,13 +24,40 @@ class RunStatus
 	void setStatus(status _status) {this->_status = _status;}
 	status getStatus() {return this->_status;}
 };
+
 class Function;
+/**
+* @class Statement
+* @brief The inteface for execution blocks
+*
+* In this interpret, every statement and function is a statement itself
+* and statements together make up a tree according to composite
+* pattern. 
+*
+* Basically, there are two types of statements: functions and non-functions.
+* The only significant difference is the fact that functions have some return
+* value whereas non-functions executes without feedback.
+*/
 class Statement
 {
 	public:
+    /// Execute block functionality
 	virtual bool operator () (RunStatus&) = 0;
 };
 
+/**
+* @class If
+* @brief If-else block
+*
+* This is a logic block which executes either of its branch depending on the
+* result of expression function.
+*
+* Pseudocode:
+*   if ( expression ) 
+*       execute ( paths [ 0 ] ) 
+*   else
+*       execute ( paths [ 1 ] ) 
+*/
 class If:public Statement
 {
 	private:
@@ -28,10 +66,26 @@ class If:public Statement
 	std::map<size_t, std::shared_ptr<Statement>> paths;
 	public:
 	virtual bool operator()(RunStatus&);
+/**
+* @brief Set predicate expression tree
+* @param exp
+*/
 	void setExpression(std::shared_ptr<Function> exp);
+/**
+* @brief Set specified path (branch)
+*
+* @param id
+* @param path
+*/
 	void setPath(size_t id, std::shared_ptr<Statement> path);
 };
 
+/**
+* @class While
+* @brief While-loop block executing statament
+*
+* This block executes given statement while predicate implies TRUE
+*/
 class While:public Statement
 {
 	private:
@@ -45,6 +99,19 @@ class While:public Statement
 };
 
 
+/**
+* @class Body
+* @brief Sequence of statements
+*
+* This block executes statements back to back.
+* Pseudocode:
+*   {
+*       statement0;
+*       statement1;
+*       statement2;
+*       statementN;
+*   }
+*/
 class Body: public Statement
 {
 	private:
@@ -54,15 +121,21 @@ class Body: public Statement
 	virtual bool operator()(RunStatus&);
 };
 
+/**
+* @class Return
+* @brief Special return statement which alterns control flow
+*
+* This statement is used in composite functions when early exit of function
+* is desired.
+* Apart from changing RunStatus, it also executs input statement which can
+* for example, set return value
+*/
 class Return: public Statement
 {
 	private:
 	std::shared_ptr<Statement> input;
-	std::shared_ptr<Statement> output;
 	public:
     void bindInput(std::shared_ptr<Function> function ) { input = std::dynamic_pointer_cast<Statement>(function); } 
 	virtual bool operator()(RunStatus&);
 };
-
-
 #endif

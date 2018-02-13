@@ -23,6 +23,17 @@ enum class ResourceType {ABSTRACT, ATOMIC, COMPOSITE, COLLECTION,ANY};
 
 using json = nlohmann::json;
 
+/**
+* @class Resource
+* @brief Abstract class for type instances
+*
+* Each registered type has a value object - Resource. Primitive types
+* have atomic resources which only contain TypeId and array of bytes.
+* Structured types are composed of other types (structured or atomic).
+* Structured types are either composite (structs) or arrays (collection).
+*
+* Resource and its derived classes follow composite pattern.
+*/
 class Resource 
 {
 	
@@ -31,29 +42,17 @@ class Resource
 	size_t baseType;
 	std::shared_ptr<TypeRegister> tr;
 	public:
-	//Resource():tr(std::shared_ptr<TypeRegister>()),value(NULL), type(0){};
-	//Resource(std::shared_ptr<TypeRegister> typereg, 
-	//	unsigned char* dt, size_t id): tr(typereg),value(dt),type(id){};
 	
-	// Virtual destructor
 	virtual ~Resource() {}
 
-	// Virtual data accessor
 	virtual void* getData() const = 0;
 
-	// Get base type id (registered in TypeRegister)
 	virtual size_t getBaseId() {return baseType;}
 	
 	ResourceType getResourceType() {return resourceType;}
-	// Get base type name
-	std::string getName();
 
-	/*template<typename T>
-	bool operator==(const T& val)
-	{
-		return ((*(T*) this->value) == val);
-	}
-	*/
+	std::string getTypeName();
+
 	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
     
     virtual json to_json() const { return json("UnkResource"); }
@@ -63,6 +62,13 @@ class Resource
 };
 
 
+/**
+* @class AtomicResource
+* @brief Exact-type value
+*
+* Serves as leaf node of Resource tree hierarchy. Always contains the raw
+* value of type. Represents type such as int, float, bool.
+*/
 class AtomicResource : public Resource
 {
 	private:
@@ -82,24 +88,19 @@ class AtomicResource : public Resource
 	}
 	virtual void* getData() const override {return value;}
 	void setData(void* dt) { this->value = (unsigned char*) dt;}
-	
-	//template<typename T>
-	//T* operator*(){return dynamic_cast<T*>(value);}
-	/*
-	template<typename T>
-	bool operator==(const T& val)
-	{
-		return ((*(T*) this->value) == val);
-	}
-
-	bool copy(const std::shared_ptr<Resource> src);
-	*/
 
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
     virtual json to_json() const override;
 
 };
 
+/**
+* @class CompositeResource
+* @brief Structured resource type
+*
+* Builds up a tree from other resources, notable atomic resources.
+* Each subresource is a member of structure and has a name. 
+*/
 class CompositeResource : public Resource
 {
 	private:
@@ -115,7 +116,6 @@ class CompositeResource : public Resource
 	}
 
 	std::shared_ptr<Resource> getComponent(size_t index) { return components[index]; }
-	// TODO
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
 	virtual void* getData() const override {};
     virtual json to_json() const override;
@@ -124,6 +124,10 @@ class CompositeResource : public Resource
     TypeId getComponentType(size_t index) const;
 };
 
+/**
+* @class CollectionResource
+* @brief Collection of arbitrary types
+*/
 class CollectionResource : public Resource
 {
 	private:
@@ -151,7 +155,14 @@ class CollectionResource : public Resource
 	    virtual json to_json() const override;
 };
 
-
+/**
+* @class AnyResource
+* @brief Serves as container for any resource
+*
+* This type of resource is neccessary to store arbitrary resource in resource.
+* The feature is used to implement passing arbitrary type which can be
+* verified during run-time.
+*/
 class AnyResource : public Resource
 {
 	private:
@@ -169,7 +180,7 @@ class AnyResource : public Resource
 			return content->getData();
 		return nullptr;
 	}
-	virtual size_t getBaseId();
+	virtual size_t getBaseId() override;
 	std::shared_ptr<Resource> getContent() const { return content; }	
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
 	virtual json to_json() const override;

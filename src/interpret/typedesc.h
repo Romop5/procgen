@@ -10,6 +10,19 @@ enum descType {ATOMIC,COMPOSITE,COLLECTION,ABSTRACT,ANY};
 
 class	TypeRegister;
 
+/**
+* @class AbstractType
+* @brief Interface for type description
+*
+* For each type of Resource (e.g. Atomic, Composite...), there is a special
+* class describing the resource (e.g. AtomicType, CompositeType).
+* Description includes:
+*   - types of members
+*   - names of members
+* Each type has a global description instance which is shared by type instances.
+*
+* Composite types can build hierarchies of types according to composite pattern.
+*/
 class	AbstractType 
 {
 	protected:
@@ -18,11 +31,30 @@ class	AbstractType
 	// Virtual destructor
 	AbstractType():size(0){}
 	virtual ~AbstractType() {}
+/**
+* @brief Get typedescription type of class
+*
+* @return one of enum descType (ATOMIC, COLLECTION, ...)
+*/
 	virtual descType getType() {return ABSTRACT;}
+/**
+* @brief Deprecated
+*
+* @return 
+*/
 	unsigned int getSize() {return size;}
+/**
+* @brief Deprecated
+*
+* @return 
+*/
 	unsigned int getAlignedSize();
 };
 
+/**
+* @class AtomicType
+* @brief Metaclass for exact types (int, float, ...)
+*/
 class AtomicType : public AbstractType
 {
 	public:
@@ -33,6 +65,11 @@ class AtomicType : public AbstractType
 	virtual descType getType() { return ATOMIC;};
 	
 };
+
+/**
+* @class CompositeType
+* @brief Metaclass for structured types
+*/
 class CompositeType : public AbstractType
 {
 	std::shared_ptr<TypeRegister> tr;
@@ -40,17 +77,49 @@ class CompositeType : public AbstractType
 	CompositeType(std::shared_ptr<TypeRegister>,
 			unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items);
 	virtual descType getType() { return COMPOSITE;};
-	std::vector<TypeId> components;
-	std::vector<std::string> componentsNames;
 
 	unsigned int getOffset(unsigned int componentID);
 
+/**
+* @brief Has member with name
+*/
 	bool hasComponentWithName(const std::string name) const;
+/**
+* @brief Get order of member subtype
+*
+* @param name
+*
+* @return -1 if name isn't member 
+*/
 	size_t getComponentPositionByName(const std::string name) const;
+/**
+* @brief Get member name from order (position)
+*
+* @param componentID
+*
+* @return 
+*/
     const std::string getComponentName(size_t componentID) const;
+/**
+* @brief Get member TypeId from order
+*
+* @param componentID
+*
+* @return 
+*/
     TypeId getComponentTypeId(size_t componentID) const;
+
+    size_t getComponentCount() { return this->components.size(); }
+
+    protected:
+	std::vector<TypeId> components;
+	std::vector<std::string> componentsNames;
 		
 };
+/**
+* @class CollectionType
+* @brief Holds global collection type
+*/
 class CollectionType : public AbstractType
 {
 	public:
@@ -58,13 +127,14 @@ class CollectionType : public AbstractType
 	virtual descType getType() { return COLLECTION;}
 };
 
+/**
+* @class AnyType
+* @brief Holds special any type
+*/
 class AnyType: public AbstractType
 {
 	public:
 	AnyType() {};
 	virtual descType getType() { return ANY;}
 };
-
-
-
 #endif

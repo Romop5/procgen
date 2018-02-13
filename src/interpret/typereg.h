@@ -7,6 +7,10 @@
 #include "resource.h"
 #include "typedesc.h"
 
+/**
+* @class TypeRegister 
+* @brief Registration and instancing of user-defined types
+*/
 class TypeRegister: public std::enable_shared_from_this<TypeRegister> 
 {
 	//using TypeId = size_t;
@@ -17,7 +21,16 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		addAny();
 		addCollection();
 	};
-	// TODO: test + add conditions to other add* functions
+
+    
+/**
+* @brief Add another name for existing type
+*
+* @param alias   The new name for type
+* @param aliased The existing type
+*
+* @return \cFALSE if \calias name already exists
+*/
 	bool addAlias(const std::string& alias, const std::string& aliased)
 	{
 		// if aliased type exists and alias doesn't
@@ -30,6 +43,17 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		return false;
 	}
 
+/**
+* @brief Register a new type paired with C++ type \cT
+*
+* @tparam T C++ type
+* @param typeName Interpret-dependend name for type
+*
+* This function registers a new type \ctypeName with values of \cT
+* @example add<int>("integer") registers a new variable integer
+* which can store ints
+* @return \cFALSE if type with the same name exists
+*/
 	template<typename T>
 	bool add(const std::string& typeName)
 	{
@@ -37,6 +61,16 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		types[id] = std::make_shared<AtomicType>(sizeof(T));
 		names[typeName] = id;
 	}
+
+/**
+* @brief Register a new structured type from other types
+*
+* @param typeName The name for structured type in interpret domain
+* @param types The vector of \cTypeId of other types
+*
+* @return \cFALSE if type with the same name exists
+* @see TypeRegister::addCompositeWithNames
+*/
 	bool addComposite(const std::string& typeName,std::vector<TypeId> types)
 	{
         // Fail on invalid type
@@ -58,6 +92,16 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
         return true;
 
 	}
+/**
+* @brief Register a new structured type from other named types 
+*
+* @param typeName   The name for structured type in interpret domain
+* @param types      The vector of \cTypeId of other types
+* @param itemNames  The names of member subtypes
+*
+* @return \cFALSE if type with the same name exists
+* @see TypeRegister::addComposite
+*/
 	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
 	{
         // Fail on invalid type
@@ -80,18 +124,32 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 
 	}
 
+/**
+* @brief Internally register collection type
+*/
 	bool addCollection()
 	{
 		TypeId id = highest++;
 		types[id] = std::make_shared<CollectionType>();
 		names["collection"] = id;
 	}
+/**
+* @brief Internally register 'any' type
+*/
 	bool addAny()
 	{
 		TypeId id = highest++;
 		types[id] = std::make_shared<AnyType>();
 		names["any"] = id;
 	}
+
+/**
+* @brief Get \cTypeId by type name
+*
+* @param name
+*
+* @return \cUNKNOWN if name doesn't exist
+*/
 	TypeId getTypeId(const std::string& name)
 	{
 		auto it = names.find(name);
@@ -99,6 +157,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 			return it->second;
 		return UNKWNOWN;
 	}
+/**
+* @brief Get typename for given id
+*
+* @param id
+*
+* @return "typeNotFound" if \cid doesn't exist  
+*/
 	std::string getTypeName(const TypeId id)
 	{
 		for(auto &x: this->names)
@@ -108,6 +173,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		}
 		return "typeNotFound";
 	}
+/**
+* @brief Create an instance of Resource of registered type
+*
+* @param type
+*
+* @return \cnullptr if given TypeId is not valid
+*/
 	std::shared_ptr<Resource> sharedResource(TypeId type)
 	{
 		auto it = types.find(type);
@@ -130,9 +202,9 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 					{
 						auto compo = std::dynamic_pointer_cast<CompositeType>(it->second);
 						std::map<size_t,std::shared_ptr<Resource>> map;
-						for(int i = 0; i < compo->components.size();i++)
+						for(int i = 0; i < compo->getComponentCount() ;i++)
 						{
-							auto res = this->sharedResource(compo->components[i]);
+							auto res = this->sharedResource(compo->getComponentTypeId(i));
 							map[i] = res;
 						}
 						return std::make_shared<CompositeResource>(shared_from_this(),type,map);
@@ -150,6 +222,14 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		return nullptr;
 	}
 	
+    
+/**
+* @brief Create an instance of type
+*
+* @param name
+*
+* @return \cnullptr if name doesn't exist
+*/
 	std::shared_ptr<Resource> sharedResource(std::string name)
 	{
 		auto id = this->getTypeId(name);
@@ -159,6 +239,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	}
 	
 
+/**
+* @brief Get TypeDescription for TypeId 
+*
+* @param id
+*
+* @return TypeDescription of \cUNKWNOWN if id is invalid
+*/
 	std::shared_ptr<AbstractType>& getType(TypeId id)
 	{
 		auto it = types.find(id);
@@ -169,6 +256,14 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		return types[UNKWNOWN];	
 	}
 
+
+/**
+* @brief Is id a valid TypeId ?
+*
+* @param id
+*
+* @return FALSE if not
+*/
     bool hasTypeWithID(TypeId id) const
     {
         if(id == 0)
@@ -178,6 +273,13 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
         return true;
     }
     
+/**
+* @brief Is name registered
+*
+* @param name
+*
+* @return FALSE if not 
+*/
     bool hasType(const std::string& name)
     {
         auto it = getTypeId(name);

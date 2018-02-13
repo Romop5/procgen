@@ -17,6 +17,14 @@
 #include "statement.h"
 class Statement;
 class Resource;
+
+/**
+* @class Function
+* @brief Specialized statement which has inputs and output
+*
+* Classes based on Function can be tied together using inputs and can pass
+* value through output and input ports.
+*/
 class Function: public Statement
 {
 	// inputs = functions
@@ -47,6 +55,10 @@ class DebugStatement:public Function
 	virtual bool operator()(RunStatus& stat);
 };
 
+/**
+* @class PrintJson
+* @brief Function block for debugging purposes
+*/
 class PrintJson: public Function
 {
 	public:
@@ -70,6 +82,13 @@ class PrintValue: public Function
 	}
 };
 
+/**
+* @class CollectionAppend
+* @brief Appends new element into collection
+*
+* Input 0 - collection
+* Input 1 - element 
+*/
 class CollectionAppend:public Function
 {
 	public:
@@ -83,6 +102,14 @@ class CollectionAppend:public Function
 	}
 };
 
+/**
+* @class CollectionIndex
+* @brief Outputs collection element, specified by index
+*
+* Input 0 - collection
+* Input 1 - index 
+* Output  - element resource
+*/
 class CollectionIndex:public Function
 {
 	public:
@@ -97,6 +124,13 @@ class CollectionIndex:public Function
 	}
 };
 
+/**
+* @class CollectionLength
+* @brief Returns the length of collection
+*
+* Input 0 - collection
+* Output  - length resource (size_t)
+*/
 class CollectionLength:public Function
 {
 	public:
@@ -111,6 +145,13 @@ class CollectionLength:public Function
 	}
 };
 
+/**
+* @class CollectionRemove
+* @brief Remove specified element
+*
+* Input 0 - collection
+* Input 1 - position 
+*/
 class CollectionRemove:public Function
 {
 	public:
@@ -125,11 +166,14 @@ class CollectionRemove:public Function
 	}
 };
 
-/*
- * Input 0 = struct
- * Input 1 = index
- * Output = part 
- */
+/**
+* @class CompositeGet
+* @brief Get member of structure
+*
+* Input 0 - collection
+* Input 1 - index 
+* Output  - element resource
+*/
 class CompositeGet:public Function
 {
 	public:
@@ -145,11 +189,15 @@ class CompositeGet:public Function
 	}
 };
 
-/*
- * Input 0 = struct
- * Input 1 = index
- * Input 2 = part 
- */
+/**
+* @class CompositeSet
+* @brief Set member of structure
+*
+* Input 0 - collection
+* Input 1 - index 
+* Input 2 - element
+*/
+
 class CompositeSet:public Function
 {
 	public:
