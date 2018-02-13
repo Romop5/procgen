@@ -29,7 +29,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * @param alias   The new name for type
 * @param aliased The existing type
 *
-* @return \cFALSE if \calias name already exists
+* @return \c FALSE if \c alias name already exists
 */
 	bool addAlias(const std::string& alias, const std::string& aliased)
 	{
@@ -44,15 +44,15 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	}
 
 /**
-* @brief Register a new type paired with C++ type \cT
+* @brief Register a new type paired with C++ type \c T
 *
 * @tparam T C++ type
 * @param typeName Interpret-dependend name for type
 *
-* This function registers a new type \ctypeName with values of \cT
+* This function registers a new type \c typeName with values of \c T
 * @example add<int>("integer") registers a new variable integer
 * which can store ints
-* @return \cFALSE if type with the same name exists
+* @return \c FALSE if type with the same name exists
 */
 	template<typename T>
 	bool add(const std::string& typeName)
@@ -66,9 +66,9 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * @brief Register a new structured type from other types
 *
 * @param typeName The name for structured type in interpret domain
-* @param types The vector of \cTypeId of other types
+* @param types The vector of \c TypeId of other types
 *
-* @return \cFALSE if type with the same name exists
+* @return \c FALSE if type with the same name exists
 * @see TypeRegister::addCompositeWithNames
 */
 	bool addComposite(const std::string& typeName,std::vector<TypeId> types)
@@ -96,10 +96,10 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * @brief Register a new structured type from other named types 
 *
 * @param typeName   The name for structured type in interpret domain
-* @param types      The vector of \cTypeId of other types
+* @param types      The vector of \c TypeId of other types
 * @param itemNames  The names of member subtypes
 *
-* @return \cFALSE if type with the same name exists
+* @return \c FALSE if type with the same name exists
 * @see TypeRegister::addComposite
 */
 	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
@@ -144,11 +144,11 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	}
 
 /**
-* @brief Get \cTypeId by type name
+* @brief Get \c TypeId by type name
 *
 * @param name
 *
-* @return \cUNKNOWN if name doesn't exist
+* @return \c UNKNOWN if name doesn't exist
 */
 	TypeId getTypeId(const std::string& name)
 	{
@@ -162,7 +162,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 *
 * @param id
 *
-* @return "typeNotFound" if \cid doesn't exist  
+* @return "typeNotFound" if \c id doesn't exist  
 */
 	std::string getTypeName(const TypeId id)
 	{
@@ -178,7 +178,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 *
 * @param type
 *
-* @return \cnullptr if given TypeId is not valid
+* @return \c nullptr if given TypeId is not valid
 */
 	std::shared_ptr<Resource> sharedResource(TypeId type)
 	{
@@ -228,7 +228,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 *
 * @param name
 *
-* @return \cnullptr if name doesn't exist
+* @return \c nullptr if name doesn't exist
 */
 	std::shared_ptr<Resource> sharedResource(std::string name)
 	{
@@ -244,7 +244,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 *
 * @param id
 *
-* @return TypeDescription of \cUNKWNOWN if id is invalid
+* @return TypeDescription of \c UNKWNOWN if id is invalid
 */
 	std::shared_ptr<AbstractType>& getType(TypeId id)
 	{

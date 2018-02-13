@@ -82,6 +82,7 @@ void yyerror(Generation* proc, const char *s);
 %left "*" 
 
 %left UMINUS  
+%left UPLUS 
 %left NEGATION "!"
 
 

@@ -92,7 +92,16 @@ class While:public Statement
 	std::shared_ptr<Function> _expression;
 	std::shared_ptr<Statement> _statement;
 	public:
+/**
+* @brief Set loop condition 
+* @param expression
+*/
     void bindCondition(std::shared_ptr<Function> expression) { this->_expression = expression; }
+/**
+* @brief Set loop statement 
+*
+* @param statement
+*/
     void bindStatement(std::shared_ptr<Statement> statement) { this->_statement = statement; }
 
 	virtual bool operator()(RunStatus&);

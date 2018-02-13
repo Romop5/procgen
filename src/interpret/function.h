@@ -35,10 +35,19 @@ class Function: public Statement
 
 
 	protected:		
-	bool				_doInputs(RunStatus& stat);
+	bool				        _doInputs(RunStatus& stat);
 	std::shared_ptr<Function>	_getInput(size_t id) {return this->_inputs[id];}
 	public:
+/**
+* @brief Bind func expression as input at slot id
+* @param id
+* @param func
+*/
 	virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
+/**
+* @brief Set resource res as function storage place
+* @param res
+*/
 	virtual bool bindOutput(std::shared_ptr<Resource> res);
 	std::shared_ptr<Resource>	getOutput() { return this->_output; }
 	virtual bool operator()(RunStatus& stat);

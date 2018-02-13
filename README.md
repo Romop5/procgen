@@ -15,7 +15,9 @@ The generation is similar to parametric L-systems as it has **rules** with **par
 * Python bindings (TODO)
 
 [How does this tool work](HOWDOESITWORK.md)
+
 ### Example procedural code
+
 ```cpp
 // create a basic structure
 using helloStructure = struct
