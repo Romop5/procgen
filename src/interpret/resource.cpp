@@ -39,7 +39,7 @@ json AtomicResource::to_json() const
     return json("unkAtomicValue");
 }
 
-std::string Resource::getName()
+std::string Resource::getTypeName()
 {
 	return tr->getTypeName(this->baseType);
 }

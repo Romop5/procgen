@@ -176,7 +176,7 @@ namespace ProcGen {
         {
 			inputResources.push_back(typeDesc.resource);
             std::cout << "Parameter: " << typeDesc.name << " with type: "
-                << typeregister->getTypeName(typeDesc.resource->getBaseId()) 
+                << typeDesc.resource->getTypeName() 
                 << std::endl;
         }
 
@@ -202,7 +202,7 @@ namespace ProcGen {
 				operationName= "Negation";
 				break;
 		}
-		auto type = typeregister->getTypeName(exp->getOutput()->getBaseId());
+		auto type = exp->getOutput()->getTypeName();
 		auto tmpResult = typeregister->sharedResource(type);
 		auto operationBox = functionregister->getFunc(operationName+":"+type);
 		if(operationBox == nullptr)
@@ -328,7 +328,7 @@ namespace ProcGen {
             return false;
         }
         std::cout << "Pushing variable " << name << " with type " <<
-                typeregister->getTypeName(res->getBaseId()) << std::endl;
+                res->getTypeName() << std::endl;
         this->expressionsStack.push(functionregister->getHandler(res));
         return true;
     }
@@ -350,7 +350,7 @@ namespace ProcGen {
         auto compositeResource = 
                 std::dynamic_pointer_cast<CompositeResource>(resource);
         
-        auto structureName = typeregister->getTypeName(compositeResource->getBaseId());
+        auto structureName = compositeResource->getTypeName();
         auto position = compositeResource->getComponentPosition(member);
         if(position == -1)
         {
@@ -375,7 +375,7 @@ namespace ProcGen {
 
 
         std::cout << "Pushing structuremember '" << member << "' with type " <<
-                typeregister->getTypeName(outputResource->getBaseId()) << std::endl;
+                outputResource->getTypeName() << std::endl;
         this->expressionsStack.push(getter);
     }
 
@@ -588,7 +588,7 @@ namespace ProcGen {
     {
         this->localStackFrame->addVar(parameter.name,parameter.resource);
         std::cout << "Registering parameter " << parameter.name << " "
-                    << typeregister->getTypeName(parameter.resource->getBaseId()) << std::endl;
+                    << parameter.resource->getTypeName() << std::endl;
         return true;
     }
 
@@ -677,7 +677,7 @@ namespace ProcGen {
 
 		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
 		{
-			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+			errorMessage("Expected collection, got '%s'", expr->getOutput()->getTypeName());
 		}
 		auto at = std::make_shared<CollectionAppend>();
 		at->bindInput(0, expr);
@@ -697,7 +697,7 @@ namespace ProcGen {
 		this->expressionsStack.pop();
 		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
 		{
-			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+			errorMessage("Expected collection, got '%s'", expr->getOutput()->getTypeName());
 		}
 		auto at = std::make_shared<CollectionIndex>();
 		at->bindInput(0, expr);
@@ -714,7 +714,7 @@ namespace ProcGen {
 		this->expressionsStack.pop();
 		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
 		{
-			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+			errorMessage("Expected collection, got '%s'", expr->getOutput()->getTypeName());
 		}
 		auto at = std::make_shared<CollectionLength>();
 		at->bindInput(0, expr);
@@ -731,7 +731,7 @@ namespace ProcGen {
 		this->expressionsStack.pop();
 		if(expr->getOutput()->getBaseId() != typeregister->getTypeId("collection"))
 		{
-			errorMessage("Expected collection, got '%s'", typeregister->getTypeName(expr->getOutput()->getBaseId()));
+			errorMessage("Expected collection, got '%s'", expr->getOutput()->getTypeName());
 		}
 
 		auto at = std::make_shared<CollectionRemove>();

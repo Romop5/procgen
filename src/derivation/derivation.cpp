@@ -50,11 +50,11 @@ void Derivation::generate(size_t maxSteps)
 				// skip symbols
 				i += howManytoSkip;	
 			} else {
-				std::cerr << "No aplicable rule found for type: " << sym->getName() << std::endl;
+				std::cerr << "No aplicable rule found for type: " << sym->getTypeName() << std::endl;
 				this->appendNextSymbol(sym);
 			}
 		} else {
-			std::cerr << "No rule found for type: " << sym->getName() << std::endl;
+			std::cerr << "No rule found for type: " << sym->getTypeName() << std::endl;
 			this->appendNextSymbol(sym);
 		}
 	}
@@ -119,7 +119,7 @@ void Derivation::_debug()
 	std::cout << "Current String Content" << std::endl;
 	for(size_t i = 0; i < this->currentString.size(); i++)
 	{
-		std::cout << i << "\t'" << this->currentString[i]->getName() << "'"<<std::endl;
+		std::cout << i << "\t'" << this->currentString[i]->getTypeName() << "'"<<std::endl;
 	}
 	std::cout << "Elements count: " << this->currentString.size() << std::endl;
 }
