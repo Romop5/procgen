@@ -51,7 +51,7 @@ class Resource
 	
 	ResourceType getResourceType() {return resourceType;}
 
-	std::string getTypeName();
+	std::string getTypeName() const;
 
 	virtual bool copy(const std::shared_ptr<Resource> src) = 0;
     

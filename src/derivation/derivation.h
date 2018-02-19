@@ -92,6 +92,11 @@ class Derivation
 	{
 		return this->currentString;
 	}
+    void clear()
+    {
+        this->currentString.clear();
+        this->nextString.clear();
+    }
 
 };
 #endif

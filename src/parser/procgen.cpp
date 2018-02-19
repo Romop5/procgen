@@ -43,11 +43,16 @@ namespace ProcGen {
 		do {
 			yyparse(this);
 		} while (!feof(yyin));
-		return true;
+
+        if(!hasAnyError)
+            return true;
+        return false;
 	}
 
     bool Generation::runInit()
     {
+        // clear all
+        this->der->clear();
         auto initFunction = functionregister->getFunc("init");
         if(initFunction == nullptr)
         {
@@ -56,14 +61,14 @@ namespace ProcGen {
         }
         RunStatus rs;
         (*initFunction)(rs);
-        std::cout << "Initialized...\n";
+        //std::cout << "Initialized...\n";
         return true;
     }
     
     bool Generation::run(int maximumSteps)
     {
         der->generate(maximumSteps);
-        std::cout << "Done...\n";
+        //std::cout << "Done...\n";
     }
 
     
@@ -128,7 +133,7 @@ namespace ProcGen {
 		for(auto &x: typelist)
 		{
 			//TODO: check if type exists
-            std::cout << "registerStruct" << std::endl;
+            //std::cout << "registerStruct" << std::endl;
             types.push_back(x.resource->getBaseId());
 			names.push_back(x.name);
 		}
@@ -173,14 +178,14 @@ namespace ProcGen {
 		std::vector<std::shared_ptr<Resource>> inputResources;
 	
 		// type list
-        std::cout << "Registering function " << name << "with num. of params:"
-            << typeList.size() << "\n";
+        //std::cout << "Registering function " << name << "with num. of params:"
+            //<< typeList.size() << "\n";
 		for(auto &typeDesc: typeList)
         {
 			inputResources.push_back(typeDesc.resource);
-            std::cout << "Parameter: " << typeDesc.name << " with type: "
-                << typeDesc.resource->getTypeName() 
-                << std::endl;
+            //std::cout << "Parameter: " << typeDesc.name << " with type: "
+                //<< typeDesc.resource->getTypeName() 
+                //<< std::endl;
         }
 
         typeList.clear();
@@ -271,7 +276,7 @@ namespace ProcGen {
 
 		// Create operation function
 
-		std::cout << type+":"+operationName<< " je kunda" << std::endl;
+		//std::cout << type+":"+operationName<< " je kunda" << std::endl;
 		auto operationBox = functionregister->getFunc(operationName+":"+type);
 		if(!operationBox)
 		{
@@ -330,8 +335,8 @@ namespace ProcGen {
             errorMessage("Undefined variable %s\n", name);
             return false;
         }
-        std::cout << "Pushing variable " << name << " with type " <<
-                res->getTypeName() << std::endl;
+        //std::cout << "Pushing variable " << name << " with type " <<
+                //res->getTypeName() << std::endl;
         this->expressionsStack.push(functionregister->getHandler(res));
         return true;
     }
@@ -377,8 +382,8 @@ namespace ProcGen {
         getter->bindOutput(outputResource);
 
 
-        std::cout << "Pushing structuremember '" << member << "' with type " <<
-                outputResource->getTypeName() << std::endl;
+        //std::cout << "Pushing structuremember '" << member << "' with type " <<
+                //outputResource->getTypeName() << std::endl;
         this->expressionsStack.push(getter);
     }
 
@@ -590,8 +595,8 @@ namespace ProcGen {
     bool Generation::registerFormalParameter(sTypeDeclaration& parameter)
     {
         this->localStackFrame->addVar(parameter.name,parameter.resource);
-        std::cout << "Registering parameter " << parameter.name << " "
-                    << parameter.resource->getTypeName() << std::endl;
+        //std::cout << "Registering parameter " << parameter.name << " "
+        //            << parameter.resource->getTypeName() << std::endl;
         return true;
     }
 
