@@ -5,10 +5,13 @@ ProcGen - a library for procedural generation
 </p>
 
 ## About
+**WORK IN PROGRESS** *BUG REPORTS APPRECIATED*
 
 *ProcGen* is a C++ library aimed to be used for procedural generation. It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures** in fancy *JSON* format.
 
 The generation is similar to parametric L-systems as it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**.
+
+The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 2018.
 
 ### Features
 * C-like style of code
@@ -20,37 +23,55 @@ The generation is similar to parametric L-systems as it has **rules** with **par
 [How does this tool work](HOWDOESITWORK.md)
 
 ### Example procedural code
+Following code was used to generate the pyramide which can be found in the header of
+this document.
 
 ```cpp
-// create a basic structure
-using helloStructure = struct
-{
-	int counter;
+using vec3 = struct  {// define vector of 3 floats
+    float x;
+    float y;
+    float z;
 };
 
-// rule for helloStructure
-using simpleRule = rule helloStructure 
-{
-	// the rule is only valid when counter is not 5
-	if(this.counter != 5)
-		return true;
-	return false;
+vec3 cVec3(float x, float y, float z) {// define 'constructor'
+    vec3 tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    return tmp;
 }
-{
-	// rule's procedure
-	helloStructure tmp = this;
-	tmp.counter = tmp.counter + 1;
-	// in this case, append structure with incremented counter for next-step of derivation
-	appendSymbol(tmp);
+
+using cube = struct {// define cube (position + side of cube)
+    vec3 position;
+    float sz;
 };
 
-// This is something like the main function
-int init()
-{
-	// it appends symbol to start string
-	helloStructure hello;
-	hello.counter = 0;
-	appendSymbol(hello);
+cube cCube(vec3 pos, float sz) {// constructor
+    cube tmp;
+    tmp.position = pos;
+    tmp.sz = sz;
+    return tmp;
+}
+
+// the one and only rule
+using tst = rule cube {
+    return true;  // this rule is valid in every step, so simply return true
+} {
+    // the body of rule -> following statements create new symbols which
+    // replace the current one in next-step string
+    float newSize = this.sz/2.0;
+    // Generate three base cubes
+    appendSymbol(cCube(cVec3(this.position.x-newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
+    appendSymbol(cCube(cVec3(this.position.x+newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
+    appendSymbol(cCube(cVec3(this.position.x,this.position.y-newSize,this.position.z+newSize) ,newSize));
+    // Generate one above them
+    appendSymbol(cCube(cVec3(this.position.x,this.position.y+newSize,this.position.z) ,newSize));
+
+};
+
+// Global function which works as main() in regular c
+int init() {
+    appendSymbol(cCube(cVec3(0.0,0.0,0.0),50.0));
 }
 ```
 ## Example results
