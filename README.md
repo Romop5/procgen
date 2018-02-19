@@ -1,6 +1,8 @@
 ProcGen - a library for procedural generation
 ================================
 
+[logo]: https://github.com/Romop5/procgen/raw/master/pyramide.gif"Pyramide"
+
 ## About
 
 *ProcGen* is a C++ library aimed to be used for procedural generation. It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures** in fancy *JSON* format.
