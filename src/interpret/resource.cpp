@@ -39,7 +39,7 @@ json AtomicResource::to_json() const
     return json("unkAtomicValue");
 }
 
-std::string Resource::getTypeName()
+std::string Resource::getTypeName() const
 {
 	return tr->getTypeName(this->baseType);
 }
@@ -115,6 +115,7 @@ json CollectionResource::to_json() const
 json CompositeResource::to_json() const
 {
     json object;
+    object["_type"] = this->getTypeName();
 	for(size_t i = 0; i < this->components.size(); i++)
 	{
 		object[getComponentName(i)] = (this->components.at(i)->to_json());

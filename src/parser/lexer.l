@@ -60,7 +60,7 @@ using namespace std;
 
 [0-9]+            { yylval.ival = atoi(yytext); return INTEGER; }
 [a-zA-Z0-9]+      {
-	cout << "Got string: " << yytext << endl;
+	//cout << "Got string: " << yytext << endl;
 	yylval.sval = strdup(yytext);
 	// detect if it is type or identifier
     if(proc->hasType(yytext))

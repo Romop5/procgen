@@ -131,7 +131,7 @@ typeDeclaration          : TYPE NAME
 			 {sTypeDeclaration temp = proc->fillTypeDeclaration($1,$2);
               proc->typeList.push_back(temp);
               proc->registerFormalParameter(temp);
-              std::cout << "typeList " << proc->typeList.size() << std::endl;
+              //std::cout << "typeList " << proc->typeList.size() << std::endl;
              }
 
 
@@ -248,7 +248,8 @@ literal                   : INTEGER
 
 %%
 void yyerror(Generation* proc, const char *s) {
-	std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
-	exit(-1);
+    proc->errorMessage(s);
+	//std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
+	//exit(-1);
 }
 
