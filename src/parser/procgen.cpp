@@ -36,7 +36,10 @@ namespace ProcGen {
 		////yydebug = 1;/
 		yyin = fopen(file.c_str(),"r");
 		if(yyin == NULL)
+        {
 			errorMessage("Failed to open file ...");
+            return false;
+        }
 		do {
 			yyparse(this);
 		} while (!feof(yyin));
