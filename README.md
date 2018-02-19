@@ -1,7 +1,8 @@
 ProcGen - a library for procedural generation
 ================================
-
-[logo]: https://github.com/Romop5/procgen/blob/master/pyramide.gif?raw=true "Pyramide"
+<p align="center">
+    <img width="120" height="90" src="https://github.com/Romop5/procgen/blob/master/pyramide.gif?raw=true">
+</p>
 
 ## About
 
