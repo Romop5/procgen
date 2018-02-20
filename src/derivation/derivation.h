@@ -50,6 +50,7 @@ class Derivation
 	std::shared_ptr<TypeRegister> tr;
 
 	private:
+    int allowedIterations;
 	std::map<TypeId, std::vector<ruleType>> rules;
 	std::vector<std::shared_ptr<Resource>> currentString;
 	std::vector<std::shared_ptr<Resource>> nextString;
@@ -63,6 +64,7 @@ class Derivation
 	{
 		this->tr = tr;
 		this->fr = fr;
+        this->allowedIterations = -1;
 	}
 
 	// Add rule for symbol
@@ -97,6 +99,8 @@ class Derivation
         this->currentString.clear();
         this->nextString.clear();
     }
+
+    void setMaximumIterations(int maximum) { this->allowedIterations = maximum;}
 
 };
 #endif

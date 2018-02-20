@@ -2,6 +2,7 @@
 #include "parser.hh"
 #include <sstream>
 #include "appender.h"
+#include "iteratorlimit.h"
 
 #include <cstdarg>
 
@@ -23,6 +24,9 @@ namespace ProcGen {
         auto derivation = this->der;
 		functionregister->addFunction("appendSymbol",
              [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<AppendSymbol>(derivation));});
+
+		functionregister->addFunction("setMaximumIterations",
+             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<IteratorLimit>(derivation));});
 
 		functionregister->addFunction("print",
              [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<PrintJson>());});

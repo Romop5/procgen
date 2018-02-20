@@ -22,6 +22,10 @@ The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 201
 
 [How does this tool work](HOWDOESITWORK.md)
 
+[Annotated BNF grammar]() TODO
+[Tutorials]() TODO
+
+
 ### Example procedural code
 Following code was used to generate the pyramide which can be found in the header of
 this document.
@@ -72,6 +76,7 @@ using tst = rule cube {
 // Global function which works as main() in regular c
 int init() {
     appendSymbol(cCube(cVec3(0.0,0.0,0.0),50.0));
+    setMaximumIterations(5);
 }
 ```
 ## Example results

@@ -13,6 +13,7 @@ void Derivation::setStartSymbols(std::vector<std::shared_ptr<Resource>> symbols)
 	
 void Derivation::generate(size_t maxSteps)
 {
+    maxSteps = this->allowedIterations;
 	bool shouldContinue = false;
 	size_t step = 0;
     // Move next to current buffer
