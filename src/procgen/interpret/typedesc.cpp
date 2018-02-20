@@ -1,5 +1,5 @@
-#include "typedesc.h"
-#include "typereg.h"
+#include <procgen/interpret/typedesc.h>
+#include <procgen/interpret/typereg.h>
 #include <iostream>
 
 unsigned int AbstractType::getAlignedSize()

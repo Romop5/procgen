@@ -1,5 +1,5 @@
-#include "resource.h"
-#include "typereg.h"
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/typereg.h>
 #include <sstream>
 
 bool AtomicResource::copy(const std::shared_ptr<Resource> src)

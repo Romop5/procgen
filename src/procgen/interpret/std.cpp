@@ -1,7 +1,7 @@
-#include "types.h"
-#include "typereg.h"
-#include "functionreg.h"
-#include "compositeutils.h"
+#include <procgen/interpret/types.h>
+#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/functionreg.h>
+#include <procgen/interpret/compositeutils.h>
 
 void registerStandardTypes(TypeRegister* tr)
 {

@@ -1,4 +1,4 @@
-#include "function.h"
+#include <procgen/interpret/function.h>
 bool Function::operator()(RunStatus& stat)
 {
 	if(_doInputs(stat)) return true;

@@ -1,8 +1,8 @@
-#include "procgen.h"
+#include <procgen/parser/procgen.h>
 #include "parser.hh"
 #include <sstream>
-#include "appender.h"
-#include "iteratorlimit.h"
+#include <procgen/derivation/appender.h>
+#include <procgen/derivation/iteratorlimit.h>
 
 #include <cstdarg>
 

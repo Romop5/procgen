@@ -1,6 +1,6 @@
-#include "compositefunction.h"
-#include "functionreg.h"
-#include "std.h"
+#include <procgen/interpret/compositefunction.h>
+#include <procgen/interpret/functionreg.h>
+#include <procgen/interpret/std.h>
 #include <stdexcept>
 #include <iostream>
 

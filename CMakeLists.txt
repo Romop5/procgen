@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
+project(ProcGen)
+
 option(PROCGEN_TESTS "Build tests - use make test" OFF)
 option(PROCGEN_EXAMPLES "Build examples" OFF)
 option(PROCGEN_PARSER "Build example parser" OFF)
 
-project(ProcGen)
 
 # Add vendors (3rd libraries)
 
@@ -13,53 +14,56 @@ add_subdirectory(vendors)
 ############    DEFINE SOURCE FILES 			   ####################
 ###############################################################################
 
+
 set(INTERPRET_SOURCE 
-	src/interpret/compositefunction.h
-	src/interpret/compositeutils.h
-	src/interpret/function.cpp
-	src/interpret/function.h
-	src/interpret/functionreg.cpp
-	src/interpret/functionreg.h
-	src/interpret/resource.cpp
-	src/interpret/resource.h
-	src/interpret/statement.cpp
-	src/interpret/statement.h
-	src/interpret/std.cpp
-	src/interpret/std.h
-	src/interpret/typedesc.cpp
-	src/interpret/typedesc.h
-	src/interpret/typereg.h
-	src/interpret/types.h
-	src/interpret/types.cpp
-	src/interpret/variablereg.cpp)
+	src/procgen/interpret/compositefunction.h
+	src/procgen/interpret/compositeutils.h
+	src/procgen/interpret/function.cpp
+	src/procgen/interpret/function.h
+	src/procgen/interpret/functionreg.cpp
+	src/procgen/interpret/functionreg.h
+	src/procgen/interpret/resource.cpp
+	src/procgen/interpret/resource.h
+	src/procgen/interpret/statement.cpp
+	src/procgen/interpret/statement.h
+	src/procgen/interpret/std.cpp
+	src/procgen/interpret/std.h
+	src/procgen/interpret/typedesc.cpp
+	src/procgen/interpret/typedesc.h
+	src/procgen/interpret/typereg.h
+	src/procgen/interpret/types.h
+	src/procgen/interpret/types.cpp
+	src/procgen/interpret/variablereg.cpp)
 
 set(DERIVATION_SOURCE
-	src/derivation/appender.h
-	src/derivation/derivation.cpp
-	src/derivation/derivation.h
+	src/procgen/derivation/appender.h
+	src/procgen/derivation/derivation.cpp
+	src/procgen/derivation/derivation.h
 )
 
 add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
 target_link_libraries(procedural json)
 target_compile_features(procedural PUBLIC cxx_auto_type)
-target_include_directories(procedural PUBLIC src/interpret src/derivation)
+#target_include_directories(procedural PUBLIC src/procgen/interpret src/procgen/derivation)
+target_include_directories(procedural PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(procedural PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
 # Translate parser / lexer with Bison/Flex
-BISON_TARGET(Parser src/parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS -d)
-FLEX_TARGET(Scanner src/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+BISON_TARGET(Parser src/procgen/parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS -d)
+FLEX_TARGET(Scanner src/procgen/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 add_library(procgen
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
-    src/parser/procgen.cpp
+    src/procgen/parser/procgen.cpp
 )
 
 target_include_directories(procgen PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(procgen PUBLIC src/parser)
+target_include_directories(procgen PUBLIC src/procgen/parser)
 target_link_libraries(procgen procedural)
 
 ###############################################################################

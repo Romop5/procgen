@@ -1,7 +1,7 @@
 #ifndef _TYPESTRING_H
 #define _TYPESTRING_H
 #include <string>
-#include "types.h"
+#include <procgen/interpret/types.h>
 
 // Provides an easy way to iterate a FNC function over standard built-in types
 #define FORALL_ATOMICTYPES(FNC)\

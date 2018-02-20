@@ -1,7 +1,7 @@
-#include "std.h"
-#include "typereg.h"
-#include "variablereg.h"
-#include "functionreg.h"
+#include <procgen/interpret/std.h>
+#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/variablereg.h>
+#include <procgen/interpret/functionreg.h>
 
 template<class X>
 int fib(int n)

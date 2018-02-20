@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "interpret.h"
+#include <procgen/interpret/interpret.h>
 
 TEST_CASE("FunctionReg - basics")
 {

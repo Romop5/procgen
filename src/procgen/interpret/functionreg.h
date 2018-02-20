@@ -5,11 +5,11 @@
  * Note: standard functions available under FUNC:TYPE name
  *
  */
-#include "resource.h"
-#include "function.h"
-#include "typereg.h"
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/function.h>
+#include <procgen/interpret/typereg.h>
 #include <functional>
-#include "compositefunction.h"
+#include <procgen/interpret/compositefunction.h>
 
 // function pointer = Function constructor
 typedef std::shared_ptr<Function> (*func_constr)();

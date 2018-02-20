@@ -3,9 +3,9 @@
 
 #include <map>
 #include <memory>
-#include "types.h"
-#include "resource.h"
-#include "typedesc.h"
+#include <procgen/interpret/types.h>
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/typedesc.h>
 
 /**
 * @class TypeRegister 

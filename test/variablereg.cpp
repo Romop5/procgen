@@ -1,9 +1,9 @@
 #include "catch.hpp"
-#include "../src/interpret/typereg.h"
 #include <iostream>
-#include "../src/interpret/variablereg.h"
-#include "../src/interpret/functionreg.h"
-#include "../src/interpret/std.h"
+#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/variablereg.h>
+#include <procgen/interpret/functionreg.h>
+#include <procgen/interpret/std.h>
 
 using namespace std;
 TEST_CASE("Testing TypeRegister with STD func")

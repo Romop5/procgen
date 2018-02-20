@@ -2,8 +2,8 @@
 //#include "../src/function.h"
 //#include "../src/statement.h"
 
-#include "interpret.h"
-#include "std.h"
+#include <procgen/interpret/interpret.h>
+#include <procgen/interpret/std.h>
 
 /*
 TEST_CASE("Testing new TypeRegister")

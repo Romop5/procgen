@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include <stdexcept>
 #include <iostream>
-#include "interpret.h"
+#include <procgen/interpret/interpret.h>
 
 TEST_CASE("Collections")
 {
@@ -14,7 +14,7 @@ TEST_CASE("Collections")
 	// register collection of ints
 
 	TypeId base = tr->getTypeId("int");	
-	tr->addCollection("collection-int",base);
+	tr->addCollection();
 	
 	auto collection = std::dynamic_pointer_cast<CollectionResource>(tr->sharedResource("collection-int"));
 

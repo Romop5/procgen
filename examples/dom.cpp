@@ -1,5 +1,5 @@
-#include "derivation.h"
-#include "appender.h"
+#include <procgen/derivation/derivation.h>
+#include <procgen/derivation/appender.h>
 
 class AlwaysTrue : public Function
 {

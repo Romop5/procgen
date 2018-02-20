@@ -16,8 +16,8 @@
  * 	PYRAMIDE(width > 5, position) :  PYRAMIDE(width*0.91,position+10), FLOOR(width,position)
  *
  */
-#include "derivation.h"
-#include "appender.h"
+#include <procgen/derivation/derivation.h>
+#include <procgen/derivation/appender.h>
 #include "obj.h"
 #include <cassert>
 void pyramide_language(std::shared_ptr<Derivation> der, std::shared_ptr<TypeRegister> tr, std::shared_ptr<FunctionReg> fr)

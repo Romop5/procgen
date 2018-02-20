@@ -1,4 +1,4 @@
-#include "functionreg.h"
+#include <procgen/interpret/functionreg.h>
 #include <iostream>
 
 bool FunctionReg::addFunction(std::string name,std::function<std::shared_ptr<Function>()> c)

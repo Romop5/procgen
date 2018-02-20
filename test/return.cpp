@@ -1,10 +1,10 @@
 #include "catch.hpp"
-#include "typereg.h"
+#include <procgen/interpret/typereg.h>
 #include <iostream>
-#include "variablereg.h"
-#include "functionreg.h"
-#include "std.h"
-#include "statement.h"
+#include <procgen/interpret/variablereg.h>
+#include <procgen/interpret/functionreg.h>
+#include <procgen/interpret/std.h>
+#include <procgen/interpret/statement.h>
 
 using namespace std;
 TEST_CASE("Testing return")

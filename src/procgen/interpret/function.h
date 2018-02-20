@@ -14,7 +14,7 @@
 #include <exception>
 #include <climits>
 
-#include "statement.h"
+#include <procgen/interpret/statement.h>
 class Statement;
 class Resource;
 

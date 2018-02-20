@@ -1,8 +1,8 @@
-#include "typereg.h"
+#include <procgen/interpret/typereg.h>
 #include <iostream>
 #include <memory>
 #include <string.h>
-#include "function.h"
+#include <procgen/interpret/function.h>
 
 void copyComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> dest, int id);
 void setComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> src, int id);

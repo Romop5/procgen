@@ -4,7 +4,7 @@
 #ifndef PROCGEN_H
 #define PROCGEN_H
 
-#include "derivation.h"
+#include <procgen/derivation/derivation.h>
 
 #include <string>
 #include <stack>

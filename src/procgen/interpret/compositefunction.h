@@ -3,9 +3,9 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "resource.h"
-#include "statement.h"
-#include "function.h"
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/statement.h>
+#include <procgen/interpret/function.h>
 
 /*
 1. Create an expression tree with vars

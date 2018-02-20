@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include "resource.h"
+#include <procgen/interpret/resource.h>
 
 /**
 * @class RunStatus

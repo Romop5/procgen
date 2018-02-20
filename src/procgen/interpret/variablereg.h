@@ -1,5 +1,5 @@
-#include "resource.h"
-#include "typereg.h"
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/typereg.h>
 /**
 * @class VariableReg 
 * @brief Registers and returns named variables 

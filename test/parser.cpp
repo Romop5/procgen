@@ -1,4 +1,4 @@
-#include "procgen.h"
+#include <procgen/parser/procgen.h>
 
 using namespace ProcGen;
 int main(int argc, char** argv)

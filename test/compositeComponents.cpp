@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include <stdexcept>
 #include <iostream>
-#include "interpret.h"
+#include <procgen/interpret/interpret.h>
 
 /*
  * A test of accessing struct components by component name

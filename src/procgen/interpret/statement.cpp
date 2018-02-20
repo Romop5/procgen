@@ -1,5 +1,5 @@
-#include "statement.h"
-#include "function.h"
+#include <procgen/interpret/statement.h>
+#include <procgen/interpret/function.h>
 bool If::operator()(RunStatus& stat)
 {
 	// get result of expression

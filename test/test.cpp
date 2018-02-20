@@ -1,10 +1,10 @@
 #include "catch.hpp"
-#include "function.h"
-//#include "statement.h"
+#include <procgen/interpret/function.h>
+//#include <procgen/interpret/statement.h>
 //#include "single.h"
 
-#include "typereg.h"
-#include "types.h"
+#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/types.h>
 
 /*
 TEST_CASE("Testing new TypeRegister")

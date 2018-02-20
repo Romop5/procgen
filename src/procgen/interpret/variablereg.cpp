@@ -1,4 +1,4 @@
-#include "variablereg.h"
+#include <procgen/interpret/variablereg.h>
 #include <iostream>
 bool VariableReg::addVar(std::string name,std::shared_ptr<Resource> src)
 {
