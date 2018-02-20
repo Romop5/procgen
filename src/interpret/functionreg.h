@@ -45,7 +45,7 @@ class FunctionReg
 		{
 			auto cfs = std::make_shared<CompositeFunction>(core,inputs, output);
 			//return std::make_shared<FunctionCall>(cfs);
-			func[name] = [cfs]{return std::static_pointer_cast<Function>(std::make_shared<FunctionCall>(cfs));};
+			func[name] = [cfs,name]{return std::static_pointer_cast<Function>(std::make_shared<FunctionCall>(cfs,name));};
 			return true;
 		}
 

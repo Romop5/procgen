@@ -2,6 +2,7 @@
 #define COMPOSITE_H
 #include <vector>
 #include <memory>
+#include <string>
 #include "resource.h"
 #include "statement.h"
 #include "function.h"
@@ -41,11 +42,13 @@ struct CompositeFunction
 class FunctionCall : public Function
 {
 	std::shared_ptr<CompositeFunction> cf;
+    std::string name;
 	public:
-	FunctionCall(std::shared_ptr<CompositeFunction> cf)
+	FunctionCall(std::shared_ptr<CompositeFunction> cf,std::string name)
 	{
 		this->cf = cf;
 		this->bindOutput(this->cf->output);
+        this->name = name;
 	}
 	bool operator()(RunStatus& stat)
 	{
@@ -54,6 +57,8 @@ class FunctionCall : public Function
 			return true;
 		// TODO: checkout type equivalence 
 		// bind inputs to interface
+
+        std::cout << "Invoking function: " << this->name << std::endl;
 		for(int i=0; i < cf->inputs.size();i++)
 		{
 
