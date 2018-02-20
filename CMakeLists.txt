@@ -16,29 +16,39 @@ add_subdirectory(vendors)
 
 
 set(INTERPRET_SOURCE 
-	src/procgen/interpret/compositefunction.h
-	src/procgen/interpret/compositeutils.h
-	src/procgen/interpret/function.cpp
-	src/procgen/interpret/function.h
-	src/procgen/interpret/functionreg.cpp
-	src/procgen/interpret/functionreg.h
-	src/procgen/interpret/resource.cpp
-	src/procgen/interpret/resource.h
-	src/procgen/interpret/statement.cpp
-	src/procgen/interpret/statement.h
-	src/procgen/interpret/std.cpp
-	src/procgen/interpret/std.h
-	src/procgen/interpret/typedesc.cpp
-	src/procgen/interpret/typedesc.h
-	src/procgen/interpret/typereg.h
-	src/procgen/interpret/types.h
-	src/procgen/interpret/types.cpp
-	src/procgen/interpret/variablereg.cpp)
+    src/procgen/interpret/function.cpp
+    src/procgen/interpret/types.cpp
+    src/procgen/interpret/functionreg.cpp
+    src/procgen/interpret/typedesc.cpp
+    src/procgen/interpret/std.cpp
+    src/procgen/interpret/variablereg.cpp
+    src/procgen/interpret/statement.cpp
+    src/procgen/interpret/resource.cpp
+)
+
+set(INTERPRET_HEADERS
+    src/procgen/interpret/functionreg.h
+    src/procgen/interpret/compositefunction.h
+    src/procgen/interpret/typedesc.h
+    src/procgen/interpret/function.h
+    src/procgen/interpret/std.h
+    src/procgen/interpret/types.h
+    src/procgen/interpret/typereg.h
+    src/procgen/interpret/interpret.h
+    src/procgen/interpret/resource.h
+    src/procgen/interpret/statement.h
+    src/procgen/interpret/compositeutils.h
+    src/procgen/interpret/variablereg.h
+)
 
 set(DERIVATION_SOURCE
-	src/procgen/derivation/appender.h
-	src/procgen/derivation/derivation.cpp
-	src/procgen/derivation/derivation.h
+    src/procgen/derivation/derivation.cpp
+)
+
+set(DERIVATION_HEADERS
+    src/procgen/derivation/appender.h
+    src/procgen/derivation/derivation.h
+    src/procgen/derivation/iteratorlimit.h
 )
 
 add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
