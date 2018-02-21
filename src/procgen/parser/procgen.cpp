@@ -108,8 +108,7 @@ namespace ProcGen {
 		ruleID++;
 
 		// Get procedure
-		auto procedure= this->stackedBodies.top();
-		this->stackedBodies.pop();
+		auto procedure= this->stackedBodies.popBody();
 
 		std::stringstream ruleName;
 	       	ruleName << "rule" << ruleID;
@@ -123,8 +122,7 @@ namespace ProcGen {
 		//auto boolResult= typeregister->sharedResource("bool");
 		//TODO
         auto boolResult = ruleDefinition.conditionReturn;
-		auto condition= this->stackedBodies.top();
-		this->stackedBodies.pop();
+		auto condition= this->stackedBodies.popBody();
 
 		auto thisResource = this->ruleDefinition.thisValue;
 		std::stringstream conditionName;
@@ -187,8 +185,7 @@ namespace ProcGen {
 		}
 
 		// Get the top of statement stack
-		auto statementTop = this->stackedBodies.top();
-		this->stackedBodies.pop();
+		auto statementTop = this->stackedBodies.popBody();
 
 		// Create a vector of input parameters
 		std::vector<std::shared_ptr<Resource>> inputResources;
@@ -431,7 +428,7 @@ namespace ProcGen {
 		this->expressionsStack.pop();
         assert(expr != nullptr);
 
-		this->pushArgument(expr);
+		this->argumentVector.pushArgument(expr);
 	}
 
     bool Generation::registerLocalVariable(const char* type, const char* name,bool hasExp)
@@ -456,18 +453,6 @@ namespace ProcGen {
             return this->makeAssignment(name,true);
         }
         return true;
-	}
-
-	bool Generation::pushBody()
-	{
-		this->stackedBodies.push(std::make_shared<Body>());
-	}
-
-	std::shared_ptr<Body> Generation::popBody()
-	{
-		auto top = this->stackedBodies.top();
-		this->stackedBodies.pop();
-		return top;
 	}
 
     bool Generation::makeReturn(bool hasExpression)
@@ -503,7 +488,7 @@ namespace ProcGen {
             box->bindInput(genericCopy);
         }
 		// Register return
-		this->stackedBodies.top()->appendStatement(box); 
+		this->stackedBodies.getTop()->appendStatement(box); 
 
     }
 	bool Generation::makeAssignment(const char* name,bool hasAssignment)
@@ -526,7 +511,7 @@ namespace ProcGen {
 
 	if(!hasAssignment)
 	{
-		this->stackedBodies.top()->appendStatement(expressionTop);
+		this->stackedBodies.getTop()->appendStatement(expressionTop);
 		return true;
 	}
 
@@ -538,7 +523,7 @@ namespace ProcGen {
         genericCopy->bindInput(0, assignedResource);
         genericCopy->bindInput(1, expressionTop);
 		// Register 
-		this->stackedBodies.top()->appendStatement(genericCopy);
+		this->stackedBodies.getTop()->appendStatement(genericCopy);
 	}
 
 	bool Generation::makeWhile()
@@ -548,15 +533,14 @@ namespace ProcGen {
 		this->expressionsStack.pop();
 
 		// Get the top of statement stack
-		auto statementTop = this->stackedBodies.top();
-		this->stackedBodies.pop();
+		auto statementTop = this->stackedBodies.popBody();
 
 		auto whileStatement = std::make_shared<While>();
 		whileStatement->bindCondition(expressionTop);
 		whileStatement->bindStatement(statementTop);
 
 		// Append while to body
-		this->stackedBodies.top()->appendStatement(whileStatement);
+		this->stackedBodies.getTop()->appendStatement(whileStatement);
 	}
 
     bool Generation::makeCallStatement()
@@ -565,7 +549,7 @@ namespace ProcGen {
 		auto expressionTop= this->expressionsStack.top();
 		this->expressionsStack.pop();
 
-        this->stackedBodies.top()->appendStatement(expressionTop);
+        this->stackedBodies.getTop()->appendStatement(expressionTop);
     }
 
 	bool Generation::makeIfStatement(bool hasElseBranch)
@@ -579,13 +563,12 @@ namespace ProcGen {
 		if(hasElseBranch)
 		{
 			// Get the top of statement stack
-			elseBranch= this->stackedBodies.top();
-			this->stackedBodies.pop();
+			elseBranch= this->stackedBodies.getTop();
+			this->stackedBodies.popBody();
 		}
 
 		// Get the top of statement stack
-		auto statementTop = this->stackedBodies.top();
-		this->stackedBodies.pop();
+		auto statementTop = this->stackedBodies.popBody();
 
 		auto ifStatement = std::make_shared<If>();
 		ifStatement->setExpression(expressionTop);
@@ -593,7 +576,7 @@ namespace ProcGen {
 		ifStatement->setPath(1,elseBranch);
 
 		// Append while to body
-		this->stackedBodies.top()->appendStatement(ifStatement);
+		this->stackedBodies.getTop()->appendStatement(ifStatement);
 	
 	}
 

@@ -136,7 +136,7 @@ typeDeclaration          : TYPE NAME
 
 
 
-compoundStatement	  : "{" {proc->pushBody();} statements "}" 
+compoundStatement	  : "{" {proc->stackedBodies.pushBody();} statements "}" 
 
 statements                : statement statements | %empty 
 
@@ -153,9 +153,9 @@ declarationEnd           :      %empty
 callStatement           : functionCall
                          { proc->makeCallStatement(); } 
 functionCall             : NAME 
-             { proc->pushArgumentLevel(); }
+             { proc->argumentVector.pushArgumentLevel(); }
                            "(" argumentList ")" 
-			 {  auto args = proc->popArgumentLevel();
+			 {  auto args = proc->argumentVector.popArgumentLevel();
                 proc->createFunctionCall($1,args); }
 
 argumentList             : %empty | argument | argumentList "," argument

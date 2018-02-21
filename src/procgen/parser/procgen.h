@@ -5,25 +5,13 @@
 #define PROCGEN_H
 
 #include <procgen/derivation/derivation.h>
+#include <procgen/parser/utils.h>
 
 #include <string>
 #include <stack>
 #include "json.hpp"
 
 namespace ProcGen {
-    using Argument = std::shared_ptr<Function>;
-	class sTypeDeclaration {
-		public:
-		std::shared_ptr<Resource>   resource;
-		std::string                 name;
-	};
-
-    struct Rule {
-        std::shared_ptr<Resource>   conditionReturn;
-        TypeId                      thisTypeId;
-	std::shared_ptr<Resource>   thisValue;
-    };
-
 	class Generation {
 		std::shared_ptr<TypeRegister>	typeregister;
 		std::shared_ptr<FunctionReg>	functionregister;
@@ -35,6 +23,20 @@ namespace ProcGen {
         bool    hasAnyError;
 		public:
 		Generation();
+
+		/* Compilation utilities*/
+		std::vector<sTypeDeclaration> typeList;
+		std::stack<std::shared_ptr<Function>> expressionsStack;
+
+		// This stacked structure is used to handle N-anry 
+		BodyStack stackedBodies;
+
+		// Function argument list 
+        ArgumentVector argumentVector;
+        
+
+        Rule ruleDefinition;
+
 		bool parseFile(const std::string& file);
 
         // Run inicialization
@@ -88,32 +90,11 @@ namespace ProcGen {
 
 		// Replace expression with argument
 		bool createArgument();
-
-
 		bool registerLocalVariable(const char* type, const char* name,bool hasExp);
-
         bool makeReturn(bool hasExpression);
 		
-		/* Compilation utilities*/
-		std::vector<sTypeDeclaration> typeList;
-
-		std::stack<std::shared_ptr<Function>> expressionsStack;
 
 
-		// Function argument list 
-		std::vector<std::vector<Argument>> argumentVector;
-
-        void pushArgumentLevel() {
-            this->argumentVector.push_back(std::vector<Argument>{});
-        }
-        std::vector<Argument> popArgumentLevel()
-        {
-            auto returnValue = this->argumentVector.back();
-            this->argumentVector.pop_back();
-            return returnValue;
-        }
-
-        void pushArgument(Argument arg) {this->argumentVector.back().push_back(arg); }
 
 		bool makeAssignment(const char* name,bool hasAssignment);
 
@@ -123,10 +104,6 @@ namespace ProcGen {
 
         bool makeCallStatement();
 
-		bool pushBody();
-		std::shared_ptr<Body> popBody();
-		// This stacked structure is used to handle N-anry 
-		std::stack<std::shared_ptr<Body>> stackedBodies;
     
         bool hasType(const char* name);
         
@@ -137,7 +114,6 @@ namespace ProcGen {
         bool initializeRule(char* typeName);
         bool ruleProcedure(char* rulename);
         
-        Rule ruleDefinition;
 
 	bool makeTypeid(char* name);
 	bool makeConvert(char* name);
