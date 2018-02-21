@@ -152,8 +152,11 @@ declarationEnd           :      %empty
 
 callStatement           : functionCall
                          { proc->makeCallStatement(); } 
-functionCall             : NAME "(" argumentList ")" 
-			 { proc->createFunctionCall($1); }
+functionCall             : NAME 
+             { proc->pushArgumentLevel(); }
+                           "(" argumentList ")" 
+			 {  auto args = proc->popArgumentLevel();
+                proc->createFunctionCall($1,args); }
 
 argumentList             : %empty | argument | argumentList "," argument
 

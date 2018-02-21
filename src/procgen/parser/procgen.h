@@ -11,6 +11,7 @@
 #include "json.hpp"
 
 namespace ProcGen {
+    using Argument = std::shared_ptr<Function>;
 	class sTypeDeclaration {
 		public:
 		std::shared_ptr<Resource>   resource;
@@ -82,7 +83,7 @@ namespace ProcGen {
         bool createLiteralFromVariable(char* name); 
         bool createStructuredLiteral(char* member); 
 
-		bool createFunctionCall(const char* functionName);
+		bool createFunctionCall(const char* functionName,std::vector<Argument>);
 				
 
 		// Replace expression with argument
@@ -100,7 +101,19 @@ namespace ProcGen {
 
 
 		// Function argument list 
-		std::vector<std::shared_ptr<Function>> argumentVector;
+		std::vector<std::vector<Argument>> argumentVector;
+
+        void pushArgumentLevel() {
+            this->argumentVector.push_back(std::vector<Argument>{});
+        }
+        std::vector<Argument> popArgumentLevel()
+        {
+            auto returnValue = this->argumentVector.back();
+            this->argumentVector.pop_back();
+            return returnValue;
+        }
+
+        void pushArgument(Argument arg) {this->argumentVector.back().push_back(arg); }
 
 		bool makeAssignment(const char* name,bool hasAssignment);
 

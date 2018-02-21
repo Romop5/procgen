@@ -403,7 +403,7 @@ namespace ProcGen {
         this->expressionsStack.push(getter);
     }
 
-	bool Generation::createFunctionCall(const char* functionName)
+	bool Generation::createFunctionCall(const char* functionName, std::vector<Argument> args)
 	{
 		auto functionPointer = functionregister->getFunc(functionName);
 		if(functionPointer == nullptr)
@@ -414,14 +414,11 @@ namespace ProcGen {
 		}
 
 		// For all given parameters 
-		for(unsigned param = 0; param < argumentVector.size(); param++)
+		for(unsigned param = 0; param < args.size(); param++)
 		{
 			// TODO: semantic control / implicit conversion
-			functionPointer->bindInput(param,argumentVector[param]);
+			functionPointer->bindInput(param,args[param]);
 		}
-
-		// Clear arguments 
-		this->argumentVector.clear();
 
 		// Push new expression(function call) to expression stack
 		this->expressionsStack.push(functionPointer);
@@ -432,7 +429,9 @@ namespace ProcGen {
 	{
 		std::shared_ptr<Function> expr= this->expressionsStack.top();
 		this->expressionsStack.pop();
-		this->argumentVector.push_back(expr);
+        assert(expr != nullptr);
+
+		this->pushArgument(expr);
 	}
 
     bool Generation::registerLocalVariable(const char* type, const char* name,bool hasExp)

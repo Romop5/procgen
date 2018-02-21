@@ -61,6 +61,8 @@ class FunctionCall : public Function
         std::cout << "Invoking function: " << this->name << std::endl;
 		for(int i=0; i < cf->inputs.size();i++)
 		{
+            assert(this->_getInput(i) != nullptr);
+            assert(this->_getInput(i)->getOutput() != nullptr);
 
             std::string dmp = this->_getInput(i)->getOutput()->to_json().dump();
             std::cout << "Argument[in] " << i << "'" << dmp  << "'" << std::endl;
