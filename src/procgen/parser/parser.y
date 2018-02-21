@@ -1,7 +1,16 @@
 %code requires {
 
-#include <procgen/parser/procgen.h>
-using namespace ProcGen;
+//#include <procgen/parser/procgen.h>
+//using namespace ProcGen;
+
+    namespace ProcGen
+    {
+        class Generation;
+        
+        inline void yyerror(const char* msg)
+        {
+        }
+    }
 
 }
 
@@ -13,27 +22,34 @@ using namespace ProcGen;
 #include <error.h>
 
 #include <procgen/parser/procgen.h>
-using namespace ProcGen;
+#include <location.hh>
+#include <position.hh>
+
+#define yylex generation._scanner->yylex
+//using namespace ProcGen;
 // stuff from flex that bison needs to know about:
 //extern "C" int yylex();
-extern int yylex(ProcGen::Generation* proc);
+//extern int yylex(ProcGen::Generation* proc);
 //extern "C" int yyparse();
 //extern "C" FILE *yyin;
 
 
 //void yyerror(Interpret& interpret, const char *s);
-void yyerror(Generation* proc, const char *s);
+//void yyerror(Generation* proc, const char *s);
 
 %}
 
 
-
+%require "2.4"
+%language "C++"
+%locations
+%defines
 %debug 
-
-%define parse.error verbose
-
-%parse-param {Generation* proc}
-%lex-param {proc}
+%define api.namespace {ProcGen}
+%define parser_class_name {Parser}
+%parse-param {Generation& generation}
+%lex-param {Generation& generation}
+%error-verbose
 
 %union {
 	int     ival;
@@ -43,6 +59,7 @@ void yyerror(Generation* proc, const char *s);
     bool    boolean;
 }
 
+%token TOK_EOF 0
 %token <ival> INTEGER CHAR 
 %token <fval> FLOAT 
 %token <boolean> BOOL
@@ -101,24 +118,24 @@ declaration   : usingDeclaration | parameterDeclaration | functionDeclaration
 usingDeclaration : USING NAME "=" usingVariant ";" 
 
 usingVariant        : 	STRUCT "{" structureDeclaration "}"
-		   	{ proc->registerStruct($<sval>-1, proc->typeList); }
+		   	{ generation.registerStruct($<sval>-1, generation.typeList); }
                     |   TYPE
-			{ proc->registerAlias($<sval>-1, $1);}
-                    |   RULE TYPE { proc->initializeRule($2); } compoundStatement 
-                        { proc->ruleProcedure($2); } compoundStatement 
-			{ proc->registerRule($<sval>-1, $2); }
+			{ generation.registerAlias($<sval>-1, $1);}
+                    |   RULE TYPE { generation.initializeRule($2); } compoundStatement 
+                        { generation.ruleProcedure($2); } compoundStatement 
+			{ generation.registerRule($<sval>-1, $2); }
 
 
 parameterDeclaration  : PARAMETER TYPE NAME assign
 
 assign                 : "=" literal ";"
-		      	{ proc->registerParameter($<sval>0,$<sval>-1,true);}
+		      	{ generation.registerParameter($<sval>0,$<sval>-1,true);}
 			 | ";" 
-		      	{ proc->registerParameter($<sval>0,$<sval>-1,false);}
+		      	{ generation.registerParameter($<sval>0,$<sval>-1,false);}
 
 
-functionDeclaration   : TYPE NAME { proc->initializeFunction($1);} "(" typeList ")" compoundStatement 
-		      	{ proc->registerFunction($1,$2);}
+functionDeclaration   : TYPE NAME { generation.initializeFunction($1);} "(" typeList ")" compoundStatement 
+		      	{ generation.registerFunction($1,$2);}
 
 
 structureDeclaration     : typeDeclaration ";" | structureDeclaration typeDeclaration ";" 
@@ -128,15 +145,15 @@ typeList                 : typeDeclaration | typeList "," typeDeclaration
                             | %empty
 
 typeDeclaration          : TYPE NAME 
-			 {sTypeDeclaration temp = proc->fillTypeDeclaration($1,$2);
-              proc->typeList.push_back(temp);
-              proc->registerFormalParameter(temp);
-              //std::cout << "typeList " << proc->typeList.size() << std::endl;
+			 {sTypeDeclaration temp = generation.fillTypeDeclaration($1,$2);
+              generation.typeList.push_back(temp);
+              generation.registerFormalParameter(temp);
+              //std::cout << "typeList " << generation.typeList.size() << std::endl;
              }
 
 
 
-compoundStatement	  : "{" {proc->stackedBodies.pushBody();} statements "}" 
+compoundStatement	  : "{" {generation.stackedBodies.pushBody();} statements "}" 
 
 statements                : statement statements | %empty 
 
@@ -146,113 +163,121 @@ statement                 : callStatement ";" | declaration ";" | assignment ";"
 declaration               : TYPE NAME declarationEnd
 
 declarationEnd           :      %empty 
-			  { proc->registerLocalVariable($<sval>-1,$<sval>0,false); }
+			  { generation.registerLocalVariable($<sval>-1,$<sval>0,false); }
                             |   "=" expression 
-			  { proc->registerLocalVariable($<sval>-1,$<sval>0,true); }
+			  { generation.registerLocalVariable($<sval>-1,$<sval>0,true); }
 
 callStatement           : functionCall
-                         { proc->makeCallStatement(); } 
+                         { generation.makeCallStatement(); } 
 functionCall             : NAME 
-             { proc->argumentVector.pushArgumentLevel(); }
+             { generation.argumentVector.pushArgumentLevel(); }
                            "(" argumentList ")" 
-			 {  auto args = proc->argumentVector.popArgumentLevel();
-                proc->createFunctionCall($1,args); }
+			 {  auto args = generation.argumentVector.popArgumentLevel();
+                generation.createFunctionCall($1,args); }
 
 argumentList             : %empty | argument | argumentList "," argument
 
 argument                  : expression
-			  { proc->createArgument(); }
+			  { generation.createArgument(); }
 
 assignment                : structuredMember  assignmentEnd
 assignmentEnd		  : %empty
-			  { proc->makeAssignment("TODO",false); }
+			  { generation.makeAssignment("TODO",false); }
 		 	   | "=" expression
-			  { proc->makeAssignment("TODO",true); }
+			  { generation.makeAssignment("TODO",true); }
 
 
 ifStatement              : IF "(" expression ")" compoundStatement elseClause
 elseClause               : ELSE compoundStatement 
-			  { proc->makeIfStatement(true);}
+			  { generation.makeIfStatement(true);}
 			  | %empty
-			  { proc->makeIfStatement(false);}
+			  { generation.makeIfStatement(false);}
 
 whileStatement           : WHILE "(" expression ")" compoundStatement
-			  { proc->makeWhile();}
+			  { generation.makeWhile();}
 
 return                  :  RETURN returnEnd 
 
 returnEnd               :  %empty 
-                        { proc->makeReturn(false); } 
+                        { generation.makeReturn(false); } 
                         |  expression
-                        { proc->makeReturn(true); } 
+                        { generation.makeReturn(true); } 
 
 
 typeid			  : "<" TYPE ">" 
-				{ proc->makeTypeid($2);}
+				{ generation.makeTypeid($2);}
 	   		  | "(" NAME ")" 
-				{ proc->makeTypeid($2);}
+				{ generation.makeTypeid($2);}
 expression                : literal
 			    |   TYPEID typeid
 			    |   CONVERT "<" TYPE ">" "(" expression ")"
-				{ proc->makeConvert($3); }
+				{ generation.makeConvert($3); }
 			    | 	functionCall 
 			  
                             |   expression "<" expression
-				{ auto result = proc->createExpressionOperation('<'); }
+				{ auto result = generation.createExpressionOperation('<'); }
                             |   expression ">" expression
-				{ auto result = proc->createExpressionOperation('>'); }
+				{ auto result = generation.createExpressionOperation('>'); }
                             |   expression "==" expression
-				{ auto result = proc->createExpressionOperation('='); }
+				{ auto result = generation.createExpressionOperation('='); }
                             |   expression "!=" expression
-				{ auto result = proc->createExpressionOperation('!'); }
+				{ auto result = generation.createExpressionOperation('!'); }
                             |   expression "-" expression
-				{ auto result = proc->createExpressionOperation('-'); }
+				{ auto result = generation.createExpressionOperation('-'); }
                             |   expression "+" expression
-				{ auto result = proc->createExpressionOperation('+'); }
+				{ auto result = generation.createExpressionOperation('+'); }
                             |   expression "/" expression
-				{ auto result = proc->createExpressionOperation('/'); }
+				{ auto result = generation.createExpressionOperation('/'); }
                             |   expression "*" expression
-				{ auto result = proc->createExpressionOperation('*'); }
+				{ auto result = generation.createExpressionOperation('*'); }
                             |   "(" expression ")" 
 		            |   "-" expression %prec UMINUS
-				{ auto result = proc->createUnaryOperation('-'); }
+				{ auto result = generation.createUnaryOperation('-'); }
 		            |   "+" expression %prec UPLUS
 		            |   "!" expression 
-				{ auto result = proc->createUnaryOperation('!'); }
+				{ auto result = generation.createUnaryOperation('!'); }
 
 
 structuredMember   :   structuredMember "." structuredMemberEnd 
                    |    NAME 
-                        { proc->createLiteralFromVariable($1); } 
+                        { generation.createLiteralFromVariable($1); } 
 
 structuredMemberEnd :
 			NAME
-                        { proc->createStructuredLiteral($1); }
+                        { generation.createStructuredLiteral($1); }
 		   |	INSERT "(" expression ")"
-			{ proc->createCollectionInsert(); } 
+			{ generation.createCollectionInsert(); } 
 		   |	AT "(" expression ")"
-			{ proc->createCollectionAt(); } 
+			{ generation.createCollectionAt(); } 
 		   |	SIZE "(" ")"
-			{ proc->createCollectionSize(); } 
+			{ generation.createCollectionSize(); } 
 		   |    DEL "(" expression ")"
-			{ proc->createCollectionDel(); } 
+			{ generation.createCollectionDel(); } 
 
 /* Terminals*/
 
 literal                   : INTEGER 
-				{ proc->createLiteralInteger($1); } 
+				{ generation.createLiteralInteger($1); } 
 			  | FLOAT
-				{ proc->createLiteralFloat($1); } 
+				{ generation.createLiteralFloat($1); } 
 			  | STRING 
               | BOOL
-				{ proc->createLiteralBool($1); } 
+				{ generation.createLiteralBool($1); } 
               | structuredMember
                 
 
 %%
-void yyerror(Generation* proc, const char *s) {
-    proc->errorMessage(s);
+/*void yyerror(Generation* generation, const char *s) {
+    generation.errorMessage(s);
 	//std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
 	//exit(-1);
 }
+*/
 
+namespace ProcGen
+{
+    void Parser::error(const location&, const std::string& m)
+    {
+        //std::cerr << *generation.location  << std::endl;
+    }
+}

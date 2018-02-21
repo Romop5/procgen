@@ -1,6 +1,7 @@
 #include <procgen/parser/procgen.h>
 #include "parser.hh"
 #include <sstream>
+#include <fstream>
 #include <procgen/derivation/appender.h>
 #include <procgen/derivation/natives.h>
 #include <procgen/derivation/iteratorlimit.h>
@@ -12,6 +13,9 @@ namespace ProcGen {
 
 	Generation::Generation()
 	{
+        _scanner = new Scanner();
+        _parser = new Parser(*this);
+
 		typeregister = std::make_shared<TypeRegister>();
 		functionregister = std::make_shared<FunctionReg>(typeregister);
 		localStackFrame = std::make_shared<VariableReg>(typeregister);	
@@ -24,10 +28,15 @@ namespace ProcGen {
         hasAnyError = false;;
 	}
 	
+    Generation::~Generation()
+    {
+        delete _parser;
+        delete _scanner;
+    }
+
 	bool Generation::parseFile(const std::string& file)
 	{
-		////yydebug = 1;/
-		yyin = fopen(file.c_str(),"r");
+		/*yyin = fopen(file.c_str(),"r");
 		if(yyin == NULL)
         {
 			errorMessage("Failed to open file ...");
@@ -36,6 +45,13 @@ namespace ProcGen {
 		do {
 			yyparse(this);
 		} while (!feof(yyin));
+    */
+        std::ifstream s(file.c_str(),std::ifstream::in);
+        _scanner->switch_streams(&s, &std::cerr);
+
+        _parser->parse();
+        
+        s.close();
 
         if(!hasAnyError)
             return true;
@@ -604,15 +620,15 @@ namespace ProcGen {
         va_start(parameters,message); 
         fprintf(stderr,"[Parser]");
         vfprintf(stderr, message, parameters);
-        fprintf(stderr,"Position: %d.%d\n", yylloc.first_line,yylloc.first_column);
+        //fprintf(stderr,"Position: %d.%d\n", yylloc.first_line,yylloc.first_column);
         va_end(parameters);
         this->hasAnyError = true;
     }
     void Generation::setDebugOn(bool state)
     {
-        yydebug = 0;
-        if(state)
-            yydebug = 1;
+        //yydebug = 0;
+        //if(state)
+        //    yydebug = 1;
     }
 
     sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)

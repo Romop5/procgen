@@ -6,13 +6,28 @@
 
 #include <procgen/derivation/derivation.h>
 #include <procgen/parser/utils.h>
+#include <procgen/parser/scanner.h>
 
 #include <string>
 #include <stack>
 #include "json.hpp"
 
 namespace ProcGen {
+    
+    // fwd dec
+    class Parser;
+    class Scanner;
+    class Location;
+
 	class Generation {
+        private:
+        
+        Scanner* _scanner;        
+        Parser*  _parser;        
+
+        friend class Parser;
+        friend class Scanner;
+
 		std::shared_ptr<TypeRegister>	typeregister;
 		std::shared_ptr<FunctionReg>	functionregister;
 		// Stores all local variables (local to function, rule)
@@ -23,6 +38,7 @@ namespace ProcGen {
         bool    hasAnyError;
 		public:
 		Generation();
+        ~Generation();
 
 		/* Compilation utilities*/
 		std::vector<sTypeDeclaration> typeList;
