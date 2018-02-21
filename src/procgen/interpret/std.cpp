@@ -26,11 +26,13 @@ void registerStandardFunctions(FunctionReg* fr)
 		[tr]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 		//[&]{return std::static_pointer_cast<Function>(std::make_shared<func>(tr));});
 
-	#define REG_PRINT(type,typeName)\
+/*	#define REG_PRINT(type,typeName)\
 		fr->addFunction("PrintValue:" typeName,\
 		[]{return std::static_pointer_cast<Function>(std::make_shared<PrintValue<type>>());});
-
-	FORALL_ATOMICTYPES(REG_PRINT);
+*/
+    
+    
+	//FORALL_ATOMICTYPES(REG_PRINT);
 
 	REG_FUNC_FORALL("Copy",Copy);
 	REG_FUNC_FORALL("UnaryMinus",UnaryMinus);
@@ -70,6 +72,7 @@ void registerStandardFunctions(FunctionReg* fr)
 		return generate;
 	});
 
-
+    fr->addFunction("print",
+    []{return std::static_pointer_cast<Function>(std::make_shared<PrintJson>());});
 
 }

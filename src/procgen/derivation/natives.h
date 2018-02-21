@@ -13,6 +13,7 @@ class NativeCurrentPosition: public Function
 		NativeCurrentPosition(std::shared_ptr<Derivation> de)
 		{
 			this->derivation = de;
+            this->bindOutput(derivation->tr->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)
@@ -31,12 +32,13 @@ class NativeCurrentStringId: public Function
 		NativeCurrentStringId(std::shared_ptr<Derivation> de)
 		{
 			this->derivation = de;
+            this->bindOutput(derivation->tr->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)
 		{
             *(int*) this->getOutput()->getData() =
-                                     derivation->getCurrentStringPositionId();
+                                     derivation->getCurrentStringId();
 			return false;
 		}
 };
@@ -76,6 +78,7 @@ class NativeGetParent: public Function
 		NativeGetParent(std::shared_ptr<Derivation> de)
 		{
 			this->derivation = de;
+            this->bindOutput(derivation->tr->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)

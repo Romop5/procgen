@@ -85,6 +85,7 @@ namespace ProcGen {
         REGISTER_NATIVE_FUNCTION("getCurrentStringId", NativeCurrentStringId);
         REGISTER_NATIVE_FUNCTION("getSymbol", NativeGetSymbol);
         REGISTER_NATIVE_FUNCTION("getParent", NativeGetParent);
+        REGISTER_NATIVE_FUNCTION("setMaximumIterations", IteratorLimit);
     }
     
     bool Generation::initializeFunction(char* type)
