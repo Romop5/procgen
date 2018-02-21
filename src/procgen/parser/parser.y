@@ -276,8 +276,9 @@ literal                   : INTEGER
 
 namespace ProcGen
 {
-    void Parser::error(const location&, const std::string& m)
+    void Parser::error(const location& loc, const std::string& m)
     {
-        //std::cerr << *generation.location  << std::endl;
+        generation.errorMessage(m);
+//        std::cerr << "Error" << loc << std::endl;
     }
 }

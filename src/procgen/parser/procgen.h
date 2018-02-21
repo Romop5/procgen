@@ -8,6 +8,8 @@
 #include <procgen/parser/utils.h>
 #include <procgen/parser/scanner.h>
 
+#include "location.hh"
+
 #include <string>
 #include <stack>
 #include "json.hpp"
@@ -24,6 +26,7 @@ namespace ProcGen {
         
         Scanner* _scanner;        
         Parser*  _parser;        
+        location _location;
 
         friend class Parser;
         friend class Scanner;
@@ -66,7 +69,7 @@ namespace ProcGen {
 		bool isReady()	{ return flagIsParsed; }
 
         // Error report
-        bool errorMessage(const char* message, ...);
+        bool errorMessage(std::string message, ...);
 
         void setDebugOn(bool state);
 		/*

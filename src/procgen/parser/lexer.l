@@ -15,23 +15,32 @@ using namespace std;
 typedef ProcGen::Parser::token token;
 typedef ProcGen::Parser::token_type token_type;
 
-/*#define LOC_NEXT_LINE(name,count)\
-    (name).last_column = 1;                      \
-    (name).first_column= 1;                      \
-    (name).last_line += count;                  \
-    (name).first_line = (name).last_line;
+#define LOC_NEXT_LINE(name, count)\
+    (name).lines(count); (name).step();
 
 #define LOC_STEP(name)\
-    (name).first_column = (name).last_column;     \
-    (name).first_line = (name).last_line;
+    (name).step();
 
 #define LOC_MOVEBY(name,len)\
-    (name).last_column = (name).first_column; \
-    (name).first_column = (name).last_column+len;     \
+    (name) += len;
 
-#define YY_USER_ACTION LOC_MOVEBY(yylloc,yyleng)
-//#define YY_DECL int yylex(ProcGen::Generation* proc)
+/*#define LOC_NEXT_LINE(name,count)\
+    (name)->last_column = 1;                      \
+    (name)->first_column= 1;                      \
+    (name)->last_line += count;                  \
+    (name)->first_line = (name).last_line;
+
+#define LOC_STEP(name)\
+    (name)->first_column = (name).last_column;     \
+    (name)->first_line = (name).last_line;
+
+#define LOC_MOVEBY(name,len)\
+    (name)->last_column = (name).first_column; \
+    (name)->first_column = (name).last_column+len;     \
 */
+#define YY_USER_ACTION LOC_MOVEBY(generation._location,yyleng)
+//#define YY_DECL int yylex(ProcGen::Generation* proc)
+
 
 %}
 
@@ -43,10 +52,10 @@ typedef ProcGen::Parser::token_type token_type;
 
 %%
 %{
-    //LOC_STEP(yylloc);
+    LOC_STEP(generation._location);
 %}
 
-[\n]        { //LOC_NEXT_LINE(yylloc,yyleng); LOC_STEP(yylloc);  
+[\n]        { LOC_NEXT_LINE(generation._location,yyleng); LOC_STEP(generation._location);  
 }
 [ \t]        
 "//"[^\n]* 

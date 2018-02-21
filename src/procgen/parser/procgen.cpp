@@ -48,7 +48,8 @@ namespace ProcGen {
     */
         std::ifstream s(file.c_str(),std::ifstream::in);
         _scanner->switch_streams(&s, &std::cerr);
-
+        std::string* newString = new std::string(file);
+        _location.initialize(newString);
         _parser->parse();
         
         s.close();
@@ -614,13 +615,16 @@ namespace ProcGen {
         return true;
     }
 
-    bool Generation::errorMessage(const char* message, ...)
+    bool Generation::errorMessage(std::string message, ...)
     {
         va_list parameters;
         va_start(parameters,message); 
         fprintf(stderr,"[Parser]");
-        vfprintf(stderr, message, parameters);
-        //fprintf(stderr,"Position: %d.%d\n", yylloc.first_line,yylloc.first_column);
+        vfprintf(stderr, message.c_str(), parameters);
+
+        std::stringstream ss;
+        ss << _location;
+        fprintf(stderr,", %s\n", ss.str().c_str());
         va_end(parameters);
         this->hasAnyError = true;
     }

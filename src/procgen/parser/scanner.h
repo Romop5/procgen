@@ -7,7 +7,7 @@
 # ifndef YY_DECL
 #  define YY_DECL ProcGen::Parser::token_type                         \
      ProcGen::Scanner::yylex(ProcGen::Parser::semantic_type* yylval,    \
-                              ProcGen::Parser::location_type*,        \
+                              ProcGen::Parser::location_type* loc,        \
                               ProcGen::Generation& generation)
 # endif
 
