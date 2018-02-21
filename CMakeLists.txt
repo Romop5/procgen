@@ -72,7 +72,7 @@ add_library(procgen
     src/procgen/parser/procgen.cpp
 )
 
-target_include_directories(procgen PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(procgen PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(procgen PUBLIC src/procgen/parser)
 target_link_libraries(procgen procedural)
 

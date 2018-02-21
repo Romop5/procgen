@@ -104,3 +104,5 @@ typedef ProcGen::Parser::token_type token_type;
 #ifdef yylex
 #undef yylex
 #endif
+
+int ProcGenFlexLexer::yylex() {return 0;}
