@@ -2,6 +2,7 @@
 #include "parser.hh"
 #include <sstream>
 #include <procgen/derivation/appender.h>
+#include <procgen/derivation/natives.h>
 #include <procgen/derivation/iteratorlimit.h>
 
 #include <cstdarg>
@@ -17,19 +18,7 @@ namespace ProcGen {
 		globalVariables = std::make_shared<VariableReg>(typeregister);	
 		der = std::make_shared<Derivation>(typeregister,functionregister);
 
-		registerStandardTypes(typeregister.get());
-		registerStandardFunctions(functionregister.get());
-
-        // Add derivation standards
-        auto derivation = this->der;
-		functionregister->addFunction("appendSymbol",
-             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<AppendSymbol>(derivation));});
-
-		functionregister->addFunction("setMaximumIterations",
-             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<IteratorLimit>(derivation));});
-
-		functionregister->addFunction("print",
-             [derivation]()->std::shared_ptr<Function>{return std::static_pointer_cast<Function>(std::make_shared<PrintJson>());});
+        this->registerNatives();        
 
         flagIsParsed = true;
         hasAnyError = false;;
@@ -75,6 +64,28 @@ namespace ProcGen {
         //std::cout << "Done...\n";
     }
 
+
+
+#define REGISTER_NATIVE_FUNCTION(stringName, className)\
+		functionregister->addFunction(stringName,\
+        [derivation]()->std::shared_ptr<Function>{\
+                return std::static_pointer_cast<Function>\
+                (std::make_shared<className>(derivation));\
+        });
+
+    void Generation::registerNatives()
+    {
+ 		registerStandardTypes(typeregister.get());
+		registerStandardFunctions(functionregister.get());
+
+        // Add derivation standards
+        auto derivation = this->der;
+        REGISTER_NATIVE_FUNCTION("appendSymbol", AppendSymbol);
+        REGISTER_NATIVE_FUNCTION("getCurrentPosition", NativeCurrentPosition);
+        REGISTER_NATIVE_FUNCTION("getCurrentStringId", NativeCurrentStringId);
+        REGISTER_NATIVE_FUNCTION("getSymbol", NativeGetSymbol);
+        REGISTER_NATIVE_FUNCTION("getParent", NativeGetParent);
+    }
     
     bool Generation::initializeFunction(char* type)
     {

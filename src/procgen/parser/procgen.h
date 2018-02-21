@@ -54,6 +54,7 @@ namespace ProcGen {
 		 *	Utility functions, called by parser
 		 */
 
+        void registerNatives();
         // Prepare local stack
         bool initializeFunction(char* type);
 

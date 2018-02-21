@@ -16,14 +16,18 @@ void Derivation::generate(size_t maxSteps)
     maxSteps = this->allowedIterations;
 	bool shouldContinue = false;
 	size_t step = 0;
-    // Move next to current buffer
+    // Move next to current buffer etc
     this->shiftBuffers();
 	do {
 	std::cout << "Step: " <<step++ <<std::endl;
 	shouldContinue = false;
 	std::cout << "Current string size: " << this->currentString.size() <<std::endl;
+
+    // TODO
+    // Document this algorithm in BC
 	for(size_t i = 0; i < this->currentString.size(); i++)
 	{
+        this->currentStringPositionID = i;
 		// Find a rule for current symbols
 		// If no rule exists, copy to nextString and continue
 		// Otherwise, set shouldContinue to TRUE and apply rule	
@@ -32,6 +36,8 @@ void Derivation::generate(size_t maxSteps)
 		if(this->hasAnyRule(sym->getBaseId()))
 		{
 			auto& rulesForSymbol = this->rules[sym->getBaseId()];
+            // Fill set 'availableRules' with rules whose predicate
+            // return 'TRUE'
 			std::vector<ruleType> availableRules;
 			for(auto& rule: rulesForSymbol)
 			{
@@ -40,7 +46,8 @@ void Derivation::generate(size_t maxSteps)
 					availableRules.push_back(rule);
 				}
 			}
-			// choose based on random
+
+            // If there is at least one applicable rule
 			if(availableRules.size() > 0)
 			{
 				shouldContinue = true;	
@@ -51,10 +58,12 @@ void Derivation::generate(size_t maxSteps)
 				// skip symbols
 				i += howManytoSkip;	
 			} else {
+                // if 'availableRules' is empty, apply default rule (copy)
 				std::cerr << "No aplicable rule found for type: " << sym->getTypeName() << std::endl;
 				this->appendNextSymbol(sym);
 			}
 		} else {
+            // if 'availableRules' is empty, apply default rule (copy)
 			std::cerr << "No rule found for type: " << sym->getTypeName() << std::endl;
 			this->appendNextSymbol(sym);
 		}
@@ -108,9 +117,17 @@ void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 
 void Derivation::shiftBuffers()
 {
-    std::cout << this->nextString.size() << std::endl;
+    // Increment currentString to match next string
+    this->currentStringID++;
+    // Add next string to hierarchy
+    this->hierarchy[this->currentStringID] = this->nextString;
+
+    // Swap buffers
 	this->currentString = this->nextString;
 	this->nextString.clear();
+    
+    // Reset position
+    this->currentStringPositionID = 0;
 
 }
 

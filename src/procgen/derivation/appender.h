@@ -1,4 +1,6 @@
-#include "../interpret/interpret.h"
+#ifndef _APPENDER_H
+#define _APPENDER_H
+#include <procgen/interpret/interpret.h>
 #include <procgen/derivation/derivation.h>
 
 class AppendSymbol : public Function
@@ -30,3 +32,4 @@ class AppendSymbol : public Function
 			return false;
 		}
 };
+#endif

@@ -1,9 +1,12 @@
 #ifndef DERIVATION_H
 #define DERIVATION_H
 #include <procgen/interpret/interpret.h>
+//#include <procgen/derivation/natives.h>
+//#include <procgen/derivation/appender.h>
 #include "json.hpp"
 #include <map>
 
+/*
 class DomNode {
 	public:
 		std::shared_ptr<Resource> symbol;
@@ -41,22 +44,39 @@ class Dom
 		return empty;
 	}
 };
+*/
 
 class Derivation
 {
+//TODO
 	public:
 	using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function> >;
 	std::shared_ptr<FunctionReg> fr;
 	std::shared_ptr<TypeRegister> tr;
 
 	private:
+
+    size_t currentIterationID;        
+    size_t currentStringID;
+    size_t currentStringPositionID;
+
     int allowedIterations;
+
+    using vectorOfSymbols = std::vector<std::shared_ptr<Resource>>;
+
+    // stores hierarchy of history
+    std::map<size_t,vectorOfSymbols> hierarchy;
+
+    // hierarchyRelation defines parent for positions in given string
+    // <string,position> -> [string-1] <position>
+    std::map<std::pair<size_t,size_t>,size_t> hierarchyRelation;
+
 	std::map<TypeId, std::vector<ruleType>> rules;
-	std::vector<std::shared_ptr<Resource>> currentString;
-	std::vector<std::shared_ptr<Resource>> nextString;
+	vectorOfSymbols currentString;
+	vectorOfSymbols nextString;
 	
 	// Object model tree
-	Dom dom;
+	//Dom dom;
 
 
 	public:
@@ -90,10 +110,7 @@ class Derivation
 
     json to_json() const;
 
-	const std::vector<std::shared_ptr<Resource>> getCurrentSymbolList() const
-	{
-		return this->currentString;
-	}
+	const std::vector<std::shared_ptr<Resource>> getCurrentSymbolList() const { return this->currentString; }
     void clear()
     {
         this->currentString.clear();
@@ -101,6 +118,30 @@ class Derivation
     }
 
     void setMaximumIterations(int maximum) { this->allowedIterations = maximum;}
+
+    size_t getCurrentStringId() const { return this->currentStringID; }
+    size_t getCurrentStringPositionId() const { return this->currentStringPositionID; }
+    size_t getCurrentIterationId() const { return this->currentIterationID; }
+    std::shared_ptr<Resource> getSymbolAtPosition(size_t stringId, size_t position)
+    {
+        if(stringId == this->getCurrentIterationId())
+        {
+            return this->currentString[position];
+        } else if(this->hierarchy.find(stringId) != this->hierarchy.end())
+        {
+            return this->hierarchy[stringId][position];
+        }
+        return tr->sharedResource("any");
+    }
+    size_t getParentId(size_t stringId, size_t position)
+    {
+        auto key = std::make_pair(stringId,position);
+        if(hierarchyRelation.find(key) != hierarchyRelation.end())
+        {
+            return hierarchyRelation[key];
+        }
+        return -1;
+    }
 
 };
 #endif
