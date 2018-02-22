@@ -18,17 +18,32 @@
 #  undef yyFlexLexer
 # endif
 
+#include <stack>
+#include <fstream>
 
 namespace ProcGen
 {
     class Scanner: public ProcGenFlexLexer
     {
         public:
-        Scanner(){}
+        Scanner(){
+            yy_flex_debug = 0;
+        }
+        
         virtual ~Scanner(){}
 
         virtual Parser::token_type yylex(Parser::semantic_type* yylval,
                 Parser::location_type* l, Generation& generation);
+
+        //std::stack<ProcGen_BUFFER_STATE> includes;
+        std::stack<yy_buffer_state*> includes;
+        std::stack<Parser::location_type> includeLocation;
+
+        
+        bool hasParserFileWithName(char* name)
+        {
+            return false;
+        }
     };
     
 }

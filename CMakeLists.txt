@@ -63,7 +63,7 @@ find_package(FLEX REQUIRED)
 
 # Translate parser / lexer with Bison/Flex
 BISON_TARGET(Parser src/procgen/parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS -d)
-FLEX_TARGET(Scanner src/procgen/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
+FLEX_TARGET(Scanner src/procgen/parser/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS -d)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 add_library(procgen

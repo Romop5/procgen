@@ -1,10 +1,9 @@
+%x incl
+
 %{
 #include <cstdio>
 #include <iostream>
-using namespace std;
-//#define YY_DECL int yylex(ProcGen::Generation* proc)
-//#define YY_DECL extern "C" int yylex()
-
+#include <fstream>
 #include "parser.hh"  
 #include <procgen/parser/scanner.h>
 #include "procgen.h" 
@@ -61,6 +60,43 @@ typedef ProcGen::Parser::token_type token_type;
 "//"[^\n]* 
 "/*"[^*]*"*/" 
 
+"#include" BEGIN(incl);
+<incl>[ \t]*      /* eat the whitespace */
+<incl>[^ \t\n]+  { /* got the include file name */
+                if(this->hasParserFileWithName(yytext) == false) 
+                {
+                    //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
+                    std::ifstream* includedFile = new std::ifstream(yytext,std::ifstream::in);
+                    if(includedFile->is_open() == false)
+                    {
+                        delete includedFile;
+                        generation.errorMessage("failed to load %s file in #include.", yytext);
+                        yyterminate();
+                    }
+
+                    this->includes.push(YY_CURRENT_BUFFER);
+                    this->includeLocation.push(generation._location);
+            
+                    std::string* locationName = new std::string(yytext);
+                    generation._location = Parser::location_type(locationName,0,0);
+
+                    this->yy_switch_to_buffer(this->yy_create_buffer(includedFile,YY_BUF_SIZE));
+                    BEGIN(INITIAL);
+                }
+            }
+<<EOF>> {
+            if(!this->includes.empty())
+            {
+                this->yy_delete_buffer(YY_CURRENT_BUFFER );
+                this->yy_switch_to_buffer(this->includes.top());
+                this->includes.pop();
+                generation._location = this->includeLocation.top();
+                this->includeLocation.pop();
+            } else {
+                yyterminate(); 
+            }
+        }
+
 "parameter"	{ return token::USING;}
 "rule"		{ return token::RULE;}
 "using"		{ return token::USING;}
@@ -106,9 +142,13 @@ typedef ProcGen::Parser::token_type token_type;
 ">"		{ return token::GREATER;}
 "<"		{ return token::LESS;}
 "\."	{ return token::DOT;}
-.                ;
 
+.      {
+            generation.errorMessage("Invalid lexical token '%s'",yytext);
+            yyterminate();
+        }
 %%
+
 
 #ifdef yylex
 #undef yylex
