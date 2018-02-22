@@ -2,6 +2,11 @@
 #include <procgen/interpret/typereg.h>
 #include <sstream>
 
+
+std::shared_ptr<Resource> Resource::allocateClone()
+{
+    return this->tr->sharedResource(this->getBaseId());
+}
 bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 {
 	if(!value)

@@ -59,6 +59,8 @@ class Resource
 
     ResourceType    getResourceType() const { return this->resourceType; }
 
+    std::shared_ptr<Resource> allocateClone(); 
+
 };
 
 
