@@ -62,22 +62,24 @@ typedef ProcGen::Parser::token_type token_type;
 
 "#include" BEGIN(incl);
 <incl>[ \t]*      /* eat the whitespace */
-<incl>[^ \t\n]+  { /* got the include file name */
+<incl>\"[^\"]+\"  { /* got the include file name */
                 if(this->hasParserFileWithName(yytext) == false) 
                 {
                     //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
-                    std::ifstream* includedFile = new std::ifstream(yytext,std::ifstream::in);
+                    std::string name = std::string(yytext).substr(1,yyleng-2);
+                    std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
                     if(includedFile->is_open() == false)
                     {
                         delete includedFile;
-                        generation.errorMessage("failed to load %s file in #include.", yytext);
+                        generation.errorMessage("failed to load '%s' file in #include.", name);
                         yyterminate();
                     }
 
+                    this->addParsingFile(name.c_str());
                     this->includes.push(YY_CURRENT_BUFFER);
                     this->includeLocation.push(generation._location);
             
-                    std::string* locationName = new std::string(yytext);
+                    std::string* locationName = new std::string(name);
                     generation._location = Parser::location_type(locationName,0,0);
 
                     this->yy_switch_to_buffer(this->yy_create_buffer(includedFile,YY_BUF_SIZE));

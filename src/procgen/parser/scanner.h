@@ -20,6 +20,7 @@
 
 #include <stack>
 #include <fstream>
+#include <set>
 
 namespace ProcGen
 {
@@ -39,11 +40,16 @@ namespace ProcGen
         std::stack<yy_buffer_state*> includes;
         std::stack<Parser::location_type> includeLocation;
 
+        std::set<std::string> alreadyParsed;
+
         
-        bool hasParserFileWithName(char* name)
+        bool hasParserFileWithName(const std::string& name)  
         {
+            if(alreadyParsed.find(name) != alreadyParsed.end())
+                return true;
             return false;
         }
+        void addParsingFile(const std::string& name) { alreadyParsed.insert(name); }
     };
     
 }
