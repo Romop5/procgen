@@ -24,6 +24,17 @@ void If::setPath(size_t id, std::shared_ptr<Statement> path)
 	this->paths[id] = path;
 }
 
+
+json If::to_json() const 
+{
+    json js = json(getBoxName());
+    for(auto &path: this->paths)
+    {
+        js[path.first] = (path.second)->to_json();   
+    }
+    return js;
+}
+
 bool While::operator()(RunStatus& stat)
 {
 	while(true)

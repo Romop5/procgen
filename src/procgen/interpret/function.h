@@ -388,6 +388,7 @@ class GenerateUniform: public Function
 		float x = random() / (float(UINT_MAX)+1.0);
 		x = x*(b-a)+a;
 		*(float*) this->getOutput()->getData() = x;
+        return false;
 	}
 };
 
@@ -399,6 +400,7 @@ class GenerateRandom: public Function
 		if(_doInputs(stat)) return true;
 
 		*(float*) this->getOutput()->getData() = random() / (float(UINT_MAX)+1.0);
+        return false;
 	}
 };
 

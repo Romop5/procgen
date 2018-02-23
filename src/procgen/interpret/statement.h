@@ -20,6 +20,7 @@
 class RunStatus
 {
 	public:
+    RunStatus() { _status = OK; }
 	enum status { OK, RETURN_REACHED, RUNTIME_ERROR} _status;
 	void setStatus(status _status) {this->_status = _status;}
 	status getStatus() {return this->_status;}
@@ -43,6 +44,8 @@ class Statement
 	public:
     /// Execute block functionality
 	virtual bool operator () (RunStatus&) = 0;
+    virtual const std::string getBoxName() const { return "Statement";}
+    virtual json to_json() const { return json(getBoxName());}
 };
 
 /**
@@ -66,6 +69,7 @@ class If:public Statement
 	std::map<size_t, std::shared_ptr<Statement>> paths;
 	public:
 	virtual bool operator()(RunStatus&);
+    virtual json to_json() const override;
 /**
 * @brief Set predicate expression tree
 * @param exp
