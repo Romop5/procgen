@@ -4,6 +4,7 @@
 
 #include <procgen/interpret/function.h>
 #include <procgen/derivation/derivation.h>
+#include <procgen/utils/logger.h>
 
 // int = getCurrentPosition() returns current position in derivation string
 class NativeCurrentPosition: public Function
@@ -93,6 +94,7 @@ class NativeGetParent: public Function
             int stringId = *(int*) _getInput(0)->getOutput()->getData();
             int positionId = *(int*) _getInput(1)->getOutput()->getData();
     
+            LOG_DEBUG("getParent() stringId: %d position %d\n", stringId, positionId);
 
             *(int*) this->getOutput()->getData() =
                         (derivation->getParentId(stringId, positionId));

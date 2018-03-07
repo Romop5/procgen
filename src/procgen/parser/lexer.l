@@ -137,6 +137,7 @@ typedef ProcGen::Parser::token_type token_type;
 ")"		{ return token::RPAR;}
 ";"		{ return token::SEMICOL;}
 "=="		{ return token::EQ;}
+"!="		{ return token::NOTEQ;}
 "+"		{ return token::PLUS;}
 "-"		{ return token::MINUS;}
 "*"		{ return token::MUL;}
