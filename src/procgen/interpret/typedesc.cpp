@@ -1,5 +1,6 @@
 #include <procgen/interpret/typedesc.h>
 #include <procgen/interpret/typereg.h>
+#include <procgen/utils/logger.h>
 #include <iostream>
 
 unsigned int AbstractType::getAlignedSize()
@@ -47,10 +48,10 @@ bool CompositeType::hasComponentWithName(const std::string name) const
 
 size_t CompositeType::getComponentPositionByName(const std::string name) const
 {
-    std::cout << "Looking for '"<< name << "' in:\n";
+    LOG_DEBUG("Looking for %s in: \n",name.c_str());
     for(auto &x: this->componentsNames)
     {
-        std::cout << "'" << x << "'" << std::endl;
+        LOG_DEBUG("'%s'\n",x.c_str());
     }
 
 	for(size_t x = 0 ; x < this->componentsNames.size(); x++)

@@ -1,4 +1,5 @@
 #include <procgen/interpret/variablereg.h>
+#include <procgen/utils/logger.h>
 #include <iostream>
 bool VariableReg::addVar(std::string name,std::shared_ptr<Resource> src)
 {
@@ -19,7 +20,7 @@ void VariableReg::_debug()
 {
 	for(auto &x: this->vars)
 	{
-		std::cout << "VR: " << x.first << std::endl;
+		LOG_DEBUG("VR: %s\n",x.first.c_str()); 
 	}
 }
 

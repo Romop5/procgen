@@ -3,6 +3,7 @@
 #include <memory>
 #include <string.h>
 #include <procgen/interpret/function.h>
+#include <procgen/utils/logger.h>
 
 void copyComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> dest, int id);
 void setComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> composite,std::shared_ptr<Resource> src, int id);
@@ -61,7 +62,7 @@ void* getComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> co
 	if(type->getType() != COMPOSITE)
 		return NULL;
 	auto compo = std::dynamic_pointer_cast<CompositeType>(type);
-	std::cout << "Size: " << type->getSize() << std::endl;
+	LOG_DEBUG("Size: %d\n",type->getSize());
 	return (void*) ((unsigned char*) composite->getData() + compo->getOffset(id));
 }
 
@@ -71,7 +72,7 @@ void copyComponent(std::shared_ptr<TypeRegister> tr,std::shared_ptr<Resource> co
 	if(type->getType() != COMPOSITE)
 		return;
 	auto compo = std::dynamic_pointer_cast<CompositeType>(type);
-	std::cout << "Size: " << type->getSize() << std::endl;
+	LOG_DEBUG("Size: %d\n",type->getSize());
 	void* src =  (void*) ((unsigned char*) composite->getData() + compo->getOffset(id));
 
 
