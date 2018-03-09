@@ -44,9 +44,29 @@ json AtomicResource::to_json() const
     return json("unkAtomicValue");
 }
 
+bool AtomicResource:isInteger()
+{
+	std::string nameOfType = tr->getTypeName(baseType);
+	return (nameOfType == "int");
+}
+bool AtomicResource::isFloat()
+{
+	std::string nameOfType = tr->getTypeName(baseType);
+	return (nameOfType == "float");
+}
+
 std::string Resource::getTypeName() const
 {
 	return tr->getTypeName(this->baseType);
+}
+
+int  AtomicResource::getInteger()
+{
+	return *(int*) this->getData();
+}
+float AtomicResource::getFloat()
+{
+	return *(float*) this->getData();
 }
 
 bool CompositeResource::copy(const std::shared_ptr<Resource> src)

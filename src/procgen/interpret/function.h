@@ -404,6 +404,19 @@ class GenerateRandom: public Function
 	}
 };
 
+// Random in range <0,1)
+class SetRandomSeed: public Function
+{
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+
+		srand(*(int*) _getInput()->getOutput()->getData());
+		return false;
+	}
+};
+
+
 
 
 

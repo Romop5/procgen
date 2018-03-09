@@ -62,6 +62,16 @@ void registerStandardFunctions(FunctionReg* fr)
 		return generate;
 	});
 
+	fr->addFunction("setRandomSeed",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<SetRandomSeed>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+
 
 	fr->addFunction("uniform",
 	[tr]{

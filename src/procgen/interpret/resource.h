@@ -60,7 +60,6 @@ class Resource
     ResourceType    getResourceType() const { return this->resourceType; }
 
     std::shared_ptr<Resource> allocateClone(); 
-
 };
 
 
@@ -94,6 +93,11 @@ class AtomicResource : public Resource
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
     virtual json to_json() const override;
 
+    	bool isInteger();
+	bool isFloat();
+
+	int  getInteger();
+	float getFloat();
 };
 
 /**
