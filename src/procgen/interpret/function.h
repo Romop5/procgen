@@ -15,6 +15,7 @@
 #include <climits>
 
 #include <procgen/interpret/statement.h>
+#include <procgen/utils/logger.h>
 class Statement;
 class Resource;
 
@@ -74,7 +75,7 @@ class PrintJson: public Function
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
-		std::cout << _getInput(0)->getOutput()->to_json().dump() << std::endl;
+		LOG_DEBUG("PrintJson %s\n",_getInput(0)->getOutput()->to_json().dump().c_str());
 		return false;
 	}
 };
@@ -86,7 +87,7 @@ class PrintValue: public Function
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
-		std::cout << *(T*)(_getInput(0)->getOutput()->getData()) << std::endl;
+		LOG_DEBUG("Operation: %g\n",*(T*)(_getInput(0)->getOutput()->getData()));
 		return false;
 	}
 };
@@ -283,7 +284,7 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR ;\
 		*(T*)(getOutput()->getData()) = out;\
-		std::cout << "Copying\n";\
+		LOG_DEBUG("Copying\n");\
 		return false;\
 	}\
 };
@@ -299,7 +300,7 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
 		*(T*)(getOutput()->getData()) = out;\
-		std::cout << #OPNAME << "\n";\
+		LOG_DEBUG(#OPNAME "\n");\
 		return false;\
 	}\
 };
@@ -315,7 +316,7 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		bool out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
 		*(bool*)(getOutput()->getData()) = out;\
-		std::cout << #OPNAME << "\n";\
+		LOG_DEBUG(#OPNAME "\n");\
 		return false;\
 	}\
 };

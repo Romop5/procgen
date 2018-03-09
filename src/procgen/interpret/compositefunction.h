@@ -6,6 +6,7 @@
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/statement.h>
 #include <procgen/interpret/function.h>
+#include <procgen/utils/logger.h>
 
 /*
 1. Create an expression tree with vars
@@ -58,23 +59,23 @@ class FunctionCall : public Function
 		// TODO: checkout type equivalence 
 		// bind inputs to interface
 
-        std::cout << "Invoking function: " << this->name << std::endl;
+        LOG_DEBUG("Invoking function: %s\n",this->name.c_str());
 		for(int i=0; i < cf->inputs.size();i++)
 		{
             assert(this->_getInput(i) != nullptr);
             assert(this->_getInput(i)->getOutput() != nullptr);
 
             std::string dmp = this->_getInput(i)->getOutput()->to_json().dump();
-            std::cout << "Argument[in] " << i << "'" << dmp  << "'" << std::endl;
+            LOG_DEBUG("Argument[in] %d %s\n",i,dmp.c_str());
 			cf->inputs[i]->copy(this->_getInput(i)->getOutput());
             dmp = cf->inputs[i]->to_json().dump();
-            std::cout << "Argument[inside] " << i << "'" << dmp  << "'" << std::endl;
+            LOG_DEBUG("Argument[inside] %d %s\n",i,dmp.c_str());
 		}
 		// process function
 		if(this->getOutput() != nullptr)
         {
             std::string dmp = this->getOutput()->to_json().dump();
-            std::cout << "Output[before] '" << dmp << "'" << std::endl;
+            LOG_DEBUG("Output[before] %s\n'",dmp.c_str());
         }
 
 		bool result = (*cf->core)(stat);
@@ -82,7 +83,7 @@ class FunctionCall : public Function
         if(this->getOutput() != nullptr)
         {
             std::string dmp = this->getOutput()->to_json().dump();
-            std::cout << "Output[after] '" << dmp << "'" << std::endl;
+            LOG_DEBUG("Output[after] '%s'\n",dmp.c_str());
         }
 
 		// copy result

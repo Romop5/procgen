@@ -113,6 +113,9 @@ void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 	std::cout << "Appended\n";
 	std::cout << this->nextString.size() << "\n";
 	std::cout << this << std::endl;
+
+    // add relation for parent
+    hierarchyRelation[std::make_pair(this->getCurrentStringId()+1,this->nextString.size()-1)] = this->getCurrentStringPositionId();
 }
 
 void Derivation::shiftBuffers()

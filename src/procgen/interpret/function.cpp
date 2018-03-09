@@ -19,7 +19,10 @@ bool Function::_doInputs(RunStatus& stat)
 	for(auto &x: this->_inputs)
 	{
 		if((*(x.second))(stat) == true)
+        {
+            LOG_DEBUG("Return triggered, coming home.\n");
 			return true;
+        }
 	}
 	return false;
 }
