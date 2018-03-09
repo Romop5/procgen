@@ -412,7 +412,7 @@ class SetRandomSeed: public Function
 	{
 		if(_doInputs(stat)) return true;
 
-		srand(*(int*) _getInput()->getOutput()->getData());
+		srand(*(int*) _getInput(0)->getOutput()->getData());
 		return false;
 	}
 };

@@ -44,7 +44,7 @@ json AtomicResource::to_json() const
     return json("unkAtomicValue");
 }
 
-bool AtomicResource:isInteger()
+bool AtomicResource::isInteger()
 {
 	std::string nameOfType = tr->getTypeName(baseType);
 	return (nameOfType == "int");
