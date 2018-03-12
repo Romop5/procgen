@@ -80,6 +80,8 @@
 %token COMMA    ","
 %token ASSIGN	"="
 %token EQ       "=="
+%token AND      "&&"
+%token OR       "||"
 %token NOTEQ   "!="
 %token MINUS    "-"
 %token PLUS     "+"
@@ -90,6 +92,7 @@
 %token GREATER ">"
 %token LESS    "<"
 // Operators
+%left AND OR
 %left EQ NOTEQ
 %left GREATER LESS
 
@@ -212,6 +215,10 @@ expression                : literal
 				{ generation.makeConvert($3); }
 			    | 	functionCall 
 			  
+                            |   expression "&&" expression
+				{ auto result = generation.createExpressionOperation('&'); }
+                            |   expression "||" expression
+				{ auto result = generation.createExpressionOperation('|'); }
                             |   expression "<" expression
 				{ auto result = generation.createExpressionOperation('<'); }
                             |   expression ">" expression

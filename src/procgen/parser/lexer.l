@@ -138,6 +138,8 @@ typedef ProcGen::Parser::token_type token_type;
 ";"		{ return token::SEMICOL;}
 "=="		{ return token::EQ;}
 "!="		{ return token::NOTEQ;}
+"&&"		{ return token::AND;}
+"||"		{ return token::OR;}
 "+"		{ return token::PLUS;}
 "-"		{ return token::MINUS;}
 "*"		{ return token::MUL;}

@@ -68,6 +68,7 @@ class NativeGetSymbol: public Function
             int positionId = *(int*) _getInput(1)->getOutput()->getData();
     
             this->bindOutput(derivation->getSymbolAtPosition(stringId, positionId));
+            LOG_DEBUG("getSymbol (%d, %d): %s\n",stringId, positionId, this->getOutput()->to_json().dump().c_str());
 			return false;
 		}
 };

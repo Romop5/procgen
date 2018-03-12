@@ -40,6 +40,8 @@ void registerStandardFunctions(FunctionReg* fr)
 
 	REG_FUNC(bool, "Negation", Negation );
 
+	REG_FUNC_FORALL("And", And);
+	REG_FUNC_FORALL("Or",Or);
 	REG_FUNC_FORALL("Add",Add);
 	REG_FUNC_FORALL("Sub",Sub);
 	REG_FUNC_FORALL("Mul",Mul);

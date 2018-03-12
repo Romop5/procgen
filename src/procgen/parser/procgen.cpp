@@ -300,6 +300,8 @@ namespace ProcGen {
 			case '<': operationName = "Less"; break;
 			case '=': operationName = "Eq"; break;
 			case '!': operationName = "NotEq"; break;
+			case '&': operationName = "And"; break;
+			case '|': operationName = "Or"; break;
 			default:
 				  errorMessage("Undefined operation");
 		}

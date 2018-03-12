@@ -194,7 +194,7 @@ json AnyResource::to_json() const
 {
 	if(content)
 		return content->to_json();
-	return json("any");
+	return json("any (empty)");
 }
 
 size_t AnyResource::getBaseId()

@@ -252,6 +252,9 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		bool out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
 		*(bool*)(getOutput()->getData()) = out;\
+		LOG_DEBUG(#OPNAME " %d " #OPERATOR " %d\n",out,\
+                *(T*) _getInput(0)->getOutput()->getData(),\
+                *(T*) _getInput(1)->getOutput()->getData());\
 		return false;\
 	}\
 };
@@ -269,6 +272,9 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
 		*(T*)(getOutput()->getData()) = out;\
+		LOG_DEBUG(#OPNAME " %d " #OPERATOR " %d\n",out,\
+                *(T*) _getInput(0)->getOutput()->getData(),\
+                *(T*) _getInput(1)->getOutput()->getData());\
 		return false;\
 	}\
 };
@@ -284,7 +290,8 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR ;\
 		*(T*)(getOutput()->getData()) = out;\
-		LOG_DEBUG("Copying\n");\
+		LOG_DEBUG(#OPNAME " %d " #OPERATOR "\n",out,\
+                *(T*) _getInput(0)->getOutput()->getData());\
 		return false;\
 	}\
 };
@@ -300,7 +307,8 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		T out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
 		*(T*)(getOutput()->getData()) = out;\
-		LOG_DEBUG(#OPNAME "\n");\
+		LOG_DEBUG(#OPNAME #OPERATOR " %d \n",out,\
+                *(T*) _getInput(0)->getOutput()->getData());\
 		return false;\
 	}\
 };
@@ -316,7 +324,8 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		bool out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
 		*(bool*)(getOutput()->getData()) = out;\
-		LOG_DEBUG(#OPNAME "\n");\
+		LOG_DEBUG(#OPNAME #OPERATOR " %d \n",out,\
+                *(T*) _getInput(0)->getOutput()->getData());\
 		return false;\
 	}\
 };
@@ -438,5 +447,7 @@ DEF_BINARY_OP(Div,/);
 DEF_BINARY_LOGIC_OP(Greater,>);
 DEF_BINARY_LOGIC_OP(Less,<);
 DEF_BINARY_LOGIC_OP(Eq,==);
+DEF_BINARY_LOGIC_OP(And,&&);
+DEF_BINARY_LOGIC_OP(Or,||);
 DEF_BINARY_LOGIC_OP(NotEq,!=);
 #endif
