@@ -93,11 +93,9 @@
 %left EQ NOTEQ
 %left GREATER LESS
 
-%left "-" 
-%left "+" 
+%left "+" "-" 
 %left "/" 
 %left "*" 
-
 %left UMINUS  
 %left UPLUS 
 %left NEGATION "!"
@@ -234,7 +232,7 @@ expression                : literal
 		            |   "-" expression %prec UMINUS
 				{ auto result = generation.createUnaryOperation('-'); }
 		            |   "+" expression %prec UPLUS
-		            |   "!" expression 
+		            |   "!" expression %prec NEGATION
 				{ auto result = generation.createUnaryOperation('!'); }
 
 
