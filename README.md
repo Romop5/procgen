@@ -20,13 +20,15 @@ The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 201
 * CMake supported
 * Python bindings (TODO)
 
+### What next
+[Simple generating tutorial](doc/TUTORIAL.md)
+
 [How does this tool work](HOWDOESITWORK.md)
 
 [Complete BNF grammar](doc/COMPLETEGRAMMAR.md) 
 
 [Annotated BNF grammar]() TODO
 
-[Tutorials]() TODO
 
 
 ### Example procedural code
