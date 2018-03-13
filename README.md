@@ -22,7 +22,10 @@ The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 201
 
 [How does this tool work](HOWDOESITWORK.md)
 
+[Complete BNF grammar](doc/COMPLETEGRAMMAR.md) 
+
 [Annotated BNF grammar]() TODO
+
 [Tutorials]() TODO
 
 
