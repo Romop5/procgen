@@ -7,28 +7,31 @@ ProcGen - a library for procedural generation
 ## About
 **WORK IN PROGRESS** *BUG REPORTS APPRECIATED*
 
-*ProcGen* is a C++ library aimed to be used for procedural generation. It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures** in fancy *JSON* format.
+Have you ever wanted to generate fractals ? Recursive geometry ? Complex self-similar structures ? Or simple 3D models for voxel-like game ?
 
-The generation is similar to parametric L-systems as it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**.
+*ProcGen* is a C++ library aimed to be used for procedural generation. It works as rewritting machine which **iteratively transforms user-defined structures to other structures**. This is allowed by defining custom structures like in C-like language and defining rules which act like procedures, transforming the given input structure to new structures.
+
+The generation is thus similar to parametric L-systems as it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**, with C-like statements like **if**, **while**.
+
+It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures** in fancy *JSON* format.
+
 
 The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 2018.
 
 ### Features
 * C-like style of code
-* Run-time configuration 
-* JSON outputs
+* L-system & rewritting system based generation
+* Run-time structure and rules configuration 
+* JSON serializing for results of generation
 * CMake supported
 * Python bindings (TODO)
 
-### What next
+### Documentation
 [Simple generating tutorial](doc/TUTORIAL.md)
 
-[How does this tool work](HOWDOESITWORK.md)
+[How does this tool and L-systems work](HOWDOESITWORK.md)
 
 [Complete BNF grammar](doc/COMPLETEGRAMMAR.md) 
-
-[Annotated BNF grammar]() TODO
-
 
 
 ### Example procedural code
