@@ -41,6 +41,7 @@ bool While::operator()(RunStatus& stat)
 	{
 		if((*this->_expression)(stat)) return true;
 		bool isTrue = *(bool*) this->_expression->getOutput()->getData();
+        LOG_DEBUG("While expression result: %d\n", isTrue);
 		if(!isTrue)
 			break;
 		// eval statement
