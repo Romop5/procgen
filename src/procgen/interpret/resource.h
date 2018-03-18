@@ -13,7 +13,7 @@
 #include <vector>
 #include <map>
 
-#include "json.hpp"
+#include <procgen/utils/json.hpp>
 
 using TypeId = size_t;
 class CompositeType;

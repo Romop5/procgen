@@ -12,7 +12,7 @@
 
 #include <string>
 #include <stack>
-#include "json.hpp"
+#include <procgen/utils/json.hpp>
 
 namespace ProcGen {
     

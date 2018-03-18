@@ -3,7 +3,7 @@
 #include <procgen/interpret/interpret.h>
 //#include <procgen/derivation/natives.h>
 //#include <procgen/derivation/appender.h>
-#include "json.hpp"
+#include <procgen/utils/json.hpp>
 #include <map>
 
 /*

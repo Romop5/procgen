@@ -62,14 +62,11 @@ set(PARSER_HEADERS
 
 set(UTILS_HEADERS
     src/procgen/utils/logger.h
+    src/procgen/utils/json.hpp
 )
 
 
 
-#add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
-#target_link_libraries(procedural json)
-#target_compile_features(procedural PUBLIC cxx_auto_type)
-#target_include_directories(procedural PUBLIC src/procgen/interpret src/procgen/derivation)
 #target_include_directories(procedural PUBLIC $<INSTALL_INTERFACE:include>)
 #target_include_directories(procedural PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
@@ -89,10 +86,12 @@ add_library(procgen
     src/procgen/parser/procgen.cpp
 )
 
+target_compile_features(procgen PUBLIC cxx_auto_type)
+
+# Include all components from src (utils, parser, interpret, derivator)
+target_include_directories(procgen PUBLIC src)
 
 target_include_directories(procgen PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(procgen PUBLIC src/procgen/parser)
-target_link_libraries(procgen json)
 
 
 ### Set up installation
