@@ -51,7 +51,7 @@ void Derivation::generate(size_t maxSteps)
 			if(availableRules.size() > 0)
 			{
 				shouldContinue = true;	
-				size_t randomChoose = random() % availableRules.size();
+				size_t randomChoose = rand() % availableRules.size();
 				std::cout << "Random no: "<< randomChoose << std::endl;
 				// apply rule on symbol
 				int howManytoSkip = applyRule(availableRules[randomChoose], sym);
