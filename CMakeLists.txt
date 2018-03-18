@@ -15,6 +15,8 @@ add_subdirectory(vendors)
 ###############################################################################
 
 
+set(SRC_PATH ${CMAKE_SOURCE_DIR}/src/procgen)
+
 set(INTERPRET_SOURCE 
     src/procgen/interpret/function.cpp
     src/procgen/interpret/types.cpp
@@ -46,17 +48,30 @@ set(DERIVATION_SOURCE
 )
 
 set(DERIVATION_HEADERS
+    src/procgen/derivation/natives.h
     src/procgen/derivation/appender.h
     src/procgen/derivation/derivation.h
     src/procgen/derivation/iteratorlimit.h
 )
 
-add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
-target_link_libraries(procedural json)
-target_compile_features(procedural PUBLIC cxx_auto_type)
+set(PARSER_HEADERS
+    src/procgen/parser/utils.h
+    src/procgen/parser/scanner.h
+    src/procgen/parser/procgen.h
+)
+
+set(UTILS_HEADERS
+    src/procgen/utils/logger.h
+)
+
+
+
+#add_library(procedural ${INTERPRET_SOURCE} ${DERIVATION_SOURCE})
+#target_link_libraries(procedural json)
+#target_compile_features(procedural PUBLIC cxx_auto_type)
 #target_include_directories(procedural PUBLIC src/procgen/interpret src/procgen/derivation)
-target_include_directories(procedural PUBLIC $<INSTALL_INTERFACE:include>)
-target_include_directories(procedural PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
+#target_include_directories(procedural PUBLIC $<INSTALL_INTERFACE:include>)
+#target_include_directories(procedural PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
@@ -69,12 +84,41 @@ ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 add_library(procgen
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
+    ${INTERPRET_SOURCE}
+    ${DERIVATION_SOURCE}
     src/procgen/parser/procgen.cpp
 )
 
+
 target_include_directories(procgen PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(procgen PUBLIC src/procgen/parser)
-target_link_libraries(procgen procedural)
+target_link_libraries(procgen json)
+
+
+### Set up installation
+install (FILES ${UTILS_HEADERS}
+DESTINATION include/procgen/utils)
+
+install (FILES ${INTERPRET_HEADERS}
+DESTINATION include/procgen/interpret)
+
+install (FILES ${DERIVATION_HEADERS}
+DESTINATION include/procgen/derivation)
+
+# Append bison and lexer headers
+set(PARSER_HEADERS
+    ${PARSER_HEADERS}
+    ${BISON_Parser_OUTPUT_HEADER}
+    ${CMAKE_CURRENT_BINARY_DIR}/stack.hh
+    ${CMAKE_CURRENT_BINARY_DIR}/location.hh
+    ${CMAKE_CURRENT_BINARY_DIR}/position.hh
+)
+
+install (FILES ${PARSER_HEADERS}
+DESTINATION include/procgen/parser)
+
+install (TARGETS procgen
+DESTINATION lib)
 
 ###############################################################################
 ############    PARSER EXAMPLE 				   ####################
