@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 
 	if(argc < 3)
 	{
-		error(0,0,"USAGE: %s <FILE-PATH> <ITERATION-COUNT>",argv[0]);
+        fprintf(stderr, "USAGE: %s <FILE-PATH> <ITERATION-COUNT>",argv[0]);
 		exit(1);
 	}
 
