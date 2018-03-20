@@ -7,22 +7,27 @@
 #define FORALL_ATOMICTYPES(FNC)\
 	FNC(int,"int");\
 	FNC(bool,"bool");\
-	FNC(short,"short");\
-	FNC(long,"long");\
 	FNC(float,"float");\
-	FNC(double,"double");\
+	FNC(long,"long");
+/*
 	FNC(char,"char");\
+	FNC(short,"short");\
+	FNC(double,"double");\
+*/
 
 // Provides an easy way to iterate a FNC function over standard built-in types
 // This time supports a parameter, passed to function
 #define FORALL_ATOMICTYPES3(FNC,PARAM)\
-	FNC(int,"int",PARAM);\
-	FNC(bool,"bool",PARAM);\
-	FNC(short,"short",PARAM);\
-	FNC(long,"long",PARAM);\
-	FNC(float,"float",PARAM);\
+	FNC(int,PARAM);\
+	FNC(bool,PARAM);\
+	FNC(long,PARAM);\
+	FNC(float,PARAM);
+
+/*
 	FNC(double,"double",PARAM);\
-	FNC(char,"char",PARAM);
+	FNC(char,"char",PARAM);\
+	FNC(short,"short",PARAM);
+*/
 
 // Defines a templated function which can be used to convert C++ type
 // to its string representation.

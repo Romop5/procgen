@@ -19,3 +19,17 @@ void registerStandardTypes(TypeRegister* tr);
 */
 void registerStandardFunctions(FunctionReg* fr);
 
+
+
+/**
+* @brief Detect if two standard types are convertible to common type
+* @param first
+* @param second 
+*
+* Returns which of those two types is common (or the other one can be converted to)
+* If two types are incompatbile, returns NULL (0).
+* If second type is convertible to first, retursn 1.
+* If first type is convertible to second, returns 2.
+*/
+
+int getCommonType(std::string first, std::string second);

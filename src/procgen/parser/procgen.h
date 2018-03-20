@@ -137,6 +137,8 @@ namespace ProcGen {
 	bool makeTypeid(char* name);
 	bool makeConvert(char* name);
 
+	bool makeExplicitCast(char* finalTypename);
+
 	bool createCollectionInsert();
 	bool createCollectionAt();
 	bool createCollectionSize();

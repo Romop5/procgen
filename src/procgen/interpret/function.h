@@ -15,6 +15,7 @@
 #include <climits>
 
 #include <procgen/interpret/statement.h>
+#include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
 class Statement;
 class Resource;
@@ -426,6 +427,21 @@ class SetRandomSeed: public Function
 	}
 };
 
+template<typename DEST,typename SRC>
+class Cast: public Function
+{
+	public:
+	virtual bool operator()(RunStatus& stat)
+	{
+		if(_doInputs(stat)) return true;
+		DEST out = (DEST) *(SRC*) _getInput(0)->getOutput()->getData();
+		*(DEST*)(getOutput()->getData()) = out;
+		LOG_DEBUG("Cast from %s to %s \n",keyword<SRC>().c_str(), keyword<DEST>().c_str());
+		return false;
+	}
+};
+
+
 
 
 
@@ -444,6 +460,7 @@ DEF_BINARY_OP(Add,+);
 DEF_BINARY_OP(Sub,-);
 DEF_BINARY_OP(Mul,*);
 DEF_BINARY_OP(Div,/);
+DEF_BINARY_OP(Modulo,%);
 DEF_BINARY_LOGIC_OP(Greater,>);
 DEF_BINARY_LOGIC_OP(Less,<);
 DEF_BINARY_LOGIC_OP(Eq,==);

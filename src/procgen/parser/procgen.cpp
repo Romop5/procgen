@@ -257,14 +257,18 @@ namespace ProcGen {
 		return operationBox;	
 
 	}
+
 	std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
 	{
 		// TODO: produce common type
+
+        // 1. get two operands from expression stack
 		std::shared_ptr<Function> first= this->expressionsStack.top();
 		this->expressionsStack.pop();
 		std::shared_ptr<Function> second = this->expressionsStack.top();
 		this->expressionsStack.pop();
 
+        // 2. detect the type of operands
 		TypeId a = 0;
 		if(first->getOutput() != nullptr)
 			a = first->getOutput()->getBaseId();
@@ -279,11 +283,32 @@ namespace ProcGen {
 		
 		if(a != b)
 		{
-			//TODO
-			errorMessage("Semantic error: types don't match. Types:\n\
+            std::string firstType =  typeregister->getTypeName(a);
+            std::string secondType =  typeregister->getTypeName(b);
+
+            int common = getCommonType(firstType, secondType);
+            if(common == 0 )
+            {
+                // error
+                errorMessage("Semantic error: types don't match. Types:\n\
                     %s, %s\n",
                      typeregister->getTypeName(a).c_str(),
                      typeregister->getTypeName(b).c_str());
+            } else {
+                if(common == 2)
+                {
+                    firstType.swap(secondType);
+                    std::swap(first, second);
+                }
+                auto conversionFunction = functionregister->getFunc(std::string("Cast:")+firstType+":"+secondType);
+                if(conversionFunction == nullptr)
+                {
+                    errorMessage("Semantic error: failed to cast operands to %s from %s",firstType.c_str(), secondType.c_str());
+                }
+                conversionFunction->bindInput(0,second);
+                conversionFunction->bindOutput(typeregister->sharedResource(secondType));
+                second = conversionFunction;
+            }
 		}
 
 		// TODO: watch out for aliases
@@ -302,6 +327,7 @@ namespace ProcGen {
 			case '!': operationName = "NotEq"; break;
 			case '&': operationName = "And"; break;
 			case '|': operationName = "Or"; break;
+			case '%': operationName = "Modulo"; break;
 			default:
 				  errorMessage("Undefined operation");
 		}
@@ -538,7 +564,7 @@ namespace ProcGen {
 		auto assignedResource = this->expressionsStack.top();
 		this->expressionsStack.pop();
 
-        auto genericCopy= std::make_shared<GenericCopy>();
+        auto genericCopy = std::make_shared<GenericCopy>();
         genericCopy->bindInput(0, assignedResource);
         genericCopy->bindInput(1, expressionTop);
 		// Register 
@@ -694,6 +720,28 @@ namespace ProcGen {
 
 		this->expressionsStack.push(convertexpr);
 	}
+
+	bool Generation::makeExplicitCast(char* finalTypename)
+	{
+		auto expr = this->expressionsStack.top();
+		this->expressionsStack.pop();
+
+        std::string fromType = expr->getOutput()->getTypeName();
+
+        // is there any conversion function for these two types ?
+        auto conversionFunction = functionregister->getFunc(std::string("Cast:")+ finalTypename + ":" + fromType);
+        if(conversionFunction == nullptr)
+        {
+            errorMessage("Invalid explicit conversion from %s to %s", fromType.c_str(), finalTypename);
+        } else {
+                conversionFunction->bindInput(0,expr);
+                conversionFunction->bindOutput(typeregister->sharedResource(finalTypename));
+                expr = conversionFunction;
+        }
+
+		this->expressionsStack.push(expr);
+	}
+
 
 	bool Generation::createCollectionInsert()
 	{

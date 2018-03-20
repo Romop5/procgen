@@ -3,6 +3,8 @@
 #include <procgen/interpret/functionreg.h>
 #include <procgen/interpret/compositeutils.h>
 
+#include <set>
+
 void registerStandardTypes(TypeRegister* tr)
 {
 	#define REG_TYPE(type,typeName)\
@@ -17,9 +19,15 @@ void registerStandardFunctions(FunctionReg* fr)
 	#define REG_FUNC_FORALL(funcname,func)\
 		FORALL_ATOMICTYPES3(REG_FUNC,func);\
 		;
-	#define REG_FUNC(type,typeName,func)\
-		fr->addFunction(#func ":" typeName,\
+	#define REG_FUNC(type,func)\
+		fr->addFunction(#func ":" #type,\
 		[]{return std::static_pointer_cast<Function>(std::make_shared<func<type>>());});
+
+	#define REG_FUNC2(type,type2,func)\
+		fr->addFunction(#func ":" #type ":" #type2,\
+		[]{return std::static_pointer_cast<Function>(std::make_shared<func<type,type2>>());});
+
+
 
 	#define REG_REGULAR_FUNC(funcName,func)\
 		fr->addFunction(std::string(funcName),\
@@ -38,7 +46,10 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC_FORALL("UnaryMinus",UnaryMinus);
 	REG_FUNC_FORALL("UnaryPlus",UnaryPlus);
 
-	REG_FUNC(bool, "Negation", Negation );
+	REG_FUNC(bool, Negation );
+	REG_FUNC(int, Modulo);
+
+	REG_FUNC2(float,int, Cast);
 
 	REG_FUNC_FORALL("And", And);
 	REG_FUNC_FORALL("Or",Or);
@@ -88,4 +99,27 @@ void registerStandardFunctions(FunctionReg* fr)
     fr->addFunction("print",
     []{return std::static_pointer_cast<Function>(std::make_shared<PrintJson>());});
 
+}
+
+bool getCommonType(std::string first, std::string second)
+{
+    // FROM -> TO
+    static std::set<std::pair<std::string,std::string>> convertibleRelation = 
+        {
+            // int to float is ok
+            {std::make_pair("int","float")},
+            // int to bool is ok
+            {std::make_pair("int","bool")},
+        };
+
+    if(convertibleRelation.find(std::make_pair(first, second)) != convertibleRelation.end())
+    {
+        return 2;
+    }
+
+    if(convertibleRelation.find(std::make_pair(second, first)) != convertibleRelation.end())
+    {
+        return 1;
+    }
+    return NULL;
 }

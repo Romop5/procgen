@@ -79,6 +79,7 @@
 %token SEMICOL  ";"
 %token COMMA    ","
 %token ASSIGN	"="
+%token MODULO   "%"
 %token EQ       "=="
 %token AND      "&&"
 %token OR       "||"
@@ -97,6 +98,7 @@
 %left GREATER LESS
 
 %left "+" "-" 
+%left "%" 
 %left "/" 
 %left "*" 
 %left UMINUS  
@@ -211,8 +213,10 @@ typeid			  : "<" TYPE ">"
 				{ generation.makeTypeid($2);}
 expression                : literal
 			    |   TYPEID typeid
+                |   TYPE "(" expression ")"
+                    { generation.makeExplicitCast($1); }
 			    |   CONVERT "<" TYPE ">" "(" expression ")"
-				{ generation.makeConvert($3); }
+                    { generation.makeConvert($3); }
 			    | 	functionCall 
 			  
                             |   expression "&&" expression
@@ -235,6 +239,8 @@ expression                : literal
 				{ auto result = generation.createExpressionOperation('/'); }
                             |   expression "*" expression
 				{ auto result = generation.createExpressionOperation('*'); }
+                            |   expression "%" expression
+				{ auto result = generation.createExpressionOperation('%'); }
                             |   "(" expression ")" 
 		            |   "-" expression %prec UMINUS
 				{ auto result = generation.createUnaryOperation('-'); }

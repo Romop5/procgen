@@ -140,6 +140,7 @@ typedef ProcGen::Parser::token_type token_type;
 "!="		{ return token::NOTEQ;}
 "&&"		{ return token::AND;}
 "||"		{ return token::OR;}
+"%"		{ return token::MODULO;}
 "+"		{ return token::PLUS;}
 "-"		{ return token::MINUS;}
 "*"		{ return token::MUL;}
