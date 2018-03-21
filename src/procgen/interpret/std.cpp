@@ -50,6 +50,8 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC(int, Modulo);
 
 	REG_FUNC2(float,int, Cast);
+	REG_FUNC2(int,float, Cast);
+	REG_FUNC2(bool,int, Cast);
 
 	REG_FUNC_FORALL("And", And);
 	REG_FUNC_FORALL("Or",Or);
