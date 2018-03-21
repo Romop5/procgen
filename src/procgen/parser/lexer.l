@@ -58,7 +58,30 @@ typedef ProcGen::Parser::token_type token_type;
 }
 [ \t]        
 "//"[^\n]* 
-"/*"[^*]*"*/" 
+
+
+"/*"    {
+        //ftp://ftp.gnu.org/old-gnu/Manuals/flex-2.5.4/html_mono/flex.html#SEC19
+        int c;
+
+        while((c = yyinput()) != 0)
+            {
+            if(c == '\n')
+            {
+                LOC_NEXT_LINE(generation._location,1); LOC_STEP(generation._location);  
+            } else {
+                LOC_STEP(generation._location);
+            }
+
+            if(c == '*')
+                {
+                if((c = yyinput()) == '/')
+                    break;
+                else
+                    unput(c);
+                }
+            }
+        }
 
 "#include" BEGIN(incl);
 <incl>[ \t]*      /* eat the whitespace */
