@@ -331,6 +331,23 @@ class OPNAME: public Function\
 	}\
 };
 
+// Define a unary function operatorion OPNAME<type> 
+#define DEF_PREFIX_UNARY_FUNCTION(OPNAME,OPERATOR)\
+template<typename T>\
+class OPNAME: public Function\
+{\
+	public:\
+	virtual bool operator()(RunStatus& stat)\
+	{\
+		if(_doInputs(stat)) return true;\
+		T out = OPERATOR (*(T*) _getInput(0)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %d = " #OPERATOR " %d \n",out,\
+                *(T*) _getInput(0)->getOutput()->getData());\
+		*(T*)(getOutput()->getData()) = out;\
+		return false;\
+	}\
+};
+
 
 
 
@@ -415,7 +432,6 @@ class GenerateRandom: public Function
 	}
 };
 
-// Random in range <0,1)
 class SetRandomSeed: public Function
 {
 	virtual bool operator()(RunStatus& stat)
@@ -455,6 +471,9 @@ DEF_UNARY_OP(Copy,);
 DEF_PREFIX_BOOL_UNARY_OP(Negation, !);
 DEF_PREFIX_UNARY_OP(UnaryMinus, -);
 DEF_PREFIX_UNARY_OP(UnaryPlus, +);
+
+DEF_PREFIX_UNARY_FUNCTION(Sin, sin);
+DEF_PREFIX_UNARY_FUNCTION(Cosin, cos);
 
 DEF_BINARY_OP(Add,+);
 DEF_BINARY_OP(Sub,-);

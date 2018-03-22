@@ -91,7 +91,7 @@
 %token DOT      "."
 %token ADDEQ    "+="
 %token MULEQ    "*="
-%token MINEQ    "-+"
+%token MINEQ    "-="
 %token DIVEQ    "/="
 
 %token GREATER ">"

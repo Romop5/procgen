@@ -49,6 +49,7 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC(bool, Negation );
 	REG_FUNC(int, Modulo);
 
+
 	REG_FUNC2(float,int, Cast);
 	REG_FUNC2(int,float, Cast);
 	REG_FUNC2(bool,int, Cast);
@@ -68,6 +69,28 @@ void registerStandardFunctions(FunctionReg* fr)
 	
 	REG_REGULAR_FUNC("get",AccessComposite);
 	REG_REGULAR_FUNC("set",SetComposite);
+
+	fr->addFunction("sin",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<Sin<float>>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+	fr->addFunction("cos",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<Cosin<float>>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+
+
+
 
 	fr->addFunction("random",
 	[tr]{

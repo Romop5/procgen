@@ -4,12 +4,15 @@ TODO List for 2018
 21.3.
 1. Add function parameters call control         DONE
    Control = assignment                         DONE
-2. add *= , += operators                
+2. add *= , += operators                        DONE
 3. Think of automated constructors for types
     vec3(float, float, float) for struct { float, float, float} 
-4. add sin/cos
-5. set seed
+4. add sin/cos                                  DONE
+5. set seed                                     DONE
 6. JSON importer
+
+7. make sure parameters are working 
+8. build "setUniform" mechanism in procgen
 
 Unit tests = unit scripts
     = good ones
