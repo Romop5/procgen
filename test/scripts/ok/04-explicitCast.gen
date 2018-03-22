@@ -1,0 +1,5 @@
+int init()
+{
+    int i = int(10);
+    i = int(10.5);
+}

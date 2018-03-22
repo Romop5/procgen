@@ -8,10 +8,12 @@ bool Function::operator()(RunStatus& stat)
 bool Function::bindInput(size_t id, std::shared_ptr<Function> func)
 {
 	this->_inputs[id] = func;	
+    return true;
 }
 bool Function::bindOutput(std::shared_ptr<Resource> res)
 {
 	this->_output = res;
+    return true;
 }
 
 bool Function::_doInputs(RunStatus& stat)

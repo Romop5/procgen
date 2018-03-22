@@ -103,8 +103,9 @@ void registerStandardFunctions(FunctionReg* fr)
 
 }
 
-bool getCommonType(std::string first, std::string second)
+int getCommonType(std::string first, std::string second)
 {
+    LOG_DEBUG("getCommonType: %s %s\n", first.c_str(), second.c_str());
     // FROM -> TO
     static std::set<std::pair<std::string,std::string>> convertibleRelation = 
         {

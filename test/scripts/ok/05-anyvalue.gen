@@ -1,0 +1,6 @@
+int init()
+{
+    any a = 5.0;
+    a = 1;
+    a = true;
+}

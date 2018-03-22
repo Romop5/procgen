@@ -1,12 +1,22 @@
 TODO List for 2018
 =================
 
-1. Add function parameters call control
-2. add *= , += operators
+21.3.
+1. Add function parameters call control         DONE
+   Control = assignment                         DONE
+2. add *= , += operators                
 3. Think of automated constructors for types
     vec3(float, float, float) for struct { float, float, float} 
 4. add sin/cos
+5. set seed
+6. JSON importer
 
+Unit tests = unit scripts
+    = good ones
+    = bad ones
+    = something like REQUIRE ?
+
+LONG TERM TODO
 =================
 1. Clean the code
 	- adding comments

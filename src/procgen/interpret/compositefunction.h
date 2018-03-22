@@ -75,7 +75,7 @@ class FunctionCall : public Function
 		if(this->getOutput() != nullptr)
         {
             std::string dmp = this->getOutput()->to_json().dump();
-            LOG_DEBUG("Output[before] %s\n'",dmp.c_str());
+            LOG_DEBUG("Output[before] '%s'\n",dmp.c_str());
         }
 
 		bool result = (*cf->core)(stat);
@@ -102,6 +102,25 @@ class FunctionCall : public Function
 
 		return false;
 	}
+
+
+    bool bindInput(size_t id, std::shared_ptr<Function> func) override
+    {
+        if(func->getOutput() == nullptr)
+            return false;
+        if(!this->cf->inputs[id]->hasSameType(func->getOutput()))
+            return false;
+        return Function::bindInput(id, func);
+    }
+    bool bindOutput(std::shared_ptr<Resource> res) override
+    {
+        if(!this->cf->output->hasSameType(res))
+            return false;
+        return Function::bindOutput(res);
+    }
+
+
+
 };
 
 #endif

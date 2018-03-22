@@ -89,6 +89,10 @@
 %token DIV      "/"
 %token MUL      "*"
 %token DOT      "."
+%token ADDEQ    "+="
+%token MULEQ    "*="
+%token MINEQ    "-+"
+%token DIVEQ    "/="
 
 %token GREATER ">"
 %token LESS    "<"
@@ -188,6 +192,18 @@ assignmentEnd		  : %empty
 			  { generation.makeAssignment("TODO",false); }
 		 	   | "=" expression
 			  { generation.makeAssignment("TODO",true); }
+
+		 	   | "+=" expression
+			  { generation.makeAssignment("TODO",true,'+'); }
+
+		 	   | "-=" expression
+			  { generation.makeAssignment("TODO",true,'-'); }
+
+		 	   | "*=" expression
+			  { generation.makeAssignment("TODO",true,'*'); }
+
+		 	   | "/=" expression
+			  { generation.makeAssignment("TODO",true,'/'); }
 
 
 ifStatement              : IF "(" expression ")" compoundStatement elseClause

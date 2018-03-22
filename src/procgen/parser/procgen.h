@@ -115,7 +115,7 @@ namespace ProcGen {
 
 
 
-		bool makeAssignment(const char* name,bool hasAssignment);
+		bool makeAssignment(const char* name,bool hasAssignment,char op = '=');
 
 		bool makeWhile();
 

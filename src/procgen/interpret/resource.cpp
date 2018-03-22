@@ -2,6 +2,10 @@
 #include <procgen/interpret/typereg.h>
 #include <sstream>
 
+bool Resource::hasSameType(std::shared_ptr<Resource> res)
+{
+    return (this->getBaseId() == res->getBaseId());
+}
 
 std::shared_ptr<Resource> Resource::allocateClone()
 {

@@ -459,7 +459,12 @@ namespace ProcGen {
 		for(unsigned param = 0; param < args.size(); param++)
 		{
 			// TODO: semantic control / implicit conversion
-			functionPointer->bindInput(param,args[param]);
+			bool isTypeCompatible = functionPointer->bindInput(param,args[param]);
+            if(!isTypeCompatible)
+            {
+                errorMessage("[Semantic Error] Incompatible parameter %d's type in function call of %s", param, functionName);
+            }
+
 		}
 
 		// Push new expression(function call) to expression stack
@@ -536,7 +541,7 @@ namespace ProcGen {
 		this->stackedBodies.getTop()->appendStatement(box); 
 
     }
-	bool Generation::makeAssignment(const char* name,bool hasAssignment)
+	bool Generation::makeAssignment(const char* name,bool hasAssignment,char op)
 	{
 		/*// get resourse
 		auto resource = localStackFrame->getVar(name);
@@ -563,12 +568,73 @@ namespace ProcGen {
         // Get expression
 		auto assignedResource = this->expressionsStack.top();
 		this->expressionsStack.pop();
+        
+        // if we don't assign to "any" variable
+        if(assignedResource->getOutput()->getTypeName() != "any")
+        {
+            // if expession doesn't have the same type
+            if(!assignedResource->getOutput()->hasSameType(expressionTop->getOutput()))
+            {
+                // try to convert
+                auto first = assignedResource->getOutput()->getTypeName();
+                auto second =  expressionTop->getOutput()->getTypeName();
 
-        auto genericCopy = std::make_shared<GenericCopy>();
-        genericCopy->bindInput(0, assignedResource);
-        genericCopy->bindInput(1, expressionTop);
+                LOG_DEBUG("Comparing 1. %s with 2. %s\n", first.c_str(), second.c_str());
+                int compatibilityResult = getCommonType(second, first);
+                LOG_DEBUG("Compability result %d\n", compatibilityResult);
+                // if conversion is impossible
+                if(compatibilityResult != 2)
+                {
+                    errorMessage("[Semantic error] Incompatible types in assignment.");
+                }
+                // else convert second to first  
+
+                auto conversionFunction = functionregister->getFunc("Cast:"+first+":"+second);
+                if(conversionFunction == nullptr)
+                {
+                    errorMessage("[Semantic error] Incompatible types in assignment - internal error.");
+                }
+                else {
+                    conversionFunction->bindInput(0, expressionTop);
+                    conversionFunction->bindOutput(typeregister->sharedResource(first));
+                    expressionTop = conversionFunction; 
+                }
+            }
+        }
+
+        std::shared_ptr<Function> resultFunction = nullptr;
+        // if it is just a regular assignment
+        if(op == '=') 
+        {
+            resultFunction = std::make_shared<GenericCopy>();
+            resultFunction->bindInput(0, assignedResource);
+            resultFunction->bindInput(1, expressionTop);
+        } else {
+            std::string operationName;
+            switch(op)
+            {
+                case '+': operationName = "Add"; break;
+                case '-': operationName = "Sub"; break;
+                case '*': operationName = "Mul"; break;
+                case '/': operationName = "Div"; break;
+                default:
+                          errorMessage("[Internal] Operator selection");
+            }
+
+            resultFunction = functionregister->getFunc(operationName+":"+assignedResource->getOutput()->getTypeName());
+            if(resultFunction == nullptr)
+            {
+                errorMessage("[Internal] Failed to get operation function in assignment");
+            }
+            // dest OP= src;
+            resultFunction->bindInput(0,assignedResource); // dest
+            resultFunction->bindInput(1,expressionTop); // src
+            resultFunction->bindOutput(assignedResource->getOutput()); // dest
+
+        }
 		// Register 
-		this->stackedBodies.getTop()->appendStatement(genericCopy);
+        assert(resultFunction != nullptr);
+		this->stackedBodies.getTop()->appendStatement(resultFunction);
 	}
 
 	bool Generation::makeWhile()

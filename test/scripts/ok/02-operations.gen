@@ -1,0 +1,9 @@
+int init()
+{
+    int a = 5;
+    int b = a + 5 * a;
+    float c = 1.0;
+    float z = 5.0;
+    float e = c + z;
+    print(e);
+}

@@ -60,6 +60,8 @@ class Resource
     ResourceType    getResourceType() const { return this->resourceType; }
 
     std::shared_ptr<Resource> allocateClone(); 
+
+    bool    hasSameType(std::shared_ptr<Resource> res);
 };
 
 

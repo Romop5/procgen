@@ -150,6 +150,13 @@ typedef ProcGen::Parser::token_type token_type;
 		return token::TYPE;
 	return token::NAME;
 }
+
+"+="		{ return token::ADDEQ;}
+"-="		{ return token::MINEQ;}
+"/="		{ return token::DIVEQ;}
+"*="		{ return token::MULEQ;}
+
+
 "!"		{ return token::NEGATION;}
 ","		{ return token::COMMA;}
 "["		{ return token::LANGL;}
