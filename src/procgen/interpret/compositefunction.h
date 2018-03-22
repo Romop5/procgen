@@ -42,13 +42,13 @@ struct CompositeFunction
 
 class FunctionCall : public Function
 {
-	std::shared_ptr<CompositeFunction> cf;
+	std::weak_ptr<CompositeFunction> cf;
     std::string name;
 	public:
 	FunctionCall(std::shared_ptr<CompositeFunction> cf,std::string name)
 	{
 		this->cf = cf;
-		this->bindOutput(this->cf->output->allocateClone());
+		this->bindOutput(this->cf.lock()->output->allocateClone());
         this->name = name;
 	}
 	bool operator()(RunStatus& stat)
@@ -60,15 +60,15 @@ class FunctionCall : public Function
 		// bind inputs to interface
 
         LOG_DEBUG("Invoking function: %s\n",this->name.c_str());
-		for(int i=0; i < cf->inputs.size();i++)
+		for(int i=0; i < cf.lock()->inputs.size();i++)
 		{
             assert(this->_getInput(i) != nullptr);
             assert(this->_getInput(i)->getOutput() != nullptr);
 
             std::string dmp = this->_getInput(i)->getOutput()->to_json().dump();
             LOG_DEBUG("Argument[in] %d %s\n",i,dmp.c_str());
-			cf->inputs[i]->copy(this->_getInput(i)->getOutput());
-            dmp = cf->inputs[i]->to_json().dump();
+			cf.lock()->inputs[i]->copy(this->_getInput(i)->getOutput());
+            dmp = cf.lock()->inputs[i]->to_json().dump();
             LOG_DEBUG("Argument[inside] %d %s\n",i,dmp.c_str());
 		}
 		// process function
@@ -78,7 +78,7 @@ class FunctionCall : public Function
             LOG_DEBUG("Output[before] '%s'\n",dmp.c_str());
         }
 
-		bool result = (*cf->core)(stat);
+		bool result = (*cf.lock()->core)(stat);
 
         if(this->getOutput() != nullptr)
         {
@@ -88,7 +88,7 @@ class FunctionCall : public Function
 
 		// copy result
 		if(this->getOutput() != nullptr)
-			this->getOutput()->copy(cf->output);
+			this->getOutput()->copy(cf.lock()->output);
 
 		// TODO: determine if positive result is caused by return or 
 		// by runtime error
@@ -108,13 +108,13 @@ class FunctionCall : public Function
     {
         if(func->getOutput() == nullptr)
             return false;
-        if(!this->cf->inputs[id]->hasSameType(func->getOutput()))
+        if(!this->cf.lock()->inputs[id]->hasSameType(func->getOutput()))
             return false;
         return Function::bindInput(id, func);
     }
     bool bindOutput(std::shared_ptr<Resource> res) override
     {
-        if(!this->cf->output->hasSameType(res))
+        if(!this->cf.lock()->output->hasSameType(res))
             return false;
         return Function::bindOutput(res);
     }

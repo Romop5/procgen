@@ -14,6 +14,11 @@ TODO List for 2018
 7. make sure parameters are working 
 8. build "setUniform" mechanism in procgen
 
+9. clean code
+    -> clangtools 
+    -> add comments
+    -> add namespace
+
 Unit tests = unit scripts
     = good ones
     = bad ones
