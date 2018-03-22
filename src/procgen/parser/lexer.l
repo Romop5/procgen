@@ -122,7 +122,7 @@ typedef ProcGen::Parser::token_type token_type;
             }
         }
 
-"parameter"	{ return token::USING;}
+"parameter"	{ return token::PARAMETER;}
 "rule"		{ return token::RULE;}
 "using"		{ return token::USING;}
 "struct"	{ return token::STRUCT;}

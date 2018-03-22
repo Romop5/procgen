@@ -190,6 +190,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 				case ATOMIC:
 					{
 					unsigned char* data = new unsigned char[it->second->getSize()];
+                    memset(data,0, it->second->getSize());
 					return std::make_shared<AtomicResource>(shared_from_this(),data,it->first);
 					}
 					break;

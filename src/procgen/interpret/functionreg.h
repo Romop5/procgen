@@ -28,6 +28,7 @@ class FunctionReg
 {
 	public:
 		FunctionReg(std::shared_ptr<TypeRegister> reg): tr(reg){};
+        ~FunctionReg() {};
 		bool addFunction(std::string name,std::function<std::shared_ptr<Function>()>);
 
 		template<class X>

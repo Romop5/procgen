@@ -390,7 +390,7 @@ namespace ProcGen {
         auto res = localStackFrame->getVar(name);
         if(res == nullptr)
         {
-            errorMessage("Undefined variable %s\n", name);
+            errorMessage("Undefined variable %s", name);
             return false;
         }
         //std::cout << "Pushing variable " << name << " with type " <<
