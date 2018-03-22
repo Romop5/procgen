@@ -51,8 +51,8 @@ class Derivation
 //TODO
 	public:
 	using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function> >;
-	std::shared_ptr<FunctionReg> fr;
-	std::shared_ptr<TypeRegister> tr;
+	std::weak_ptr<FunctionReg> fr;
+	std::weak_ptr<TypeRegister> tr;
 
 	private:
 
@@ -131,7 +131,7 @@ class Derivation
         {
             return this->hierarchy[stringId][position];
         }
-        return tr->sharedResource("any");
+        return tr.lock()->sharedResource("any");
     }
     size_t getParentId(size_t stringId, size_t position)
     {

@@ -5,9 +5,9 @@
 
 class AppendSymbol : public Function
 {
-	std::shared_ptr<Derivation> derivation;
+	std::weak_ptr<Derivation> derivation;
 	public:
-		AppendSymbol(std::shared_ptr<Derivation> de)
+		AppendSymbol(std::weak_ptr<Derivation> de)
 		{
 			this->derivation = de;
 		}
@@ -23,11 +23,11 @@ class AppendSymbol : public Function
 		    
 		    std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
 
-			std::shared_ptr<Resource> src = derivation->tr->sharedResource(_getInput(0)->getOutput()->getBaseId());
+			std::shared_ptr<Resource> src = derivation.lock()->tr.lock()->sharedResource(_getInput(0)->getOutput()->getBaseId());
 			if(src->copy(_getInput(0)->getOutput()) == false)
 				return false;
 			std::cout << "Appending id " << src->getBaseId() << "\n";
-			derivation->appendNextSymbol(src);
+			derivation.lock()->appendNextSymbol(src);
 
 			return false;
 		}

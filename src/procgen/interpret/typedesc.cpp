@@ -11,7 +11,7 @@ unsigned int AbstractType::getAlignedSize()
 		return this->size;
 	return this->size-rest+alignment;
 }
-CompositeType::CompositeType(std::shared_ptr<TypeRegister> tr,unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items)
+CompositeType::CompositeType(std::weak_ptr<TypeRegister> tr,unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items)
 {
 	this->tr = tr;
 	this->size = size;
@@ -25,7 +25,7 @@ unsigned int CompositeType::getOffset(unsigned int componentID)
 		return -1;
 	for(int i = 0; i < componentID;i++)
 	{
-		auto ut = tr->getType(components[i]);
+		auto ut = tr.lock()->getType(components[i]);
 		sum += ut->getAlignedSize();
 	}
 	return sum;

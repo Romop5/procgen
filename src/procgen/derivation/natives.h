@@ -9,18 +9,18 @@
 // int = getCurrentPosition() returns current position in derivation string
 class NativeCurrentPosition: public Function
 {
-	std::shared_ptr<Derivation> derivation;
+	std::weak_ptr<Derivation> derivation;
 	public:
-		NativeCurrentPosition(std::shared_ptr<Derivation> de)
+		NativeCurrentPosition(std::weak_ptr<Derivation> de)
 		{
 			this->derivation = de;
-            this->bindOutput(derivation->tr->sharedResource("int"));
+            this->bindOutput(derivation.lock()->tr.lock()->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)
 		{
             *(int*) this->getOutput()->getData() =
-                                            derivation->getCurrentStringPositionId();
+                                            derivation.lock()->getCurrentStringPositionId();
 			return false;
 		}
 };
@@ -28,18 +28,18 @@ class NativeCurrentPosition: public Function
 // int = getCurrentStringId() returns current string id
 class NativeCurrentStringId: public Function
 {
-	std::shared_ptr<Derivation> derivation;
+	std::weak_ptr<Derivation> derivation;
 	public:
 		NativeCurrentStringId(std::shared_ptr<Derivation> de)
 		{
 			this->derivation = de;
-            this->bindOutput(derivation->tr->sharedResource("int"));
+            this->bindOutput(derivation.lock()->tr.lock()->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)
 		{
             *(int*) this->getOutput()->getData() =
-                                     derivation->getCurrentStringId();
+                                     derivation.lock()->getCurrentStringId();
 			return false;
 		}
 };
@@ -48,7 +48,7 @@ class NativeCurrentStringId: public Function
 // int = getSymbol(stringID,posID) returns symbol at [stringId,posid]
 class NativeGetSymbol: public Function
 {
-	std::shared_ptr<Derivation> derivation;
+	std::weak_ptr<Derivation> derivation;
 	public:
 		NativeGetSymbol(std::shared_ptr<Derivation> de)
 		{
@@ -67,7 +67,7 @@ class NativeGetSymbol: public Function
             int stringId = *(int*) _getInput(0)->getOutput()->getData();
             int positionId = *(int*) _getInput(1)->getOutput()->getData();
     
-            this->bindOutput(derivation->getSymbolAtPosition(stringId, positionId));
+            this->bindOutput(derivation.lock()->getSymbolAtPosition(stringId, positionId));
             LOG_DEBUG("getSymbol (%d, %d): %s\n",stringId, positionId, this->getOutput()->to_json().dump().c_str());
 			return false;
 		}
@@ -75,12 +75,12 @@ class NativeGetSymbol: public Function
 
 class NativeGetParent: public Function
 {
-	std::shared_ptr<Derivation> derivation;
+	std::weak_ptr<Derivation> derivation;
 	public:
 		NativeGetParent(std::shared_ptr<Derivation> de)
 		{
 			this->derivation = de;
-            this->bindOutput(derivation->tr->sharedResource("int"));
+            this->bindOutput(derivation.lock()->tr.lock()->sharedResource("int"));
 		}
 	
 		bool operator()(RunStatus& rs)
@@ -98,7 +98,7 @@ class NativeGetParent: public Function
             LOG_DEBUG("getParent() stringId: %d position %d\n", stringId, positionId);
 
             *(int*) this->getOutput()->getData() =
-                        (derivation->getParentId(stringId, positionId));
+                        (derivation.lock()->getParentId(stringId, positionId));
 			return false;
 		}
 };

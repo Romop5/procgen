@@ -72,9 +72,9 @@ class AtomicType : public AbstractType
 */
 class CompositeType : public AbstractType
 {
-	std::shared_ptr<TypeRegister> tr;
+	std::weak_ptr<TypeRegister> tr;
 	public:
-	CompositeType(std::shared_ptr<TypeRegister>,
+	CompositeType(std::weak_ptr<TypeRegister>,
 			unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items);
 	virtual descType getType() { return COMPOSITE;};
 

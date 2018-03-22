@@ -27,7 +27,7 @@ typedef std::shared_ptr<Function> (*func_constr)();
 class FunctionReg 
 {
 	public:
-		FunctionReg(std::shared_ptr<TypeRegister> reg): tr(reg){};
+		FunctionReg(std::weak_ptr <TypeRegister> reg): tr(reg){};
         ~FunctionReg() {};
 		bool addFunction(std::string name,std::function<std::shared_ptr<Function>()>);
 
@@ -65,8 +65,8 @@ class FunctionReg
 		
 		// Print out all info
 		void _debug();
-		std::shared_ptr<TypeRegister> getTypeRegister() {return tr;}
+		std::weak_ptr<TypeRegister> getTypeRegister() {return tr;}
 	private:
-		std::shared_ptr<TypeRegister> tr;
+		std::weak_ptr<TypeRegister> tr;
 		std::map<std::string, std::function<std::shared_ptr<Function>()>> func;
 };

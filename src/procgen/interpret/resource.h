@@ -40,7 +40,7 @@ class Resource
 	protected:
 	ResourceType resourceType;
 	size_t baseType;
-	std::shared_ptr<TypeRegister> tr;
+	std::weak_ptr<TypeRegister> tr;
 	public:
 	
 	virtual ~Resource() {}
@@ -77,7 +77,7 @@ class AtomicResource : public Resource
 	private:
 	unsigned char* value;
 	public:
-	AtomicResource(std::shared_ptr<TypeRegister> typereg, 
+	AtomicResource(std::weak_ptr<TypeRegister> typereg, 
 		unsigned char* dt, size_t id) 
 	{
 		this->tr = typereg;
@@ -115,7 +115,7 @@ class CompositeResource : public Resource
 		std::map<size_t, std::shared_ptr<Resource>> components;
         std::shared_ptr<CompositeType>  getCompositeTypeDescription() const;
 	public:
-	CompositeResource(std::shared_ptr<TypeRegister> typereg,size_t base, std::map<size_t, std::shared_ptr<Resource>> data)
+	CompositeResource(std::weak_ptr<TypeRegister> typereg,size_t base, std::map<size_t, std::shared_ptr<Resource>> data)
 	{
 		this->baseType = base;
 		this->components = data;
@@ -142,7 +142,7 @@ class CollectionResource : public Resource
 		size_t arrayType;
 		std::vector<std::shared_ptr<Resource>> collection;
 	public:
-	CollectionResource(std::shared_ptr<TypeRegister> typereg, size_t arrayType)
+	CollectionResource(std::weak_ptr<TypeRegister> typereg, size_t arrayType)
 	{
 		this->tr = typereg;
 		this->baseType = arrayType;
@@ -176,7 +176,7 @@ class AnyResource : public Resource
 	private:
 	std::shared_ptr<Resource> content;
 	public:
-	AnyResource(std::shared_ptr<TypeRegister> typereg)
+	AnyResource(std::weak_ptr<TypeRegister> typereg)
 	{
 		this->tr = typereg;
 		this->resourceType = ResourceType::ANY;

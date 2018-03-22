@@ -75,8 +75,8 @@ void Derivation::generate(size_t maxSteps)
 
 bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource> symbol) const
 {
-	auto boolResource = this->tr->sharedResource("bool");	
-	std::get<0>(rule)->bindInput(0, fr->getHandler(symbol));
+	auto boolResource = this->tr.lock()->sharedResource("bool");	
+	std::get<0>(rule)->bindInput(0, fr.lock()->getHandler(symbol));
 	if(std::get<0>(rule)->getOutput() == nullptr)
 		std::get<0>(rule)->bindOutput(boolResource);
 	RunStatus rs;
@@ -87,7 +87,7 @@ bool Derivation::isRuleAplicable(const ruleType & rule, std::shared_ptr<Resource
 
 int Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symbol)
 {
-	std::get<1>(rule)->bindInput(0, this->fr->getHandler(symbol));
+	std::get<1>(rule)->bindInput(0, this->fr.lock()->getHandler(symbol));
 
 	auto result = std::get<1>(rule)->getOutput();
 	*(int*) result->getData() = 0;

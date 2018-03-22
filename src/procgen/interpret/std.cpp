@@ -15,7 +15,7 @@ void registerStandardTypes(TypeRegister* tr)
 
 void registerStandardFunctions(FunctionReg* fr)
 {
-	std::shared_ptr<TypeRegister> tr = fr->getTypeRegister();
+	std::shared_ptr<TypeRegister> tr = fr->getTypeRegister().lock();
 	#define REG_FUNC_FORALL(funcname,func)\
 		FORALL_ATOMICTYPES3(REG_FUNC,func);\
 		;

@@ -9,7 +9,7 @@ bool Resource::hasSameType(std::shared_ptr<Resource> res)
 
 std::shared_ptr<Resource> Resource::allocateClone()
 {
-    return this->tr->sharedResource(this->getBaseId());
+    return this->tr.lock()->sharedResource(this->getBaseId());
 }
 bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 {
@@ -27,7 +27,7 @@ bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 	if(tmp->getBaseId() != baseType)
 		return false;
 
-	size_t size = tr->getType(baseType)->getSize();
+	size_t size = tr.lock()->getType(baseType)->getSize();
 	memcpy(this->value,tmp->getData(),size);
 
 	return true;
@@ -35,7 +35,7 @@ bool AtomicResource::copy(const std::shared_ptr<Resource> src)
 
 json AtomicResource::to_json() const
 {
-    std::string nameOfType = tr->getTypeName(baseType);
+    std::string nameOfType = tr.lock()->getTypeName(baseType);
     if(nameOfType == "float")
         return json( *(float*) this->getData()); 
 
@@ -50,18 +50,18 @@ json AtomicResource::to_json() const
 
 bool AtomicResource::isInteger()
 {
-	std::string nameOfType = tr->getTypeName(baseType);
+	std::string nameOfType = tr.lock()->getTypeName(baseType);
 	return (nameOfType == "int");
 }
 bool AtomicResource::isFloat()
 {
-	std::string nameOfType = tr->getTypeName(baseType);
+	std::string nameOfType = tr.lock()->getTypeName(baseType);
 	return (nameOfType == "float");
 }
 
 std::string Resource::getTypeName() const
 {
-	return tr->getTypeName(this->baseType);
+	return tr.lock()->getTypeName(this->baseType);
 }
 
 int  AtomicResource::getInteger()
@@ -93,7 +93,7 @@ bool CompositeResource::copy(const std::shared_ptr<Resource> src)
 
 void CollectionResource::append(std::shared_ptr<Resource> item)
 {
-	auto newElement = this->tr->sharedResource(item->getBaseId());
+	auto newElement = this->tr.lock()->sharedResource(item->getBaseId());
 	newElement->copy(item);
 	this->collection.push_back(newElement);
 }
@@ -124,7 +124,7 @@ bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 	this->collection.clear();
 	for(size_t i = 0; i < srcCollection->length(); i++)
 	{
-		auto res = this->tr->sharedResource(srcCollection->at(i)->getBaseId());
+		auto res = this->tr.lock()->sharedResource(srcCollection->at(i)->getBaseId());
 		res->copy(srcCollection->at(i));
 		this->collection.push_back(res);
 	}
@@ -154,7 +154,7 @@ json CompositeResource::to_json() const
 
 std::shared_ptr<CompositeType>  CompositeResource::getCompositeTypeDescription() const
 {
-    auto typeDesc = tr->getType(baseType);    
+    auto typeDesc = tr.lock()->getType(baseType);    
     return std::dynamic_pointer_cast<CompositeType>(typeDesc);
 }
 
@@ -186,7 +186,7 @@ bool AnyResource::copy(const std::shared_ptr<Resource> src)
 	if(realsource == nullptr)
 		return false;
 
-	auto newContent = tr->sharedResource(realsource->getBaseId());
+	auto newContent = tr.lock()->sharedResource(realsource->getBaseId());
 	if(newContent == nullptr)
 		return false;
 	newContent->copy(realsource);
