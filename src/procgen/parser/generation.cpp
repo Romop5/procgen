@@ -188,8 +188,18 @@ namespace ProcGen {
 		// TODO: check types and do implicit converion if neccesary
 		// TODO: use hasLiteral and literal
 		auto literal = this->expressionsStack.top();
+        // calculate literal and set the param
 		if(hasLiteral)
+        {
+            auto setter = std::make_shared<GenericCopy>();
+            setter->bindInput(0, functionregister->getHandler(resource));
+            setter->bindInput(1, literal);
+
+            RunStatus rs;
+            (*setter)(rs);
+
 			this->expressionsStack.pop();
+        }
 
 	}
 
@@ -387,7 +397,7 @@ namespace ProcGen {
 
     bool Generation::createLiteralFromVariable(char* name)
     {
-        auto res = localStackFrame->getVar(name);
+        auto res = this->getVariable(name);
         if(res == nullptr)
         {
             errorMessage("Undefined variable %s", name);
@@ -764,7 +774,7 @@ namespace ProcGen {
 		{
 			nameResource = typeregister->sharedResource(name);
 		} else {
-			nameResource = localStackFrame->getVar(name);
+			nameResource = this->getVariable(name);
 		}
 
 		auto result = typeregister->sharedResource("int");
@@ -906,5 +916,16 @@ namespace ProcGen {
 		this->expressionsStack.push(at);
 		
 	}
+
+    std::shared_ptr<Resource> Generation::getVariable(std::string name)
+    {
+        // try local stack at first 
+		auto resultVariable = localStackFrame->getVar(name); 
+        if(resultVariable == nullptr)
+        {
+            resultVariable = globalVariables->getVar(name);
+        }
+        return resultVariable;
+    }
 }
 

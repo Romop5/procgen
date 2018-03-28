@@ -42,6 +42,19 @@ namespace ProcGen {
 		Generation();
         ~Generation();
 
+
+        template<typename T>
+        bool setUniform(std::string uniformName,T value){
+            auto var = globalVariables->getVar(uniformName);
+            if(!var)
+                return false;
+
+            if(keyword<T>() != var->getTypeName())
+                return false;
+            *(T*) var->getData() = value;
+            return true;
+        }
+
 		/* Compilation utilities*/
 		std::vector<sTypeDeclaration> typeList;
 		std::stack<std::shared_ptr<Function>> expressionsStack;
@@ -68,10 +81,6 @@ namespace ProcGen {
 		bool isReady()	{ return flagIsParsed; }
 
         bool hasAnyCompilationError() { return this->hasAnyError; }
-
-        // Set bool uniform value
-        template<typename T>
-        bool setUniform(std::string uniformName,T value);
 
         // Error report
         bool errorMessage(std::string message, ...);
@@ -166,8 +175,11 @@ namespace ProcGen {
 		}
 		return false;
 	}
-	};
 
+    private:
+        std::shared_ptr<Resource> getVariable(std::string name);
+
+	};
 
 }
 #endif

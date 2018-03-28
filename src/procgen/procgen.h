@@ -25,11 +25,16 @@ namespace ProcGen {
 
 		bool isReady()	{ return generation.flagIsParsed; }
 
-        // Set bool uniform value
         template<typename T>
-        bool setUniform(std::string uniformName,T value);
-
+        bool setUniform(std::string uniformName,T value)
+        {
+            return generation.setUniform(uniformName, value);
+        }
+         
         void setDebugOn(bool state);
+
+        // Clean
+        void reinitialize();
     };
 }
 #endif

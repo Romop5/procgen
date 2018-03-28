@@ -19,6 +19,8 @@ int main(int argc, char** argv)
 	pg.parseFile(argv[1]);
 	if(pg.isReady())
 	{
+        // set uniform
+        pg.setUniform("ticks", 1000);
         if(pg.runInit() == false)
             return 1;
 		std::cout << "It's dones" << std::endl;
