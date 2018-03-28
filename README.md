@@ -27,6 +27,8 @@ The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 201
 * Python bindings (TODO)
 
 ### Documentation
+[Changelog](CHANGELOG.md)
+
 [Simple generating tutorial](doc/TUTORIAL.md)
 
 [How does this tool and L-systems work](HOWDOESITWORK.md)
