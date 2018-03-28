@@ -89,9 +89,6 @@ void registerStandardFunctions(FunctionReg* fr)
 	});
 
 
-
-
-
 	fr->addFunction("random",
 	[tr]{
 		

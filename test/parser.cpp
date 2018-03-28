@@ -1,4 +1,5 @@
-#include <procgen/parser/procgen.h>
+//#include <procgen/parser/procgen.h>
+#include <procgen/procgen.h>
 
 using namespace ProcGen;
 int main(int argc, char** argv)
@@ -12,7 +13,7 @@ int main(int argc, char** argv)
 
 	size_t iterationCount = atoi(argv[2]);
 
-	ProcGen::Generation pg;
+	ProcGen::Procgen pg;
     pg.setDebugOn(false);
 
 	pg.parseFile(argv[1]);

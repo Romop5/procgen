@@ -1,6 +1,20 @@
 TODO List for 2018
 =================
 
+1. construktory
+2. JSON importer
+3. examples
+    - skyscrape
+    - SVG
+    - house
+    - mountain
+    - castle siege
+
+
+22.3
+- add changelog
+- add a nice sequence diagram into README to explain what we do.
+
 21.3.
 1. Add function parameters call control         DONE
    Control = assignment                         DONE
@@ -8,8 +22,7 @@ TODO List for 2018
 3. Think of automated constructors for types
     vec3(float, float, float) for struct { float, float, float} 
 4. add sin/cos                                  DONE
-5. set seed                                     DONE
-6. JSON importer
+5. set seed                                     DONEgg
 
 7. make sure parameters are working 
 8. build "setUniform" mechanism in procgen
@@ -18,6 +31,7 @@ TODO List for 2018
     -> clangtools 
     -> add comments
     -> add namespace
+
 
 Unit tests = unit scripts
     = good ones

@@ -1,8 +1,8 @@
 /*
  * Compilation helper structs / classes
  */
-#ifndef PROCGEN_H
-#define PROCGEN_H
+#ifndef GENERATION_H 
+#define GENERATION_H
 
 #include <procgen/derivation/derivation.h>
 #include <procgen/parser/utils.h>
@@ -22,7 +22,7 @@ namespace ProcGen {
     class Location;
 
 	class Generation {
-        private:
+		public:
         
         Scanner* _scanner;        
         Parser*  _parser;        
@@ -39,7 +39,6 @@ namespace ProcGen {
 		std::shared_ptr<Derivation> 	der;
 		bool	flagIsParsed;
         bool    hasAnyError;
-		public:
 		Generation();
         ~Generation();
 
@@ -68,10 +67,17 @@ namespace ProcGen {
 
 		bool isReady()	{ return flagIsParsed; }
 
+        bool hasAnyCompilationError() { return this->hasAnyError; }
+
+        // Set bool uniform value
+        template<typename T>
+        bool setUniform(std::string uniformName,T value);
+
         // Error report
         bool errorMessage(std::string message, ...);
 
         void setDebugOn(bool state);
+
 		/*
 		 *	Utility functions, called by parser
 		 */
@@ -138,6 +144,8 @@ namespace ProcGen {
 	bool makeConvert(char* name);
 
 	bool makeExplicitCast(char* finalTypename);
+
+    bool makeConstructor(const char* functionName,std::vector<Argument>);
 
 	bool createCollectionInsert();
 	bool createCollectionAt();

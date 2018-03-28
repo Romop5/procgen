@@ -1,4 +1,4 @@
-#include <procgen/parser/procgen.h>
+#include <procgen/parser/generation.h>
 #include "parser.hh"
 #include <sstream>
 #include <fstream>
@@ -807,6 +807,29 @@ namespace ProcGen {
 
 		this->expressionsStack.push(expr);
 	}
+
+    bool Generation::makeConstructor(const char* typeName,std::vector<Argument> args)
+    {
+        auto constructor = std::make_shared<Construct>();
+        assert(constructor != nullptr);
+        LOG_DEBUG("Making constructor for type %s\n", typeName);
+        constructor->bindOutput(this->typeregister->sharedResource(typeName));
+        
+        if(constructor->getOutput()->getResourceType() != ResourceType::COMPOSITE)
+        {
+            errorMessage("Creating constructor for non-composite type %s",typeName);
+        } else {
+            for(int i = 0; i < args.size(); i++)
+            {
+                if(constructor->bindInput(i, args[i]) == false)
+                {
+                    errorMessage("Invalid parameter or type of %dth parameter in constructor of %s", i,typeName);
+                }
+            }
+        }
+		this->expressionsStack.push(constructor);
+        
+    }
 
 
 	bool Generation::createCollectionInsert()

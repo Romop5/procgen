@@ -57,7 +57,8 @@ set(DERIVATION_HEADERS
 set(PARSER_HEADERS
     src/procgen/parser/utils.h
     src/procgen/parser/scanner.h
-    src/procgen/parser/procgen.h
+    src/procgen/parser/generation.h
+    src/procgen/procgen.h
 )
 
 set(UTILS_HEADERS
@@ -83,7 +84,8 @@ add_library(procgen
     ${FLEX_Scanner_OUTPUTS}
     ${INTERPRET_SOURCE}
     ${DERIVATION_SOURCE}
-    src/procgen/parser/procgen.cpp
+    src/procgen/parser/generation.cpp
+    src/procgen/procgen.cpp
 )
 
 target_compile_features(procgen PUBLIC cxx_auto_type)

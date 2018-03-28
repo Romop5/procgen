@@ -458,6 +458,39 @@ class Cast: public Function
 };
 
 
+class Construct : public Function
+{
+    public:
+    virtual bool operator()(RunStatus& stat)
+    {
+        LOG_DEBUG("Construct \n");
+        assert(this->getOutput() != nullptr);
+        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
+        size_t count = output->getComponentCount();
+        for(size_t i = 0; i < count; i++)
+        {
+            LOG_DEBUG("Construct atrib %d\n", i);
+            output->getComponent(i)->copy(this->_getInput(i)->getOutput());  
+        }
+    }
+
+	virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
+    {
+        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
+        assert(output != nullptr);
+
+        if(id >= output->getComponentCount())
+            return false;
+        // detect type consistency
+        if(!func->getOutput()->hasSameType(output->getComponent(id)))
+        {
+            return false;
+        }
+        Function::bindInput(id, func);
+        return true;
+    }
+};
+
 
 
 

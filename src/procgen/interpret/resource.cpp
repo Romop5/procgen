@@ -91,6 +91,11 @@ bool CompositeResource::copy(const std::shared_ptr<Resource> src)
 	return true;
 }
 
+size_t CompositeResource::getComponentCount() const
+{
+    return this->components.size();
+}
+
 void CollectionResource::append(std::shared_ptr<Resource> item)
 {
 	auto newElement = this->tr.lock()->sharedResource(item->getBaseId());

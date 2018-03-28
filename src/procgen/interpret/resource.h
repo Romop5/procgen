@@ -130,6 +130,7 @@ class CompositeResource : public Resource
     const std::string getComponentName(size_t index) const;
     size_t getComponentPosition(const std::string name) const;
     TypeId getComponentType(size_t index) const;
+    size_t getComponentCount() const;
 };
 
 /**

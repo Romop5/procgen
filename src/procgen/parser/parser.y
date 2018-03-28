@@ -1,7 +1,5 @@
 %code requires {
 
-//#include <procgen/parser/procgen.h>
-//using namespace ProcGen;
 
     namespace ProcGen
     {
@@ -21,7 +19,7 @@
 #include <memory> 
 #include <error.h>
 
-#include <procgen/parser/procgen.h>
+#include <procgen/parser/generation.h>
 #include <location.hh>
 #include <position.hh>
 
@@ -229,8 +227,15 @@ typeid			  : "<" TYPE ">"
 				{ generation.makeTypeid($2);}
 expression                : literal
 			    |   TYPEID typeid
-                |   TYPE "(" expression ")"
-                    { generation.makeExplicitCast($1); }
+                |    TYPE 
+                    { generation.argumentVector.pushArgumentLevel(); }
+                           "(" argumentList ")" 
+                    {  auto args = generation.argumentVector.popArgumentLevel();
+                        generation.makeConstructor($1,args); }
+
+
+                |   "(" TYPE ")" "(" expression ")" 
+                    { generation.makeExplicitCast($2); }
 			    |   CONVERT "<" TYPE ">" "(" expression ")"
                     { generation.makeConvert($3); }
 			    | 	functionCall 
