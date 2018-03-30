@@ -8,6 +8,7 @@
 using TypeId = size_t;
 enum descType {ATOMIC,COMPOSITE,COLLECTION,ABSTRACT,ANY};
 
+
 class	TypeRegister;
 
 /**
@@ -65,6 +66,8 @@ class AtomicType : public AbstractType
 	virtual descType getType() { return ATOMIC;};
 	
 };
+
+const size_t COMPOSITE_COMPONENT_NOT_FOUND = -1;
 
 /**
 * @class CompositeType

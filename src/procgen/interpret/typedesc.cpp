@@ -57,7 +57,7 @@ size_t CompositeType::getComponentPositionByName(const std::string name) const
 	for(size_t x = 0 ; x < this->componentsNames.size(); x++)
 		if(this->componentsNames[x] == name)
 			return x;
-	return -1;
+	return COMPOSITE_COMPONENT_NOT_FOUND;
 
 }
 

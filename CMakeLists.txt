@@ -157,11 +157,14 @@ if (PROCGEN_TESTS)
 
 
     add_executable(test_exe ${TEST_SOURCES})
-    target_link_libraries(test_exe procedural)
+    target_link_libraries(test_exe procgen)
     add_test(NAME unit_test COMMAND test_exe)
 
     add_executable(userfunc test/userfunc.cpp)
-    target_link_libraries(userfunc procedural)
+    target_link_libraries(userfunc procgen)
+
+    add_executable(jsonimporter examples/typeregjson.cpp)
+    target_link_libraries(jsonimporter procgen)
 
 
 endif(PROCGEN_TESTS)
