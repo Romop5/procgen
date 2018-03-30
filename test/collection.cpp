@@ -16,7 +16,7 @@ TEST_CASE("Collections")
 	TypeId base = tr->getTypeId("int");	
 	tr->addCollection();
 	
-	auto collection = std::dynamic_pointer_cast<CollectionResource>(tr->sharedResource("collection-int"));
+	auto collection = std::dynamic_pointer_cast<CollectionResource>(tr->sharedResource("collection"));
 
 	REQUIRE(collection != nullptr);
 

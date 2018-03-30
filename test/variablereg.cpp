@@ -11,7 +11,6 @@ TEST_CASE("Testing TypeRegister with STD func")
 	std::shared_ptr<TypeRegister> tr = std::make_shared<TypeRegister>() ;
 
 	REQUIRE(tr->getTypeId("int") == 0);	
-	REQUIRE(tr->getTypeId("char") == 0);	
 	REQUIRE(tr->getTypeId("bool") == 0);	
 	REQUIRE(tr->getTypeId("int32") == 0);	
 	
@@ -19,7 +18,6 @@ TEST_CASE("Testing TypeRegister with STD func")
 	registerStandardTypes(&(*tr));
 
 	REQUIRE(tr->getTypeId("int") != 0);	
-	REQUIRE(tr->getTypeId("char") != 0);	
 	REQUIRE(tr->getTypeId("bool") != 0);	
 	REQUIRE(tr->getTypeId("int32") == 0);	
 	
