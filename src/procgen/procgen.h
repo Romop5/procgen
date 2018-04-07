@@ -7,36 +7,36 @@
 #include <procgen/parser/generation.h>
 
 namespace ProcGen {
-	class Procgen {
-        ProcGen::Generation generation;
-		public:
-		Procgen();
-        ~Procgen();
+class Procgen {
+    ProcGen::Generation generation;
 
-		bool parseFile(const std::string& file);
+public:
+    Procgen();
+    ~Procgen();
 
-        // Run inicialization
-        bool runInit();
+    bool parseFile(const std::string& file);
 
-        // Run real derivation
-        bool run(int maximumSteps);
+    // Run inicialization
+    bool runInit();
 
-        json serialize() const;
+    // Run real derivation
+    bool run(int maximumSteps);
 
-		bool isReady()	{ return (generation.hasAnyError == false) &&
-					  this->isParsed(); }
-		bool isParsed()	{ return generation.flagIsParsed; }
+    json serialize() const;
 
-        template<typename T>
-        bool setUniform(std::string uniformName,T value)
-        {
-            return generation.setUniform(uniformName, value);
-        }
-         
-        void setDebugOn(bool state);
+    bool isReady() { return (generation.hasAnyError == false) && this->isParsed(); }
+    bool isParsed() { return generation.flagIsParsed; }
 
-        // Clean
-        void reinitialize();
-    };
+    template <typename T>
+    bool setUniform(std::string uniformName, T value)
+    {
+        return generation.setUniform(uniformName, value);
+    }
+
+    void setDebugOn(bool state);
+
+    // Clean
+    void reinitialize();
+};
 }
 #endif

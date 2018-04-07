@@ -1,30 +1,30 @@
 #ifndef _TYPE_H
-#define  _TYPE_H
+#define _TYPE_H
 
 #include <map>
 #include <memory>
-#include <procgen/interpret/types.h>
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/typedesc.h>
+#include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
 
 /**
 * @class TypeRegister 
 * @brief Registration and instancing of user-defined types
 */
-class TypeRegister: public std::enable_shared_from_this<TypeRegister> 
-{
-	//using TypeId = size_t;
-	public:
-	const TypeId UNKWNOWN = 0;
-	TypeRegister():highest(0){
-		add<char>("unknown");
-		addAny();
-		addCollection();
-	};
+class TypeRegister : public std::enable_shared_from_this<TypeRegister> {
+    //using TypeId = size_t;
+public:
+    const TypeId UNKWNOWN = 0;
+    TypeRegister()
+        : highest(0)
+    {
+        add<char>("unknown");
+        addAny();
+        addCollection();
+    };
 
-    
-/**
+    /**
 * @brief Add another name for existing type
 *
 * @param alias   The new name for type
@@ -32,19 +32,18 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 *
 * @return \c FALSE if \c alias name already exists
 */
-	bool addAlias(const std::string& alias, const std::string& aliased)
-	{
-		// if aliased type exists and alias doesn't
-		if(names.find(aliased) != names.end()
-				&& names.find(alias) == names.end())
-		{
-			names[alias] = names[aliased]; 
-			return true;
-		}
-		return false;
-	}
+    bool addAlias(const std::string& alias, const std::string& aliased)
+    {
+        // if aliased type exists and alias doesn't
+        if (names.find(aliased) != names.end()
+            && names.find(alias) == names.end()) {
+            names[alias] = names[aliased];
+            return true;
+        }
+        return false;
+    }
 
-/**
+    /**
 * @brief Register a new type paired with C++ type \c T
 *
 * @tparam T C++ type
@@ -55,18 +54,18 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * which can store ints
 * @return \c FALSE if type with the same name exists
 */
-	template<typename T>
-	bool add(const std::string& typeName)
-	{
-		if(names.find(typeName) != names.end())
-			return false;
-		TypeId id = highest++;
-		types[id] = std::make_shared<AtomicType>(sizeof(T));
-		names[typeName] = id;
-		return true;
-	}
+    template <typename T>
+    bool add(const std::string& typeName)
+    {
+        if (names.find(typeName) != names.end())
+            return false;
+        TypeId id = highest++;
+        types[id] = std::make_shared<AtomicType>(sizeof(T));
+        names[typeName] = id;
+        return true;
+    }
 
-/**
+    /**
 * @brief Register a new structured type from other types
 *
 * @param typeName The name for structured type in interpret domain
@@ -75,28 +74,26 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * @return \c FALSE if type with the same name exists
 * @see TypeRegister::addCompositeWithNames
 */
-	bool addComposite(const std::string& typeName,std::vector<TypeId> types)
-	{
+    bool addComposite(const std::string& typeName, std::vector<TypeId> types)
+    {
         // Fail on invalid type
-        for(auto type: types)
-        {
-            if(hasTypeWithID(type) == false)
+        for (auto type : types) {
+            if (hasTypeWithID(type) == false)
                 return false;
         }
 
-		TypeId id = highest++;
-		unsigned int size = 0;
-		for(auto &x: types)
-			size += this->getType(x)->getAlignedSize();
+        TypeId id = highest++;
+        unsigned int size = 0;
+        for (auto& x : types)
+            size += this->getType(x)->getAlignedSize();
 
-		std::vector<std::string> componentNames;
-		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,componentNames);
-		names[typeName] = id;
+        std::vector<std::string> componentNames;
+        this->types[id] = std::make_shared<CompositeType>(shared_from_this(), size, types, componentNames);
+        names[typeName] = id;
 
         return true;
-
-	}
-/**
+    }
+    /**
 * @brief Register a new structured type from other named types 
 *
 * @param typeName   The name for structured type in interpret domain
@@ -106,171 +103,154 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 * @return \c FALSE if type with the same name exists
 * @see TypeRegister::addComposite
 */
-	bool addCompositeWithNames(const std::string& typeName,std::vector<TypeId> types,std::vector<std::string> itemNames)
-	{
+    bool addCompositeWithNames(const std::string& typeName, std::vector<TypeId> types, std::vector<std::string> itemNames)
+    {
         // Fail on invalid type
-        for(auto type: types)
-        {
-            if(hasTypeWithID(type) == false)
+        for (auto type : types) {
+            if (hasTypeWithID(type) == false)
                 return false;
         }
         // Increment type count
-		TypeId id = highest++;
+        TypeId id = highest++;
         // TODO
         // Compute the size of structure
-		unsigned int size = 0;
-		for(auto &x: types)
-			size += this->getType(x)->getAlignedSize();
+        unsigned int size = 0;
+        for (auto& x : types)
+            size += this->getType(x)->getAlignedSize();
 
-		// TODO: refactor items and their names
-		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,itemNames);
-		names[typeName] = id;
+        // TODO: refactor items and their names
+        this->types[id] = std::make_shared<CompositeType>(shared_from_this(), size, types, itemNames);
+        names[typeName] = id;
 
-		return true;
+        return true;
+    }
 
-	}
-
-/**
+    /**
 * @brief Internally register collection type
 */
-	bool addCollection()
-	{
-		if(names.find("collection") != names.end())
-			return false; 
-		TypeId id = highest++;
-		types[id] = std::make_shared<CollectionType>();
-		names["collection"] = id;
-		return true;
-	}
-/**
+    bool addCollection()
+    {
+        if (names.find("collection") != names.end())
+            return false;
+        TypeId id = highest++;
+        types[id] = std::make_shared<CollectionType>();
+        names["collection"] = id;
+        return true;
+    }
+    /**
 * @brief Internally register 'any' type
 */
-	bool addAny()
-	{
-		if(names.find("any") != names.end())
-			return false; 
-		TypeId id = highest++;
-		types[id] = std::make_shared<AnyType>();
-		names["any"] = id;
-		return true;
-	}
+    bool addAny()
+    {
+        if (names.find("any") != names.end())
+            return false;
+        TypeId id = highest++;
+        types[id] = std::make_shared<AnyType>();
+        names["any"] = id;
+        return true;
+    }
 
-/**
+    /**
 * @brief Get \c TypeId by type name
 *
 * @param name
 *
 * @return \c UNKNOWN if name doesn't exist
 */
-	TypeId getTypeId(const std::string& name)
-	{
-		auto it = names.find(name);
-		if(it != names.end())
-			return it->second;
-		return UNKWNOWN;
-	}
-/**
+    TypeId getTypeId(const std::string& name)
+    {
+        auto it = names.find(name);
+        if (it != names.end())
+            return it->second;
+        return UNKWNOWN;
+    }
+    /**
 * @brief Get typename for given id
 *
 * @param id
 *
 * @return "typeNotFound" if \c id doesn't exist  
 */
-	std::string getTypeName(const TypeId id)
-	{
-		for(auto &x: this->names)
-		{
-			if(x.second == id)
-				return x.first;
-		}
-		return "typeNotFound";
-	}
-/**
+    std::string getTypeName(const TypeId id)
+    {
+        for (auto& x : this->names) {
+            if (x.second == id)
+                return x.first;
+        }
+        return "typeNotFound";
+    }
+    /**
 * @brief Create an instance of Resource of registered type
 *
 * @param type
 *
 * @return \c nullptr if given TypeId is not valid
 */
-	std::shared_ptr<Resource> sharedResource(TypeId type)
-	{
-		auto it = types.find(type);
-		if(it != types.end())
-		{
-			switch(it->second->getType())
-			{
-				case ATOMIC:
-					{
-					unsigned char* data = new unsigned char[it->second->getSize()];
-                    memset(data,0, it->second->getSize());
-					return std::make_shared<AtomicResource>(shared_from_this(),data,it->first);
-					}
-					break;
-				case COLLECTION:
-					{
-					return std::make_shared<CollectionResource>(shared_from_this(), it->first);
-					}
-					break;
-				case COMPOSITE:
-					{
-						auto compo = std::dynamic_pointer_cast<CompositeType>(it->second);
-						std::map<size_t,std::shared_ptr<Resource>> map;
-						for(size_t i = 0; i < compo->getComponentCount() ;i++)
-						{
-							auto res = this->sharedResource(compo->getComponentTypeId(i));
-							map[i] = res;
-						}
-						return std::make_shared<CompositeResource>(shared_from_this(),type,map);
-					}
-				case ANY:
-					{
-						return std::make_shared<AnyResource>(shared_from_this());
-					}
-					break;
-				default:
-					// TODO exception
-					break;
-			}
-		}
-		return nullptr;
-	}
-	
-    
-/**
+    std::shared_ptr<Resource> sharedResource(TypeId type)
+    {
+        auto it = types.find(type);
+        if (it != types.end()) {
+            switch (it->second->getType()) {
+            case ATOMIC: {
+                unsigned char* data = new unsigned char[it->second->getSize()];
+                memset(data, 0, it->second->getSize());
+                return std::make_shared<AtomicResource>(shared_from_this(), data, it->first);
+            } break;
+            case COLLECTION: {
+                return std::make_shared<CollectionResource>(shared_from_this(), it->first);
+            } break;
+            case COMPOSITE: {
+                auto compo = std::dynamic_pointer_cast<CompositeType>(it->second);
+                std::map<size_t, std::shared_ptr<Resource>> map;
+                for (size_t i = 0; i < compo->getComponentCount(); i++) {
+                    auto res = this->sharedResource(compo->getComponentTypeId(i));
+                    map[i] = res;
+                }
+                return std::make_shared<CompositeResource>(shared_from_this(), type, map);
+            }
+            case ANY: {
+                return std::make_shared<AnyResource>(shared_from_this());
+            } break;
+            default:
+                // TODO exception
+                break;
+            }
+        }
+        return nullptr;
+    }
+
+    /**
 * @brief Create an instance of type
 *
 * @param name
 *
 * @return \c nullptr if name doesn't exist
 */
-	std::shared_ptr<Resource> sharedResource(std::string name)
-	{
-		auto id = this->getTypeId(name);
-        if(hasTypeWithID(id))
+    std::shared_ptr<Resource> sharedResource(std::string name)
+    {
+        auto id = this->getTypeId(name);
+        if (hasTypeWithID(id))
             return this->sharedResource(id);
         return nullptr;
-	}
-	
+    }
 
-/**
+    /**
 * @brief Get TypeDescription for TypeId 
 *
 * @param id
 *
 * @return TypeDescription of \c UNKWNOWN if id is invalid
 */
-	std::shared_ptr<AbstractType>& getType(TypeId id)
-	{
-		auto it = types.find(id);
-		if(it != types.end())
-		{
-			return it->second;
-		}
-		return types[UNKWNOWN];	
-	}
+    std::shared_ptr<AbstractType>& getType(TypeId id)
+    {
+        auto it = types.find(id);
+        if (it != types.end()) {
+            return it->second;
+        }
+        return types[UNKWNOWN];
+    }
 
-
-/**
+    /**
 * @brief Is id a valid TypeId ?
 *
 * @param id
@@ -279,14 +259,14 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 */
     bool hasTypeWithID(TypeId id) const
     {
-        if(id == 0)
+        if (id == 0)
             return false;
-        if(id >= highest)
+        if (id >= highest)
             return false;
         return true;
     }
-    
-/**
+
+    /**
 * @brief Is name registered
 *
 * @param name
@@ -299,83 +279,74 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
         return hasTypeWithID(it);
     }
 
-	std::shared_ptr<Resource> createResourceFromJson(json symbol)
-	{
-		if(symbol.is_object())
-		{
-			// if structure doesn't have type, 
-			// then we can't determine what kind of structure it is
-			if(symbol.find("_type") == symbol.end())
-				return nullptr;
-			auto structureTypeName = symbol["_type"].get<std::string>();
+    std::shared_ptr<Resource> createResourceFromJson(json symbol)
+    {
+        if (symbol.is_object()) {
+            // if structure doesn't have type,
+            // then we can't determine what kind of structure it is
+            if (symbol.find("_type") == symbol.end())
+                return nullptr;
+            auto structureTypeName = symbol["_type"].get<std::string>();
 
-			// create structure
-			auto structureInstance = this->sharedResource(structureTypeName);
-			if(structureInstance == nullptr)
-				return nullptr;
-			if(structureInstance->getResourceType() != ResourceType::COMPOSITE)
-				return nullptr;
-			auto compositeStructureInstance = std::static_pointer_cast<CompositeResource>(structureInstance);
+            // create structure
+            auto structureInstance = this->sharedResource(structureTypeName);
+            if (structureInstance == nullptr)
+                return nullptr;
+            if (structureInstance->getResourceType() != ResourceType::COMPOSITE)
+                return nullptr;
+            auto compositeStructureInstance = std::static_pointer_cast<CompositeResource>(structureInstance);
 
-			// create submembers
-			for(json::iterator it = symbol.begin(); it != symbol.end(); ++it)
-			{
-				// ignore _type member
-				if(it.key() == "_type")
-					continue;
-				auto submember = createResourceFromJson(it.value());
-				if(submember == nullptr)
-					return nullptr;
+            // create submembers
+            for (json::iterator it = symbol.begin(); it != symbol.end(); ++it) {
+                // ignore _type member
+                if (it.key() == "_type")
+                    continue;
+                auto submember = createResourceFromJson(it.value());
+                if (submember == nullptr)
+                    return nullptr;
 
-				LOG_INFO("SUBMEMBER %s\n", it.key().c_str());
+                LOG_INFO("SUBMEMBER %s\n", it.key().c_str());
 
-				auto memberPosition = compositeStructureInstance->getComponentPosition(it.key());
-				if(memberPosition == COMPOSITE_COMPONENT_NOT_FOUND)
-					return nullptr;
-				auto memberInstance = compositeStructureInstance->getComponent(memberPosition);
-				if(memberInstance == nullptr)
-					return nullptr;
-				memberInstance->copy(submember);
+                auto memberPosition = compositeStructureInstance->getComponentPosition(it.key());
+                if (memberPosition == COMPOSITE_COMPONENT_NOT_FOUND)
+                    return nullptr;
+                auto memberInstance = compositeStructureInstance->getComponent(memberPosition);
+                if (memberInstance == nullptr)
+                    return nullptr;
+                memberInstance->copy(submember);
+            }
+            return structureInstance;
+        } else if (symbol.is_array()) {
+            // build collection
+            LOG_INFO("ARRAY \n");
+            auto collection = std::dynamic_pointer_cast<CollectionResource>(this->sharedResource("collection"));
+            for (auto& element : symbol) {
+                auto elementInstance = this->createResourceFromJson(element);
+                collection->append(elementInstance);
+            }
+            return collection;
+        } else if (symbol.is_number()) {
+            LOG_INFO("NUMBER \n");
+            if (symbol.is_number_float()) {
+                auto floatInstance = this->sharedResource("float");
+                if (floatInstance == nullptr)
+                    return nullptr;
+                *(float*)floatInstance->getData() = symbol.get<float>();
+                return floatInstance;
+            } else {
+                auto intInstance = this->sharedResource("int");
+                if (intInstance == nullptr)
+                    return nullptr;
+                *(int*)intInstance->getData() = symbol.get<int>();
+                return intInstance;
+            }
+        }
+        return nullptr;
+    }
 
-			}
-			return structureInstance;
-		} else if(symbol.is_array()){
-			// build collection
-			LOG_INFO("ARRAY \n");
-			auto collection = std::dynamic_pointer_cast<CollectionResource>(this->sharedResource("collection"));
-			for(auto &element: symbol)
-			{
-				auto elementInstance = this->createResourceFromJson(element);
-				collection->append(elementInstance);
-			}
-			return collection;
-		} else if(symbol.is_number())
-		{
-			LOG_INFO("NUMBER \n");
-			if(symbol.is_number_float())
-			{
-				auto floatInstance = this->sharedResource("float");
-				if(floatInstance == nullptr)
-					return nullptr;
-				*(float*) floatInstance->getData() = symbol.get<float>();
-				return floatInstance;
-			} else {
-				auto intInstance = this->sharedResource("int");
-				if(intInstance == nullptr)
-					return nullptr;
-				*(int*) intInstance->getData() = symbol.get<int>();
-				return intInstance;
-			}
-
-		}
-		return nullptr;
-	}	   
-
-	private:
-	TypeId highest;
-	std::map<std::string,TypeId> names;
-	std::map<TypeId,std::shared_ptr<AbstractType>> types;
-
-  
+private:
+    TypeId highest;
+    std::map<std::string, TypeId> names;
+    std::map<TypeId, std::shared_ptr<AbstractType>> types;
 };
 #endif

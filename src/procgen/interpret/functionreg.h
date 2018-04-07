@@ -5,15 +5,14 @@
  * Note: standard functions available under FUNC:TYPE name
  *
  */
-#include <procgen/interpret/resource.h>
-#include <procgen/interpret/function.h>
-#include <procgen/interpret/typereg.h>
 #include <functional>
 #include <procgen/interpret/compositefunction.h>
+#include <procgen/interpret/function.h>
+#include <procgen/interpret/resource.h>
+#include <procgen/interpret/typereg.h>
 
 // function pointer = Function constructor
 typedef std::shared_ptr<Function> (*func_constr)();
-
 
 /**
 * @class FunctionReg
@@ -24,49 +23,49 @@ typedef std::shared_ptr<Function> (*func_constr)();
 *
 * Both kind of functions are instanciated using this->getFunc().
 */
-class FunctionReg 
-{
-	public:
-		FunctionReg(std::weak_ptr <TypeRegister> reg): tr(reg){};
-        ~FunctionReg() {};
-		bool addFunction(std::string name,std::function<std::shared_ptr<Function>()>);
+class FunctionReg {
+public:
+    FunctionReg(std::weak_ptr<TypeRegister> reg)
+        : tr(reg){};
+    ~FunctionReg(){};
+    bool addFunction(std::string name, std::function<std::shared_ptr<Function>()>);
 
-		template<class X>
-		bool addFunction(std::string name)
-		{
-		    return this->addFunction(name, []{return std::static_pointer_cast<Function>(std::make_shared<X>());});
-		}
+    template <class X>
+    bool addFunction(std::string name)
+    {
+        return this->addFunction(name, [] { return std::static_pointer_cast<Function>(std::make_shared<X>()); });
+    }
 
+    bool addCompositeFunction(
+        std::string name,
+        std::shared_ptr<Statement> core,
+        std::vector<std::shared_ptr<Resource>> inputs,
+        std::shared_ptr<Resource> output)
+    {
+        auto cfs = std::make_shared<CompositeFunction>(core, inputs, output);
+        //return std::make_shared<FunctionCall>(cfs);
+        func[name] = [cfs, name] { return std::static_pointer_cast<Function>(std::make_shared<FunctionCall>(cfs, name)); };
+        return true;
+    }
 
-		bool addCompositeFunction(
-				std::string name,
-				std::shared_ptr<Statement> core,
-				std::vector<std::shared_ptr<Resource>> inputs, 
-				std::shared_ptr<Resource> output)
-		{
-			auto cfs = std::make_shared<CompositeFunction>(core,inputs, output);
-			//return std::make_shared<FunctionCall>(cfs);
-			func[name] = [cfs,name]{return std::static_pointer_cast<Function>(std::make_shared<FunctionCall>(cfs,name));};
-			return true;
-		}
+    std::shared_ptr<Function> getFunc(std::string name);
 
-		std::shared_ptr<Function> getFunc(std::string name);
-
-/**
+    /**
 * @brief Returns an instance of funcion handling given resource
 * @param res
 */
-		std::shared_ptr<HandleFunction> getHandler(std::shared_ptr<Resource> res)
-		{
-			auto hf = std::make_shared<HandleFunction>();
-			hf->bindOutput(res);
-			return hf;
-		}
-		
-		// Print out all info
-		void _debug();
-		std::weak_ptr<TypeRegister> getTypeRegister() {return tr;}
-	private:
-		std::weak_ptr<TypeRegister> tr;
-		std::map<std::string, std::function<std::shared_ptr<Function>()>> func;
+    std::shared_ptr<HandleFunction> getHandler(std::shared_ptr<Resource> res)
+    {
+        auto hf = std::make_shared<HandleFunction>();
+        hf->bindOutput(res);
+        return hf;
+    }
+
+    // Print out all info
+    void _debug();
+    std::weak_ptr<TypeRegister> getTypeRegister() { return tr; }
+
+private:
+    std::weak_ptr<TypeRegister> tr;
+    std::map<std::string, std::function<std::shared_ptr<Function>()>> func;
 };
