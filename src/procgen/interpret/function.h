@@ -481,6 +481,10 @@ class Construct : public Function
         size_t count = output->getComponentCount();
 	size_t countOfFunctionInputs = this->getCountOfInputs();
 
+	// presume correct match of arguments and parameters
+	assert(count == countOfFunctionInputs);
+	static_cast<void>(countOfFunctionInputs);
+
         for(size_t i = 0; i < count; i++)
         {
             LOG_DEBUG("Construct atrib %d\n", i);

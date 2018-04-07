@@ -78,7 +78,7 @@ namespace ProcGen {
     bool Generation::run(int maximumSteps)
     {
         der->generate(maximumSteps);
-        //std::cout << "Done...\n";
+	return true;	
     }
 
 
@@ -105,7 +105,7 @@ namespace ProcGen {
         REGISTER_NATIVE_FUNCTION("setMaximumIterations", IteratorLimit);
     }
     
-    bool Generation::initializeFunction(char* type)
+    bool Generation::initializeFunction(const char* type)
     {
         this->localStackFrame->clear();
         auto returnResource = typeregister->sharedResource(type);
@@ -202,6 +202,7 @@ namespace ProcGen {
 			this->expressionsStack.pop();
         }
 
+		return true;
 	}
 
 	bool Generation::registerFunction(char* type, char* name)
@@ -429,7 +430,8 @@ namespace ProcGen {
         
         auto structureName = compositeResource->getTypeName();
         auto position = compositeResource->getComponentPosition(member);
-        if(position == -1)
+
+        if(position == (size_t) -1)
         {
             errorMessage("'%s' doesn't contain name '%s'",structureName.c_str(),member);
         }
@@ -454,6 +456,7 @@ namespace ProcGen {
         //std::cout << "Pushing structuremember '" << member << "' with type " <<
                 //outputResource->getTypeName() << std::endl;
         this->expressionsStack.push(getter);
+	return true;
     }
 
 	bool Generation::createFunctionCall(const char* functionName, std::vector<Argument> args)
@@ -490,6 +493,7 @@ namespace ProcGen {
         assert(expr != nullptr);
 
 		this->argumentVector.pushArgument(expr);
+		return true;
 	}
 
     bool Generation::registerLocalVariable(const char* type, const char* name,bool hasExp)
@@ -551,6 +555,7 @@ namespace ProcGen {
 		// Register return
 		this->stackedBodies.getTop()->appendStatement(box); 
 
+		return true;
     }
 	bool Generation::makeAssignment(const char* name,bool hasAssignment,char op)
 	{
@@ -646,6 +651,8 @@ namespace ProcGen {
 		// Register 
         assert(resultFunction != nullptr);
 		this->stackedBodies.getTop()->appendStatement(resultFunction);
+
+		return true;
 	}
 
 	bool Generation::makeWhile()
@@ -663,6 +670,7 @@ namespace ProcGen {
 
 		// Append while to body
 		this->stackedBodies.getTop()->appendStatement(whileStatement);
+		return true;
 	}
 
     bool Generation::makeCallStatement()
@@ -672,6 +680,7 @@ namespace ProcGen {
 		this->expressionsStack.pop();
 
         this->stackedBodies.getTop()->appendStatement(expressionTop);
+	return true;
     }
 
 	bool Generation::makeIfStatement(bool hasElseBranch)
@@ -700,6 +709,7 @@ namespace ProcGen {
 		// Append while to body
 		this->stackedBodies.getTop()->appendStatement(ifStatement);
 	
+		return true;
 	}
 
     json Generation::serialize() const
@@ -732,12 +742,13 @@ namespace ProcGen {
         fprintf(stderr,", %s\n", ss.str().c_str());
         va_end(parameters);
         this->hasAnyError = true;
+	return true;
     }
     void Generation::setDebugOn(bool state)
     {
         //yydebug = 0;
         //if(state)
-        //    yydebug = 1;
+          //  yydebug = 1;
     }
 
     sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
@@ -757,6 +768,7 @@ namespace ProcGen {
         // save return condition resource
         this->ruleDefinition.conditionReturn = 
                 this->localStackFrame->getVar("_return");
+	return true;
     }
 
     bool Generation::ruleProcedure(char* typeName)
@@ -765,6 +777,7 @@ namespace ProcGen {
         auto thisResource = typeregister->sharedResource(typeName);
         this->localStackFrame->addVar("this", thisResource);        
         this->localStackFrame->addVar("_return", typeregister->sharedResource("int"));        
+	return true;
 
     }
 
@@ -784,6 +797,7 @@ namespace ProcGen {
 		typexpr->bindOutput(result);
 
 		this->expressionsStack.push(typexpr);
+		return true;
 	}
 
 	bool Generation::makeConvert(char* name)
@@ -796,6 +810,7 @@ namespace ProcGen {
 		convertexpr->bindOutput(typeregister->sharedResource(name));
 
 		this->expressionsStack.push(convertexpr);
+		return true;
 	}
 
 	bool Generation::makeExplicitCast(char* finalTypename)
@@ -817,6 +832,7 @@ namespace ProcGen {
         }
 
 		this->expressionsStack.push(expr);
+		return true;
 	}
 
     bool Generation::makeConstructor(const char* typeName,std::vector<Argument> args)
@@ -834,7 +850,7 @@ namespace ProcGen {
 	    {
 		    errorMessage("Invalid count of arguments for %s() constructor.",typeName);
 	    }
-            for(int i = 0; i < args.size(); i++)
+            for(size_t i = 0; i < args.size(); i++)
             {
                 if(constructor->bindInput(i, args[i]) == false)
                 {
@@ -843,7 +859,7 @@ namespace ProcGen {
             }
         }
 		this->expressionsStack.push(constructor);
-        
+       return true;
     }
 
 
@@ -864,7 +880,7 @@ namespace ProcGen {
 		at->bindInput(1, element);
 
 		this->expressionsStack.push(at);
-		
+		return true;
 	}
 
 
@@ -885,7 +901,7 @@ namespace ProcGen {
 		at->bindOutput(typeregister->sharedResource("any"));
 
 		this->expressionsStack.push(at);
-		
+		return true;
 	}
 
 	bool Generation::createCollectionSize()
@@ -900,7 +916,7 @@ namespace ProcGen {
 		at->bindInput(0, expr);
 		at->bindOutput(typeregister->sharedResource("int"));
 		this->expressionsStack.push(at);
-
+		return true;
 	}
 	bool Generation::createCollectionDel()
 	{
@@ -919,7 +935,7 @@ namespace ProcGen {
 		at->bindInput(1, index);
 
 		this->expressionsStack.push(at);
-		
+		return true;
 	}
 
     std::shared_ptr<Resource> Generation::getVariable(std::string name)

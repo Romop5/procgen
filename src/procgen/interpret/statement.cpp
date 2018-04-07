@@ -64,7 +64,7 @@ bool Return::operator()(RunStatus& stat)
     if(this->input != nullptr) 
         (*this->input)(stat);
 
-	stat.setStatus(RunStatus::RETURN_REACHED);
-	return true;
+    stat.setStatus(RunStatus::RETURN_REACHED);
+    return true;
 }
 

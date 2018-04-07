@@ -18,19 +18,6 @@ CompositeType::CompositeType(std::weak_ptr<TypeRegister> tr,unsigned int size, s
 	this->components = compos;
 	this->componentsNames = items;
 }
-unsigned int CompositeType::getOffset(unsigned int componentID)
-{
-	unsigned int sum = 0;
-	if(components.size() <= componentID)
-		return -1;
-	for(int i = 0; i < componentID;i++)
-	{
-		auto ut = tr.lock()->getType(components[i]);
-		sum += ut->getAlignedSize();
-	}
-	return sum;
-}
-
 
 CollectionType::CollectionType()
 {
@@ -49,9 +36,11 @@ bool CompositeType::hasComponentWithName(const std::string name) const
 size_t CompositeType::getComponentPositionByName(const std::string name) const
 {
     LOG_DEBUG("Looking for %s in: \n",name.c_str());
+
     for(auto &x: this->componentsNames)
     {
         LOG_DEBUG("'%s'\n",x.c_str());
+	static_cast<void>(x);
     }
 
 	for(size_t x = 0 ; x < this->componentsNames.size(); x++)

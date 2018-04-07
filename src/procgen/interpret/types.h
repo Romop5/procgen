@@ -19,9 +19,10 @@
 // This time supports a parameter, passed to function
 #define FORALL_ATOMICTYPES3(FNC,PARAM)\
 	FNC(int,PARAM);\
-	FNC(bool,PARAM);\
 	FNC(long,PARAM);\
 	FNC(float,PARAM);
+
+	//FNC(bool,PARAM);
 
 /*
 	FNC(double,"double",PARAM);\

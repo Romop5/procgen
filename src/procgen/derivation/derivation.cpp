@@ -4,6 +4,7 @@ bool Derivation::addRule(TypeId type, std::shared_ptr<Function> predicate, std::
 {
 	auto rule = std::make_tuple(predicate,procedure);
 	this->rules[type].push_back(rule);
+	return true;
 }
 
 void Derivation::setStartSymbols(std::vector<std::shared_ptr<Resource>> symbols)
@@ -97,6 +98,7 @@ int Derivation::applyRule(const ruleType & rule, std::shared_ptr<Resource> symbo
 
 
 	std::cout << "Return skip number: " << *(int*) result->getData() << std::endl;
+	return 0;
 }
 
 bool Derivation::hasAnyRule(TypeId type) const

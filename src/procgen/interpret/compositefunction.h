@@ -60,7 +60,7 @@ class FunctionCall : public Function
 		// bind inputs to interface
 
         LOG_DEBUG("Invoking function: %s\n",this->name.c_str());
-		for(int i=0; i < cf.lock()->inputs.size();i++)
+		for(size_t i=0; i < cf.lock()->inputs.size();i++)
 		{
             assert(this->_getInput(i) != nullptr);
             assert(this->_getInput(i)->getOutput() != nullptr);

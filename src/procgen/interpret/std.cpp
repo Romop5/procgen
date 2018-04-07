@@ -1,7 +1,6 @@
 #include <procgen/interpret/types.h>
 #include <procgen/interpret/typereg.h>
 #include <procgen/interpret/functionreg.h>
-#include <procgen/interpret/compositeutils.h>
 
 #include <set>
 
@@ -65,10 +64,6 @@ void registerStandardFunctions(FunctionReg* fr)
 	REG_FUNC_FORALL("Less",Less);
 	REG_FUNC_FORALL("Div",Div);
 
-	// composite utils
-	
-	REG_REGULAR_FUNC("get",AccessComposite);
-	REG_REGULAR_FUNC("set",SetComposite);
 
 	fr->addFunction("sin",
 	[tr]{
@@ -144,5 +139,5 @@ int getCommonType(std::string first, std::string second)
     {
         return 1;
     }
-    return NULL;
+    return 0;
 }

@@ -58,9 +58,12 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 	template<typename T>
 	bool add(const std::string& typeName)
 	{
+		if(names.find(typeName) != names.end())
+			return false;
 		TypeId id = highest++;
 		types[id] = std::make_shared<AtomicType>(sizeof(T));
 		names[typeName] = id;
+		return true;
 	}
 
 /**
@@ -123,6 +126,8 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 		this->types[id] = std::make_shared<CompositeType>(shared_from_this(),size,types,itemNames);
 		names[typeName] = id;
 
+		return true;
+
 	}
 
 /**
@@ -130,18 +135,24 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 */
 	bool addCollection()
 	{
+		if(names.find("collection") != names.end())
+			return false; 
 		TypeId id = highest++;
 		types[id] = std::make_shared<CollectionType>();
 		names["collection"] = id;
+		return true;
 	}
 /**
 * @brief Internally register 'any' type
 */
 	bool addAny()
 	{
+		if(names.find("any") != names.end())
+			return false; 
 		TypeId id = highest++;
 		types[id] = std::make_shared<AnyType>();
 		names["any"] = id;
+		return true;
 	}
 
 /**
@@ -204,7 +215,7 @@ class TypeRegister: public std::enable_shared_from_this<TypeRegister>
 					{
 						auto compo = std::dynamic_pointer_cast<CompositeType>(it->second);
 						std::map<size_t,std::shared_ptr<Resource>> map;
-						for(int i = 0; i < compo->getComponentCount() ;i++)
+						for(size_t i = 0; i < compo->getComponentCount() ;i++)
 						{
 							auto res = this->sharedResource(compo->getComponentTypeId(i));
 							map[i] = res;

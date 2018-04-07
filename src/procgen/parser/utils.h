@@ -30,6 +30,7 @@ namespace ProcGen {
         bool pushBody()
         {
             this->push(std::make_shared<Body>());
+	    return true;
         }
 
         std::shared_ptr<Body> popBody()

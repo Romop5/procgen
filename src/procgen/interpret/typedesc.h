@@ -80,9 +80,6 @@ class CompositeType : public AbstractType
 	CompositeType(std::weak_ptr<TypeRegister>,
 			unsigned int size, std::vector<TypeId> compos,std::vector<std::string> items);
 	virtual descType getType() { return COMPOSITE;};
-
-	unsigned int getOffset(unsigned int componentID);
-
 /**
 * @brief Has member with name
 */

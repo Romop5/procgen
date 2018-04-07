@@ -93,7 +93,7 @@ namespace ProcGen {
 
         void registerNatives();
         // Prepare local stack
-        bool initializeFunction(char* type);
+        bool initializeFunction(const char* type);
 
 		bool registerRule(char* name,char* type);
 

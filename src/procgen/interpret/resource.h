@@ -126,7 +126,7 @@ class CompositeResource : public Resource
 
 	std::shared_ptr<Resource> getComponent(size_t index) { return components[index]; }
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
-	virtual void* getData() const override {};
+	virtual void* getData() const override { return nullptr;};
     virtual json to_json() const override;
     const std::string getComponentName(size_t index) const;
     size_t getComponentPosition(const std::string name) const;
@@ -159,7 +159,7 @@ class CollectionResource : public Resource
 	void remove(size_t index);
 	std::shared_ptr<Resource> at(size_t index);
 	size_t length() {return this->collection.size();}
-	virtual void* getData() const override {};
+	virtual void* getData() const override { return nullptr; };
 	// TODO
 	virtual bool copy(const std::shared_ptr<Resource> src) override;
 	    virtual json to_json() const override;
