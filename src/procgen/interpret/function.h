@@ -486,6 +486,8 @@ class Construct : public Function
             LOG_DEBUG("Construct atrib %d\n", i);
             output->getComponent(i)->copy(this->_getInput(i)->getOutput());  
         }
+
+	return false;
     }
 
 	virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
