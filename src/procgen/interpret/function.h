@@ -13,6 +13,8 @@
 #include <memory>
 #include <exception>
 #include <climits>
+#include <string>
+#include <sstream>
 
 #include <procgen/interpret/statement.h>
 #include <procgen/interpret/types.h>
@@ -253,9 +255,9 @@ class OPNAME: public Function\
 		if(_doInputs(stat)) return true;\
 		bool out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
 		*(bool*)(getOutput()->getData()) = out;\
-		LOG_DEBUG(#OPNAME " %d = %d " #OPERATOR " %d\n",out,\
-                *(T*) _getInput(0)->getOutput()->getData(),\
-                *(T*) _getInput(1)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %s = %s " #OPERATOR " %s\n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str(),\
+                std::to_string(*(T*) _getInput(1)->getOutput()->getData()).c_str());\
 		return false;\
 	}\
 };
@@ -272,9 +274,9 @@ class OPNAME: public Function\
 	{\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR *(T*) _getInput(1)->getOutput()->getData();\
-		LOG_DEBUG(#OPNAME ": %d = %d " #OPERATOR " %d\n",out,\
-                *(T*) _getInput(0)->getOutput()->getData(),\
-                *(T*) _getInput(1)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME ": %s = %s " #OPERATOR " %s\n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str(),\
+                std::to_string(*(T*) _getInput(1)->getOutput()->getData()).c_str());\
 		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
@@ -290,8 +292,8 @@ class OPNAME: public Function\
 	{\
 		if(_doInputs(stat)) return true;\
 		T out = *(T*) _getInput(0)->getOutput()->getData() OPERATOR ;\
-		LOG_DEBUG(#OPNAME " %d = %d " #OPERATOR "\n",out,\
-                *(T*) _getInput(0)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %s = %s " #OPERATOR "\n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str());\
 		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
@@ -307,8 +309,8 @@ class OPNAME: public Function\
 	{\
 		if(_doInputs(stat)) return true;\
 		T out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
-		LOG_DEBUG(#OPNAME " %d = " #OPERATOR " %d \n",out,\
-                *(T*) _getInput(0)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %s = " #OPERATOR " %s \n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str());\
 		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
@@ -324,8 +326,8 @@ class OPNAME: public Function\
 	{\
 		if(_doInputs(stat)) return true;\
 		bool out = OPERATOR *(T*) _getInput(0)->getOutput()->getData();\
-		LOG_DEBUG(#OPNAME " %d =  " #OPERATOR " %d \n",out,\
-                *(T*) _getInput(0)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %s =  " #OPERATOR " %s \n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str());\
 		*(bool*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
@@ -341,8 +343,8 @@ class OPNAME: public Function\
 	{\
 		if(_doInputs(stat)) return true;\
 		T out = OPERATOR (*(T*) _getInput(0)->getOutput()->getData());\
-		LOG_DEBUG(#OPNAME " %d = " #OPERATOR " %d \n",out,\
-                *(T*) _getInput(0)->getOutput()->getData());\
+		LOG_DEBUG(#OPNAME " %s = " #OPERATOR " %s \n",std::to_string(out).c_str(),\
+                std::to_string(*(T*) _getInput(0)->getOutput()->getData()).c_str());\
 		*(T*)(getOutput()->getData()) = out;\
 		return false;\
 	}\
