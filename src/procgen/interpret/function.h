@@ -81,7 +81,7 @@ class PrintJson: public Function
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
-		LOG_DEBUG("PrintJson %s\n",_getInput(0)->getOutput()->to_json().dump().c_str());
+		LOG_INFO("PrintJson %s\n",_getInput(0)->getOutput()->to_json().dump().c_str());
 		return false;
 	}
 };
@@ -93,7 +93,7 @@ class PrintValue: public Function
 	virtual bool operator()(RunStatus& stat)
 	{
 		if(_doInputs(stat)) return true;
-		LOG_DEBUG("Operation: %g\n",*(T*)(_getInput(0)->getOutput()->getData()));
+		LOG_INFO("Operation: %g\n",*(T*)(_getInput(0)->getOutput()->getData()));
 		return false;
 	}
 };
