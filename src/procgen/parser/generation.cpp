@@ -830,6 +830,10 @@ namespace ProcGen {
         {
             errorMessage("Creating constructor for non-composite type %s",typeName);
         } else {
+	    if(constructor->getCountOfComponents() != args.size())
+	    {
+		    errorMessage("Invalid count of arguments for %s() constructor.",typeName);
+	    }
             for(int i = 0; i < args.size(); i++)
             {
                 if(constructor->bindInput(i, args[i]) == false)

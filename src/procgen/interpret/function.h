@@ -53,7 +53,10 @@ class Function: public Statement
 * @param res
 */
 	virtual bool bindOutput(std::shared_ptr<Resource> res);
+
 	std::shared_ptr<Resource>	getOutput() { return this->_output; }
+
+	size_t	getCountOfInputs() const { return this->_inputs.size(); }
 	virtual bool operator()(RunStatus& stat);
 };
 
@@ -463,12 +466,21 @@ class Cast: public Function
 class Construct : public Function
 {
     public:
+	    size_t getCountOfComponents()
+	    {
+        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
+        return output->getComponentCount();
+	    }
     virtual bool operator()(RunStatus& stat)
     {
+	if(_doInputs(stat)) return true;
+
         LOG_DEBUG("Construct \n");
         assert(this->getOutput() != nullptr);
         auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
         size_t count = output->getComponentCount();
+	size_t countOfFunctionInputs = this->getCountOfInputs();
+
         for(size_t i = 0; i < count; i++)
         {
             LOG_DEBUG("Construct atrib %d\n", i);

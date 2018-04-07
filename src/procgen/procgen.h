@@ -23,7 +23,9 @@ namespace ProcGen {
 
         json serialize() const;
 
-		bool isReady()	{ return generation.flagIsParsed; }
+		bool isReady()	{ return (generation.hasAnyError == false) &&
+					  this->isParsed(); }
+		bool isParsed()	{ return generation.flagIsParsed; }
 
         template<typename T>
         bool setUniform(std::string uniformName,T value)
