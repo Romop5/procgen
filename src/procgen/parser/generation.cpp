@@ -187,10 +187,11 @@ namespace ProcGen {
 
 		// TODO: check types and do implicit converion if neccesary
 		// TODO: use hasLiteral and literal
-		auto literal = this->expressionsStack.top();
-        // calculate literal and set the param
+
 		if(hasLiteral)
         {
+		auto literal = this->expressionsStack.top();
+        // calculate literal and set the param
             auto setter = std::make_shared<GenericCopy>();
             setter->bindInput(0, functionregister->getHandler(resource));
             setter->bindInput(1, literal);
