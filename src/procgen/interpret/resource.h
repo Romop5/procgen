@@ -83,6 +83,7 @@ class AtomicResource : public Resource
 		this->tr = typereg;
 		this->value = dt;
 		this->baseType = id;
+		this->resourceType = ResourceType::ATOMIC;
 	}
 	virtual ~AtomicResource()
 	{
