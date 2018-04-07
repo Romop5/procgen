@@ -84,7 +84,11 @@ class Derivation
 	{
 		this->tr = tr;
 		this->fr = fr;
-        this->allowedIterations = -1;
+		this->allowedIterations = -1;
+
+		this->currentStringPositionID = 0;
+		this->currentStringID = 0;
+		this->currentIterationID = 0;
 	}
 
 	// Add rule for symbol
