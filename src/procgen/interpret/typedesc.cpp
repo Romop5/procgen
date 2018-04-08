@@ -5,11 +5,13 @@
 
 unsigned int AbstractType::getAlignedSize()
 {
-    size_t alignment = alignof(max_align_t);
+/*    size_t alignment = alignof(max_align_t);
     size_t rest = this->size % alignment;
     if (rest == 0)
         return this->size;
     return this->size - rest + alignment;
+	*/
+	return 0;
 }
 CompositeType::CompositeType(std::weak_ptr<TypeRegister> tr, unsigned int size, std::vector<TypeId> compos, std::vector<std::string> items)
 {

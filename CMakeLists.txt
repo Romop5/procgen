@@ -102,6 +102,8 @@ target_include_directories(procgen PUBLIC src)
 
 target_include_directories(procgen PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
+target_include_directories(procgen PUBLIC ${FLEX_INCLUDE_DIRS})
+
 
 ### Set up installation
 install (FILES ${UTILS_HEADERS}

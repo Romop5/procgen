@@ -17,7 +17,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory> 
-#include <error.h>
+//#include <error.h>
 
 #include <procgen/parser/generation.h>
 #include <location.hh>

@@ -1,7 +1,7 @@
 #ifndef _TYPEDESC_H
 #define _TYPEDESC_H
 #include <memory>
-#include <stdalign.h>
+//#include <stdalign.h>
 #include <stddef.h>
 #include <vector>
 //typedef int TypeId;
