@@ -159,6 +159,8 @@ public:
 
     void append(std::shared_ptr<Resource> item);
     void remove(size_t index);
+    void clear();
+
     std::shared_ptr<Resource> at(size_t index);
     size_t length() { return this->collection.size(); }
     virtual void* getData() const override { return nullptr; };

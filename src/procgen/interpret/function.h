@@ -180,6 +180,25 @@ public:
 };
 
 /**
+* @class CollectionClear
+* @brief Remove all items
+*
+* Input 0 - collection
+*/
+class CollectionClear : public Function {
+public:
+    virtual bool operator()(RunStatus& stat)
+    {
+        if (_doInputs(stat))
+            return true;
+
+        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
+        res->clear();
+        return false;
+    }
+};
+
+/**
 * @class CompositeGet
 * @brief Get member of structure
 *

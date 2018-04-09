@@ -504,6 +504,14 @@ bool Generation::registerLocalVariable(const char* type, const char* name, bool 
         this->expressionsStack.push(functionregister->getHandler(resource));
         this->expressionsStack.push(swap);
         return this->makeAssignment(name, true);
+    } else {
+        // clear collection
+
+        if (resource->getResourceType() == ResourceType::COLLECTION) {
+            auto collectionReseter = std::make_shared<CollectionClear>();
+            collectionReseter->bindInput(0, functionregister->getHandler(resource));
+            this->stackedBodies.getTop()->appendStatement(collectionReseter);
+        }
     }
     return true;
 }
@@ -633,9 +641,8 @@ bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
     }
     // Register
     assert(resultFunction != nullptr);
-    if(this->stackedBodies.count() == 0)
-    {
-       errorMessage("[Internal] Failed to get Body() object");
+    if (this->stackedBodies.count() == 0) {
+        errorMessage("[Internal] Failed to get Body() object");
     } else {
         this->stackedBodies.getTop()->appendStatement(resultFunction);
     }

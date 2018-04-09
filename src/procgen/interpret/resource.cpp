@@ -107,6 +107,11 @@ void CollectionResource::remove(size_t index)
     this->collection.erase(this->collection.begin() + index);
 }
 
+void CollectionResource::clear()
+{
+    this->collection.clear();
+}
+
 std::shared_ptr<Resource> CollectionResource::at(size_t index)
 {
     return this->collection[index];
