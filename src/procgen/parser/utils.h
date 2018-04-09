@@ -38,6 +38,8 @@ public:
         return top;
     }
     std::shared_ptr<Body> getTop() { return this->top(); };
+
+    size_t count() const { return this->size(); }
 };
 
 class sTypeDeclaration {

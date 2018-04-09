@@ -633,7 +633,12 @@ bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
     }
     // Register
     assert(resultFunction != nullptr);
-    this->stackedBodies.getTop()->appendStatement(resultFunction);
+    if(this->stackedBodies.count() == 0)
+    {
+       errorMessage("[Internal] Failed to get Body() object");
+    } else {
+        this->stackedBodies.getTop()->appendStatement(resultFunction);
+    }
 
     return true;
 }
