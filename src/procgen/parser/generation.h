@@ -49,6 +49,9 @@ namespace ProcGen {
             if(!var)
                 return false;
 
+            if(var->getResourceType() != ResourceType::ATOMIC)
+                return false;
+
             if(keyword<T>() != var->getTypeName())
                 return false;
             *(T*) var->getData() = value;

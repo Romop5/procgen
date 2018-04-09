@@ -79,6 +79,16 @@ void registerStandardFunctions(FunctionReg* fr)
 		return generate;
 	});
 
+	fr->addFunction("sqrt",
+	[tr]{
+		
+		auto generate = std::static_pointer_cast<Function>(std::make_shared<Sqrt<float>>());
+		auto result = tr->sharedResource("float");
+		generate->bindOutput(result);
+		return generate;
+	});
+
+
 	fr->addFunction("cos",
 	[tr]{
 		
