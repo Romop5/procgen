@@ -10,9 +10,8 @@ TEST_CASE("TypeRegister - standard types presence")
 
     REQUIRE(tr->getTypeId("int") != 0);
     REQUIRE(tr->getTypeId("float") != 0);
-    REQUIRE(tr->getTypeId("char") != 0);
-
     REQUIRE(tr->getTypeId("int") == tr->getTypeId(keyword<int>()));
+    REQUIRE(tr->getTypeId("float") == tr->getTypeId(keyword<float>()));
 }
 
 

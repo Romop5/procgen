@@ -1,12 +1,12 @@
 #ifndef COMPOSITE_H
 #define COMPOSITE_H
-#include <vector>
 #include <memory>
-#include <string>
+#include <procgen/interpret/function.h>
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/statement.h>
-#include <procgen/interpret/function.h>
 #include <procgen/utils/logger.h>
+#include <string>
+#include <vector>
 
 /*
 1. Create an expression tree with vars
@@ -20,107 +20,97 @@
 5. Enjoy it
 */
 // Will handle tree and interfaces
-struct CompositeFunction
-{
-	std::vector<std::shared_ptr<Resource>> inputs; 
-	std::shared_ptr<Resource> output;
-	std::shared_ptr<Statement> core;
-	public:
-		CompositeFunction(
-			std::shared_ptr<Statement> core,
-			std::vector<std::shared_ptr<Resource>> inputs, 
-			std::shared_ptr<Resource> output)
-		{
+struct CompositeFunction {
+    std::vector<std::shared_ptr<Resource>> inputs;
+    std::shared_ptr<Resource> output;
+    std::shared_ptr<Statement> core;
 
-			this->core = core;
-			this->inputs = inputs;
-			this->output = output;
-		}
+public:
+    CompositeFunction(
+        std::shared_ptr<Statement> core,
+        std::vector<std::shared_ptr<Resource>> inputs,
+        std::shared_ptr<Resource> output)
+    {
 
+        this->core = core;
+        this->inputs = inputs;
+        this->output = output;
+    }
 };
 
-
-class FunctionCall : public Function
-{
-	std::weak_ptr<CompositeFunction> cf;
+class FunctionCall : public Function {
+    std::weak_ptr<CompositeFunction> cf;
     std::string name;
-	public:
-	FunctionCall(std::shared_ptr<CompositeFunction> cf,std::string name)
-	{
-		this->cf = cf;
-		this->bindOutput(this->cf.lock()->output->allocateClone());
-        this->name = name;
-	}
-	bool operator()(RunStatus& stat)
-	{
-		/* Prepare arguments */
-		if(this->_doInputs(stat))
-			return true;
-		// TODO: checkout type equivalence 
-		// bind inputs to interface
 
-        LOG_DEBUG("Invoking function: %s\n",this->name.c_str());
-		for(int i=0; i < cf.lock()->inputs.size();i++)
-		{
+public:
+    FunctionCall(std::shared_ptr<CompositeFunction> cf, std::string name)
+    {
+        this->cf = cf;
+        this->bindOutput(this->cf.lock()->output->allocateClone());
+        this->name = name;
+    }
+    bool operator()(RunStatus& stat)
+    {
+        /* Prepare arguments */
+        if (this->_doInputs(stat))
+            return true;
+        // TODO: checkout type equivalence
+        // bind inputs to interface
+
+        LOG_DEBUG("Invoking function: %s\n", this->name.c_str());
+        for (size_t i = 0; i < cf.lock()->inputs.size(); i++) {
             assert(this->_getInput(i) != nullptr);
             assert(this->_getInput(i)->getOutput() != nullptr);
 
             std::string dmp = this->_getInput(i)->getOutput()->to_json().dump();
-            LOG_DEBUG("Argument[in] %d %s\n",i,dmp.c_str());
-			cf.lock()->inputs[i]->copy(this->_getInput(i)->getOutput());
+            LOG_DEBUG("Argument[in] %d %s\n", i, dmp.c_str());
+            cf.lock()->inputs[i]->copy(this->_getInput(i)->getOutput());
             dmp = cf.lock()->inputs[i]->to_json().dump();
-            LOG_DEBUG("Argument[inside] %d %s\n",i,dmp.c_str());
-		}
-		// process function
-		if(this->getOutput() != nullptr)
-        {
+            LOG_DEBUG("Argument[inside] %d %s\n", i, dmp.c_str());
+        }
+        // process function
+        if (this->getOutput() != nullptr) {
             std::string dmp = this->getOutput()->to_json().dump();
-            LOG_DEBUG("Output[before] '%s'\n",dmp.c_str());
+            LOG_DEBUG("Output[before] '%s'\n", dmp.c_str());
         }
 
-		bool result = (*cf.lock()->core)(stat);
+        bool result = (*cf.lock()->core)(stat);
 
-        if(this->getOutput() != nullptr)
-        {
+        if (this->getOutput() != nullptr) {
             std::string dmp = this->getOutput()->to_json().dump();
-            LOG_DEBUG("Output[after] '%s'\n",dmp.c_str());
+            LOG_DEBUG("Output[after] '%s'\n", dmp.c_str());
         }
 
-		// copy result
-		if(this->getOutput() != nullptr)
-			this->getOutput()->copy(cf.lock()->output);
+        // copy result
+        if (this->getOutput() != nullptr)
+            this->getOutput()->copy(cf.lock()->output);
 
-		// TODO: determine if positive result is caused by return or 
-		// by runtime error
-		// if it was return, then reset the status
-		if(result)
-		{
-			if(stat.getStatus() != RunStatus::RETURN_REACHED)
-				return true;
-			stat.setStatus(RunStatus::OK);
-		}
+        // TODO: determine if positive result is caused by return or
+        // by runtime error
+        // if it was return, then reset the status
+        if (result) {
+            if (stat.getStatus() != RunStatus::RETURN_REACHED)
+                return true;
+            stat.setStatus(RunStatus::OK);
+        }
 
-		return false;
-	}
-
+        return false;
+    }
 
     bool bindInput(size_t id, std::shared_ptr<Function> func) override
     {
-        if(func->getOutput() == nullptr)
+        if (func->getOutput() == nullptr)
             return false;
-        if(!this->cf.lock()->inputs[id]->hasSameType(func->getOutput()))
+        if (!this->cf.lock()->inputs[id]->hasSameType(func->getOutput()))
             return false;
         return Function::bindInput(id, func);
     }
     bool bindOutput(std::shared_ptr<Resource> res) override
     {
-        if(!this->cf.lock()->output->hasSameType(res))
+        if (!this->cf.lock()->output->hasSameType(res))
             return false;
         return Function::bindOutput(res);
     }
-
-
-
 };
 
 #endif

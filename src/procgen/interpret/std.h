@@ -1,5 +1,5 @@
 #include <procgen/interpret/typereg.h>
-	
+
 /**
 * @brief Register std types 
 * @param tr
@@ -18,8 +18,6 @@ void registerStandardTypes(TypeRegister* tr);
 * For instance, registers functions for operators +,-, =, ==, !=, <, >
 */
 void registerStandardFunctions(FunctionReg* fr);
-
-
 
 /**
 * @brief Detect if two standard types are convertible to common type

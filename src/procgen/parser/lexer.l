@@ -6,7 +6,7 @@
 #include <fstream>
 #include "parser.hh"  
 #include <procgen/parser/scanner.h>
-#include <procgen/parser/procgen.h>
+#include <procgen/parser/generation.h>
 #include <memory>
 
 #define yyterminate() return token::TOK_EOF

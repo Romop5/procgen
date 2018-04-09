@@ -1,10 +1,10 @@
 #ifndef _STATEMENT_H
 #define _STATEMENT_H
 #include <iostream>
-#include <vector>
 #include <map>
 #include <memory>
 #include <procgen/interpret/resource.h>
+#include <vector>
 
 /**
 * @class RunStatus
@@ -17,13 +17,14 @@
 * In case of run-time error or early function exit, the state
 * is alterned and leads to premature end of execution of statements.
 */
-class RunStatus
-{
-	public:
+class RunStatus {
+public:
     RunStatus() { _status = OK; }
-	enum status { OK, RETURN_REACHED, RUNTIME_ERROR} _status;
-	void setStatus(status _status) {this->_status = _status;}
-	status getStatus() {return this->_status;}
+    enum status { OK,
+        RETURN_REACHED,
+        RUNTIME_ERROR } _status;
+    void setStatus(status _status) { this->_status = _status; }
+    status getStatus() { return this->_status; }
 };
 
 class Function;
@@ -39,13 +40,12 @@ class Function;
 * The only significant difference is the fact that functions have some return
 * value whereas non-functions executes without feedback.
 */
-class Statement
-{
-	public:
+class Statement {
+public:
     /// Execute block functionality
-	virtual bool operator () (RunStatus&) = 0;
-    virtual const std::string getBoxName() const { return "Statement";}
-    virtual json to_json() const { return json(getBoxName());}
+    virtual bool operator()(RunStatus&) = 0;
+    virtual const std::string getBoxName() const { return "Statement"; }
+    virtual json to_json() const { return json(getBoxName()); }
 };
 
 /**
@@ -61,27 +61,27 @@ class Statement
 *   else
 *       execute ( paths [ 1 ] ) 
 */
-class If:public Statement
-{
-	private:
-	// eval expr to choose path
-	std::shared_ptr<Function> expr;
-	std::map<size_t, std::shared_ptr<Statement>> paths;
-	public:
-	virtual bool operator()(RunStatus&);
+class If : public Statement {
+private:
+    // eval expr to choose path
+    std::shared_ptr<Function> expr;
+    std::map<size_t, std::shared_ptr<Statement>> paths;
+
+public:
+    virtual bool operator()(RunStatus&);
     virtual json to_json() const override;
-/**
+    /**
 * @brief Set predicate expression tree
 * @param exp
 */
-	void setExpression(std::shared_ptr<Function> exp);
-/**
+    void setExpression(std::shared_ptr<Function> exp);
+    /**
 * @brief Set specified path (branch)
 *
 * @param id
 * @param path
 */
-	void setPath(size_t id, std::shared_ptr<Statement> path);
+    void setPath(size_t id, std::shared_ptr<Statement> path);
 };
 
 /**
@@ -90,27 +90,26 @@ class If:public Statement
 *
 * This block executes given statement while predicate implies TRUE
 */
-class While:public Statement
-{
-	private:
-	std::shared_ptr<Function> _expression;
-	std::shared_ptr<Statement> _statement;
-	public:
-/**
+class While : public Statement {
+private:
+    std::shared_ptr<Function> _expression;
+    std::shared_ptr<Statement> _statement;
+
+public:
+    /**
 * @brief Set loop condition 
 * @param expression
 */
     void bindCondition(std::shared_ptr<Function> expression) { this->_expression = expression; }
-/**
+    /**
 * @brief Set loop statement 
 *
 * @param statement
 */
     void bindStatement(std::shared_ptr<Statement> statement) { this->_statement = statement; }
 
-	virtual bool operator()(RunStatus&);
+    virtual bool operator()(RunStatus&);
 };
-
 
 /**
 * @class Body
@@ -125,13 +124,13 @@ class While:public Statement
 *       statementN;
 *   }
 */
-class Body: public Statement
-{
-	private:
-	std::vector<std::shared_ptr<Statement>> statements;
-	public:
-	void appendStatement(std::shared_ptr<Statement> stat) {this->statements.push_back(stat);}
-	virtual bool operator()(RunStatus&);
+class Body : public Statement {
+private:
+    std::vector<std::shared_ptr<Statement>> statements;
+
+public:
+    void appendStatement(std::shared_ptr<Statement> stat) { this->statements.push_back(stat); }
+    virtual bool operator()(RunStatus&);
 };
 
 /**
@@ -143,12 +142,12 @@ class Body: public Statement
 * Apart from changing RunStatus, it also executs input statement which can
 * for example, set return value
 */
-class Return: public Statement
-{
-	private:
-	std::shared_ptr<Statement> input;
-	public:
-    void bindInput(std::shared_ptr<Function> function ) { input = std::dynamic_pointer_cast<Statement>(function); } 
-	virtual bool operator()(RunStatus&);
+class Return : public Statement {
+private:
+    std::shared_ptr<Statement> input;
+
+public:
+    void bindInput(std::shared_ptr<Function> function) { input = std::dynamic_pointer_cast<Statement>(function); }
+    virtual bool operator()(RunStatus&);
 };
 #endif

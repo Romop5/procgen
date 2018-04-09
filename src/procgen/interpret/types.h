@@ -1,14 +1,14 @@
 #ifndef _TYPESTRING_H
 #define _TYPESTRING_H
-#include <string>
 #include <procgen/interpret/types.h>
+#include <string>
 
 // Provides an easy way to iterate a FNC function over standard built-in types
-#define FORALL_ATOMICTYPES(FNC)\
-	FNC(int,"int");\
-	FNC(bool,"bool");\
-	FNC(float,"float");\
-	FNC(long,"long");
+#define FORALL_ATOMICTYPES(FNC) \
+    FNC(int, "int");            \
+    FNC(bool, "bool");          \
+    FNC(float, "float");        \
+    FNC(long, "long");
 /*
 	FNC(char,"char");\
 	FNC(short,"short");\
@@ -17,11 +17,12 @@
 
 // Provides an easy way to iterate a FNC function over standard built-in types
 // This time supports a parameter, passed to function
-#define FORALL_ATOMICTYPES3(FNC,PARAM)\
-	FNC(int,PARAM);\
-	FNC(bool,PARAM);\
-	FNC(long,PARAM);\
-	FNC(float,PARAM);
+#define FORALL_ATOMICTYPES3(FNC, PARAM) \
+    FNC(int, PARAM);                    \
+    FNC(long, PARAM);                   \
+    FNC(float, PARAM);
+
+//FNC(bool,PARAM);
 
 /*
 	FNC(double,"double",PARAM);\
@@ -35,13 +36,13 @@
 // typedef-ed types are recognized correctly
 // For example, typedef newType uint; keyword<newtype> would return uint
 //
-template<class T>
+template <class T>
 std::string keyword();
 
-// Defines a simple macro to specify keyword<TYPE> for all 
+// Defines a simple macro to specify keyword<TYPE> for all
 // our supported types
-#define KEYWORD(type,typeName)\
-template<> std::string keyword<type>() {return typeName;}
+#define KEYWORD(type, typeName) \
+    template <>                 \
+    std::string keyword<type>() { return typeName; }
 
-#endif// Calls FNC(type, string:typeName)
-
+#endif // Calls FNC(type, string:typeName)

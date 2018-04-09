@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 project(ProcGen)
 
+if ( CMAKE_COMPILER_IS_GNUCC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
+endif()
+if ( MSVC )
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
+endif()
+
 option(PROCGEN_TESTS "Build tests - use make test" OFF)
 option(PROCGEN_EXAMPLES "Build examples" OFF)
 option(PROCGEN_PARSER "Build example parser" OFF)
@@ -95,6 +102,8 @@ target_include_directories(procgen PUBLIC src)
 
 target_include_directories(procgen PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
+target_include_directories(procgen PUBLIC ${FLEX_INCLUDE_DIRS})
+
 
 ### Set up installation
 install (FILES ${UTILS_HEADERS}
@@ -157,11 +166,14 @@ if (PROCGEN_TESTS)
 
 
     add_executable(test_exe ${TEST_SOURCES})
-    target_link_libraries(test_exe procedural)
+    target_link_libraries(test_exe procgen)
     add_test(NAME unit_test COMMAND test_exe)
 
     add_executable(userfunc test/userfunc.cpp)
-    target_link_libraries(userfunc procedural)
+    target_link_libraries(userfunc procgen)
+
+    add_executable(jsonimporter examples/typeregjson.cpp)
+    target_link_libraries(jsonimporter procgen)
 
 
 endif(PROCGEN_TESTS)

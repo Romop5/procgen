@@ -1,77 +1,75 @@
 #include <procgen/derivation/derivation.h>
 
-class AlwaysTrue : public Function
-{
-	public:
-	virtual bool operator()(RunStatus& rs)
-	{
-		*(bool*) getOutput()->getData() = true;
-		return false;
-	}
+class AlwaysTrue : public Function {
+public:
+    virtual bool operator()(RunStatus& rs)
+    {
+        *(bool*)getOutput()->getData() = true;
+        return false;
+    }
 };
 
-class TestInt : public Function
-{
-	Derivation* der;
-	public:
-	TestInt(Derivation* der)
-	{
-		this->der = der;
-	}
-	virtual bool operator()(RunStatus& rs)
-	{
-		std::cout << "Symbol: " << *(int*) _getInput(0)->getOutput()->getData() << std::endl;
-		return false;
-	}
+class TestInt : public Function {
+    Derivation* der;
+
+public:
+    TestInt(Derivation* der)
+    {
+        this->der = der;
+    }
+    virtual bool operator()(RunStatus& rs)
+    {
+        std::cout << "Symbol: " << *(int*)_getInput(0)->getOutput()->getData() << std::endl;
+        return false;
+    }
 };
 
-class CopyInt : public Function
-{
-	Derivation* der;
-	public:
-	CopyInt(Derivation* der)
-	{
-		this->der = der;
-	}
-	virtual bool operator()(RunStatus& rs)
-	{
-		this->der->appendNextSymbol(_getInput(0)->getOutput());
-		return false;
-	}
+class CopyInt : public Function {
+    Derivation* der;
+
+public:
+    CopyInt(Derivation* der)
+    {
+        this->der = der;
+    }
+    virtual bool operator()(RunStatus& rs)
+    {
+        this->der->appendNextSymbol(_getInput(0)->getOutput());
+        return false;
+    }
 };
 
 int main()
 {
-	srandom(time(NULL));
-	
-	auto tr = std::make_shared<TypeRegister>();
-	auto fr = std::make_shared<FunctionReg>(tr);
-	
-	registerStandardTypes(tr.get());
-	registerStandardFunctions(fr.get());
+    srandom(time(NULL));
 
-	Derivation derivation(tr,fr);
+    auto tr = std::make_shared<TypeRegister>();
+    auto fr = std::make_shared<FunctionReg>(tr);
 
-	/* LL grammer */
+    registerStandardTypes(tr.get());
+    registerStandardFunctions(fr.get());
 
-	// int -> 
-	
-	auto intValue = tr->sharedResource("int");
-	auto floatValue  = tr->sharedResource("float");
+    Derivation derivation(tr, fr);
 
-	std::vector<std::shared_ptr<Resource>> symbols = {intValue, floatValue};
+    /* LL grammer */
 
-	derivation.setStartSymbols(symbols);
+    // int ->
 
-	// Add rule
-	
-	derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<TestInt>(&derivation));
-	derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<CopyInt>(&derivation));
+    auto intValue = tr->sharedResource("int");
+    auto floatValue = tr->sharedResource("float");
 
-	derivation.generate(1);
-	
-	derivation._debug();
+    std::vector<std::shared_ptr<Resource>> symbols = { intValue, floatValue };
 
+    derivation.setStartSymbols(symbols);
 
-	return 0;
+    // Add rule
+
+    derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<TestInt>(&derivation));
+    derivation.addRule(tr->getTypeId("int"), std::make_shared<AlwaysTrue>(), std::make_shared<CopyInt>(&derivation));
+
+    derivation.generate(1);
+
+    derivation._debug();
+
+    return 0;
 }
