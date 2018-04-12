@@ -33,6 +33,14 @@ public:
         return generation.setUniform(uniformName, value);
     }
 
+    template <typename T>
+    bool getUniform(std::string uniformName, T* value)
+    {
+        return generation.getUniform(uniformName, value);
+    }
+
+
+
     void setDebugOn(bool state);
 
     // Clean

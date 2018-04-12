@@ -56,6 +56,23 @@ public:
         *(T*)var->getData() = value;
         return true;
     }
+    template <typename T>
+    bool getUniform(std::string uniformName, T* value)
+    {
+        auto var = globalVariables->getVar(uniformName);
+        if (!var)
+            return false;
+
+        if (var->getResourceType() != ResourceType::ATOMIC)
+            return false;
+
+        if (keyword<T>() != var->getTypeName())
+            return false;
+        *value = *(T*)var->getData();
+        return true;
+    }
+
+
 
     /* Compilation utilities*/
     std::vector<sTypeDeclaration> typeList;
