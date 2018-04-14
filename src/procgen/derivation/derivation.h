@@ -129,12 +129,11 @@ public:
 
     bool hasSymbolAtPosition(size_t stringId, size_t position)
     {
-        if (stringId == this->getCurrentIterationId()) 
-        {
-            if(this->currentString.size() > position)
+        if (stringId == this->getCurrentIterationId()) {
+            if (this->currentString.size() > position)
                 return true;
         } else if (this->hierarchy.find(stringId) != this->hierarchy.end()) {
-            if(this->hierarchy[stringId].size() > position)
+            if (this->hierarchy[stringId].size() > position)
                 return true;
         }
         return false;
@@ -142,8 +141,7 @@ public:
 
     std::shared_ptr<Resource> getSymbolAtPosition(size_t stringId, size_t position)
     {
-        if(this->hasSymbolAtPosition(stringId, position))
-        {
+        if (this->hasSymbolAtPosition(stringId, position)) {
             if (stringId == this->getCurrentIterationId()) {
                 return this->currentString[position];
             } else if (this->hierarchy.find(stringId) != this->hierarchy.end()) {

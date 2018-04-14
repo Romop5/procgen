@@ -467,6 +467,32 @@ public:
     }
 };
 
+class ConstructCollection : public Function {
+public:
+    virtual bool operator()(RunStatus& stat)
+    {
+        if (_doInputs(stat))
+            return true;
+
+        LOG_DEBUG("Construct \n");
+        assert(this->getOutput() != nullptr);
+
+        auto resourceType = this->getOutput()->getResourceType();
+        if (resourceType == ResourceType::COLLECTION) {
+            LOG_DEBUG("Constructing collection\n");
+            auto output = std::dynamic_pointer_cast<CollectionResource>(this->getOutput());
+            size_t countOfFunctionInputs = this->getCountOfInputs();
+            output->clear();
+            for (size_t i = 0; i < countOfFunctionInputs; i++) {
+                // append at the end of collection
+                output->append(this->_getInput(i)->getOutput());
+            }
+        }
+
+        return false;
+    }
+};
+
 class Construct : public Function {
 public:
     size_t getCountOfComponents()
@@ -481,19 +507,22 @@ public:
 
         LOG_DEBUG("Construct \n");
         assert(this->getOutput() != nullptr);
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        size_t count = output->getComponentCount();
-        size_t countOfFunctionInputs = this->getCountOfInputs();
 
-        // presume correct match of arguments and parameters
-        assert(count == countOfFunctionInputs);
-        static_cast<void>(countOfFunctionInputs);
+        auto resourceType = this->getOutput()->getResourceType();
+        if (resourceType == ResourceType::COMPOSITE) {
+            auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
+            size_t count = output->getComponentCount();
+            size_t countOfFunctionInputs = this->getCountOfInputs();
 
-        for (size_t i = 0; i < count; i++) {
-            LOG_DEBUG("Construct atrib %d\n", i);
-            output->getComponent(i)->copy(this->_getInput(i)->getOutput());
+            // presume correct match of arguments and parameters
+            assert(count == countOfFunctionInputs);
+            static_cast<void>(countOfFunctionInputs);
+
+            for (size_t i = 0; i < count; i++) {
+                LOG_DEBUG("Construct atrib %d\n", i);
+                output->getComponent(i)->copy(this->_getInput(i)->getOutput());
+            }
         }
-
         return false;
     }
 

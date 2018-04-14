@@ -355,7 +355,7 @@ std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
     //std::cout << type+":"+operationName<< " je kunda" << std::endl;
     auto operationBox = functionregister->getFunc(operationName + ":" + type);
     if (!operationBox) {
-        errorMessage("Failed to create an instance for operation %s for type %s",operationName.c_str(), type.c_str());
+        errorMessage("Failed to create an instance for operation %s for type %s", operationName.c_str(), type.c_str());
         operationBox = std::make_shared<Function>();
     }
 
@@ -580,8 +580,7 @@ bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
     auto assignedResource = this->expressionsStack.top();
     this->expressionsStack.pop();
 
-    if(expressionTop == nullptr || assignedResource == nullptr)
-    {
+    if (expressionTop == nullptr || assignedResource == nullptr) {
         errorMessage("[Internal error] Nullptr");
         return false;
     }
@@ -835,24 +834,39 @@ bool Generation::makeExplicitCast(char* finalTypename)
 
 bool Generation::makeConstructor(const char* typeName, std::vector<Argument> args)
 {
-    auto constructor = std::make_shared<Construct>();
-    assert(constructor != nullptr);
-    LOG_DEBUG("Making constructor for type %s\n", typeName);
-    constructor->bindOutput(this->typeregister->sharedResource(typeName));
+    // Note: collection constructing differs in lack of type checking as it isn't neccessary
+    if (strcmp(typeName, "collection") == 0) {
+        auto collectionConstructor = std::make_shared<ConstructCollection>();
+        assert(collectionConstructor != nullptr);
+        LOG_DEBUG("Making collection constructor %s\n", typeName);
+        collectionConstructor->bindOutput(this->typeregister->sharedResource("collection"));
 
-    if (constructor->getOutput()->getResourceType() != ResourceType::COMPOSITE) {
-        errorMessage("Creating constructor for non-composite type %s", typeName);
-    } else {
-        if (constructor->getCountOfComponents() != args.size()) {
-            errorMessage("Invalid count of arguments for %s() constructor.", typeName);
-        }
         for (size_t i = 0; i < args.size(); i++) {
-            if (constructor->bindInput(i, args[i]) == false) {
-                errorMessage("Invalid parameter or type of %dth parameter in constructor of %s", i, typeName);
+            collectionConstructor->bindInput(i, args[i]);
+        }
+        this->expressionsStack.push(collectionConstructor);
+
+    } else {
+        auto constructor = std::make_shared<Construct>();
+        assert(constructor != nullptr);
+        LOG_DEBUG("Making constructor for type %s\n", typeName);
+        constructor->bindOutput(this->typeregister->sharedResource(typeName));
+
+        auto resourceType = constructor->getOutput()->getResourceType();
+        if (resourceType != ResourceType::COMPOSITE) {
+            errorMessage("Creating constructor for non-composite type %s", typeName);
+        } else {
+            if (constructor->getCountOfComponents() != args.size()) {
+                errorMessage("Invalid count of arguments for %s() constructor.", typeName);
+            }
+            for (size_t i = 0; i < args.size(); i++) {
+                if (constructor->bindInput(i, args[i]) == false) {
+                    errorMessage("Invalid parameter or type of %dth parameter in constructor of %s", i, typeName);
+                }
             }
         }
+        this->expressionsStack.push(constructor);
     }
-    this->expressionsStack.push(constructor);
     return true;
 }
 

@@ -39,8 +39,6 @@ public:
         return generation.getUniform(uniformName, value);
     }
 
-
-
     void setDebugOn(bool state);
 
     // Clean

@@ -73,7 +73,7 @@ public:
 };
 
 // int = getSymbol(stringID,posID) returns symbol at [stringId,posid]
-class NativeHasSymbol: public Function {
+class NativeHasSymbol : public Function {
     std::weak_ptr<Derivation> derivation;
 
 public:
@@ -96,13 +96,11 @@ public:
         int stringId = *(int*)_getInput(0)->getOutput()->getData();
         int positionId = *(int*)_getInput(1)->getOutput()->getData();
 
-        *(bool*) this->getOutput()->getData() = derivation.lock()->hasSymbolAtPosition(stringId, positionId);
-        LOG_DEBUG("hasSymbol (%d, %d): %d\n", stringId, positionId, *(bool*) this->getOutput()->getData());
+        *(bool*)this->getOutput()->getData() = derivation.lock()->hasSymbolAtPosition(stringId, positionId);
+        LOG_DEBUG("hasSymbol (%d, %d): %d\n", stringId, positionId, *(bool*)this->getOutput()->getData());
         return false;
     }
 };
-
-
 
 class NativeGetParent : public Function {
     std::weak_ptr<Derivation> derivation;
@@ -134,9 +132,8 @@ public:
     }
 };
 
-
 // void skipSymbol(void)
-class NativeSkipSymbol: public Function {
+class NativeSkipSymbol : public Function {
     std::weak_ptr<Derivation> derivation;
 
 public:
@@ -156,8 +153,5 @@ public:
         return false;
     }
 };
-
-
-
 
 #endif

@@ -72,8 +72,6 @@ public:
         return true;
     }
 
-
-
     /* Compilation utilities*/
     std::vector<sTypeDeclaration> typeList;
     std::stack<std::shared_ptr<Function>> expressionsStack;
