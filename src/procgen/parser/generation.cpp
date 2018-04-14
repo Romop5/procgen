@@ -98,8 +98,10 @@ void Generation::registerNatives()
     REGISTER_NATIVE_FUNCTION("getCurrentPosition", NativeCurrentPosition);
     REGISTER_NATIVE_FUNCTION("getCurrentStringId", NativeCurrentStringId);
     REGISTER_NATIVE_FUNCTION("getSymbol", NativeGetSymbol);
+    REGISTER_NATIVE_FUNCTION("hasSymbol", NativeHasSymbol);
     REGISTER_NATIVE_FUNCTION("getParent", NativeGetParent);
     REGISTER_NATIVE_FUNCTION("setMaximumIterations", IteratorLimit);
+    REGISTER_NATIVE_FUNCTION("skipSymbol", NativeSkipSymbol);
 }
 
 bool Generation::initializeFunction(const char* type)
@@ -199,6 +201,7 @@ bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
 
 bool Generation::registerFunction(char* type, char* name)
 {
+    LOG_DEBUG("Registering function %s:%s\n", type, name);
     auto resource = localStackFrame->getVar("_return");
     if (resource == nullptr) {
         errorMessage("Unknown type: %s\n", type);
@@ -352,7 +355,8 @@ std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
     //std::cout << type+":"+operationName<< " je kunda" << std::endl;
     auto operationBox = functionregister->getFunc(operationName + ":" + type);
     if (!operationBox) {
-        errorMessage("Failed to create an instance for operation");
+        errorMessage("Failed to create an instance for operation %s for type %s",operationName.c_str(), type.c_str());
+        operationBox = std::make_shared<Function>();
     }
 
     auto tmpResult = typeregister->sharedResource(a);
@@ -506,7 +510,6 @@ bool Generation::registerLocalVariable(const char* type, const char* name, bool 
         return this->makeAssignment(name, true);
     } else {
         // clear collection
-
         if (resource->getResourceType() == ResourceType::COLLECTION) {
             auto collectionReseter = std::make_shared<CollectionClear>();
             collectionReseter->bindInput(0, functionregister->getHandler(resource));
@@ -576,6 +579,12 @@ bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
     // Get expression
     auto assignedResource = this->expressionsStack.top();
     this->expressionsStack.pop();
+
+    if(expressionTop == nullptr || assignedResource == nullptr)
+    {
+        errorMessage("[Internal error] Nullptr");
+        return false;
+    }
 
     // if we don't assign to "any" variable
     if (assignedResource->getOutput()->getTypeName() != "any") {

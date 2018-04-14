@@ -4,6 +4,8 @@
 
 bool Resource::hasSameType(std::shared_ptr<Resource> res)
 {
+    if(res == nullptr)
+        return false;
     return (this->getBaseId() == res->getBaseId());
 }
 

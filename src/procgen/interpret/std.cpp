@@ -42,6 +42,7 @@ void registerStandardFunctions(FunctionReg* fr)
     REG_FUNC_FORALL("UnaryPlus", UnaryPlus);
 
     REG_FUNC(bool, Negation);
+    REG_FUNC(bool, Eq);
     REG_FUNC(int, Modulo);
 
     REG_FUNC2(float, int, Cast);
