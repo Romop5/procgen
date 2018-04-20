@@ -90,10 +90,11 @@ typedef ProcGen::Parser::token_type token_type;
                 {
                     //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
                     std::string name = std::string(yytext).substr(1,yyleng-2);
-                    std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
+                   // std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
+                    auto includedFile = std::make_shared<std::ifstream>(name, std::ifstream::in);
                     if(includedFile->is_open() == false)
                     {
-                        delete includedFile;
+                        //delete includedFile;
                         generation.errorMessage("failed to load '%s' file in #include.", name);
                         yyterminate();
                     }
@@ -105,7 +106,7 @@ typedef ProcGen::Parser::token_type token_type;
                     std::string* locationName = new std::string(name);
                     generation._location = Parser::location_type(locationName,0,0);
 
-                    this->yy_switch_to_buffer(this->yy_create_buffer(includedFile,YY_BUF_SIZE));
+                    this->yy_switch_to_buffer(this->yy_create_buffer(includedFile.get(),YY_BUF_SIZE));
                     BEGIN(INITIAL);
                 }
             }

@@ -41,6 +41,7 @@ public:
     std::set<std::string> alreadyParsed;
 
     std::vector<std::shared_ptr<std::string>> identifiers;
+    std::vector<std::shared_ptr<std::ifstream>> includeFileStreams;
 
     bool hasParserFileWithName(const std::string& name)
     {

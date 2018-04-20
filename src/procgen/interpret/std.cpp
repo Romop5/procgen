@@ -43,6 +43,8 @@ void registerStandardFunctions(FunctionReg* fr)
 
     REG_FUNC(bool, Negation);
     REG_FUNC(bool, Eq);
+    REG_FUNC(bool, And);
+    REG_FUNC(bool, Or);
     REG_FUNC(int, Modulo);
 
     REG_FUNC2(float, int, Cast);
