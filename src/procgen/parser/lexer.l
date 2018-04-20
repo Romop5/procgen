@@ -95,16 +95,19 @@ typedef ProcGen::Parser::token_type token_type;
                     if(includedFile->is_open() == false)
                     {
                         //delete includedFile;
-                        generation.errorMessage("failed to load '%s' file in #include.", name);
+                        generation.errorMessage("Failed to load '%s' file in #include.", name);
                         yyterminate();
                     }
+
+                    this->includeFileStreams.push_back(includedFile);
 
                     this->addParsingFile(name.c_str());
                     this->includes.push(YY_CURRENT_BUFFER);
                     this->includeLocation.push(generation._location);
-            
-                    std::string* locationName = new std::string(name);
-                    generation._location = Parser::location_type(locationName,0,0);
+                
+                    auto locationName = std::make_shared<std::string>(name);
+                    this->identifiers.push_back(locationName);
+                    generation._location = Parser::location_type(locationName.get(),0,0);
 
                     this->yy_switch_to_buffer(this->yy_create_buffer(includedFile.get(),YY_BUF_SIZE));
                     BEGIN(INITIAL);

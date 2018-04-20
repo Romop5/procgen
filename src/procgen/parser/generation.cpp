@@ -146,6 +146,7 @@ bool Generation::registerAlias(const char* alias, const char* aliasedType)
 
 bool Generation::registerStruct(const char* name, std::vector<sTypeDeclaration>& typelist)
 {
+    LOG_DEBUG("Registering struct %s\n", name);
     std::vector<TypeId> types;
     std::vector<std::string> names;
     for (auto& x : typelist) {
