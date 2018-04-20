@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 #include <procgen/interpret/resource.h>
-#include <procgen/interpret/typedesc.h>
+#include <procgen/interpret/typedescription.h>
 #include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <procgen/interpret/functionreg.h>
+#include <procgen/interpret/functionregister.h>
 
 bool FunctionReg::addFunction(std::string name, std::function<std::shared_ptr<Function>()> c)
 {

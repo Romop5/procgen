@@ -1,6 +1,6 @@
 #include <iostream>
-#include <procgen/interpret/typedesc.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typedescription.h>
+#include <procgen/interpret/typeregister.h>
 #include <procgen/utils/logger.h>
 
 unsigned int AbstractType::getAlignedSize()

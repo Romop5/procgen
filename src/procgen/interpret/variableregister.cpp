@@ -1,5 +1,5 @@
 #include <iostream>
-#include <procgen/interpret/variablereg.h>
+#include <procgen/interpret/variableregister.h>
 #include <procgen/utils/logger.h>
 bool VariableReg::addVar(std::string name, std::shared_ptr<Resource> src)
 {

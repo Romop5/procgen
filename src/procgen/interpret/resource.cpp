@@ -1,5 +1,5 @@
 #include <procgen/interpret/resource.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typeregister.h>
 #include <sstream>
 
 bool Resource::hasSameType(std::shared_ptr<Resource> res)

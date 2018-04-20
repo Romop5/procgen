@@ -1,5 +1,5 @@
-#include <procgen/interpret/functionreg.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/functionregister.h>
+#include <procgen/interpret/typeregister.h>
 #include <procgen/interpret/types.h>
 
 #include <set>

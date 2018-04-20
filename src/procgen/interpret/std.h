@@ -1,4 +1,4 @@
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typeregister.h>
 
 /**
 * @brief Register std types 
