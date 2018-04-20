@@ -9,10 +9,15 @@
 namespace ProcGen {
 class Procgen {
     ProcGen::Generation generation;
+    std::string lastError;
 
 public:
     Procgen();
     ~Procgen();
+
+    bool hasAnyErrorMessage() const;
+
+    const std::string& getLastErrorMessage() const;
 
     bool parseFile(const std::string& file);
 

@@ -26,7 +26,6 @@ Generation::Generation()
 
     flagIsParsed = true;
     hasAnyError = false;
-    ;
 }
 
 Generation::~Generation()
@@ -37,16 +36,6 @@ Generation::~Generation()
 
 bool Generation::parseFile(const std::string& file)
 {
-    /*yyin = fopen(file.c_str(),"r");
-		if(yyin == NULL)
-        {
-			errorMessage("Failed to open file ...");
-            return false;
-        }
-		do {
-			yyparse(this);
-		} while (!feof(yyin));
-    */
     std::ifstream s(file.c_str(), std::ifstream::in);
     _scanner->switch_streams(&s, &std::cerr);
     std::string* newString = new std::string(file);
@@ -55,9 +44,7 @@ bool Generation::parseFile(const std::string& file)
 
     s.close();
 
-    if (!hasAnyError)
-        return true;
-    return false;
+    return (!hasAnyError);
 }
 
 bool Generation::runInit()
@@ -71,7 +58,6 @@ bool Generation::runInit()
     }
     RunStatus rs;
     (*initFunction)(rs);
-    //std::cout << "Initialized...\n";
     return true;
 }
 
@@ -89,10 +75,12 @@ bool Generation::run(int maximumSteps)
 
 void Generation::registerNatives()
 {
+    // Register standard types provided by interpret (bool, int, float)
     registerStandardTypes(typeregister.get());
+    // Register standard functions by interpret (sin, cos)
     registerStandardFunctions(functionregister.get());
 
-    // Add derivation standards
+    // Add functions provided by derivation module
     auto derivation = this->der;
     REGISTER_NATIVE_FUNCTION("appendSymbol", AppendSymbol);
     REGISTER_NATIVE_FUNCTION("getCurrentPosition", NativeCurrentPosition);
@@ -129,13 +117,11 @@ bool Generation::registerRule(char* name, char* type)
     ruleName << "rule" << ruleID;
     //auto typeResource = typeregister->sharedResource(type);
     auto typeResource = localStackFrame->getVar("this");
+
     functionregister->addCompositeFunction(
         ruleName.str(), procedure, { typeResource }, localStackFrame->getVar("_return"));
 
     // Get condition
-    //
-    //auto boolResult= typeregister->sharedResource("bool");
-    //TODO
     auto boolResult = ruleDefinition.conditionReturn;
     auto condition = this->stackedBodies.popBody();
 
@@ -151,7 +137,11 @@ bool Generation::registerRule(char* name, char* type)
 }
 bool Generation::registerAlias(char* alias, char* aliasedType)
 {
-    return typeregister->addAlias(alias, aliasedType);
+    if (typeregister->addAlias(alias, aliasedType) == false) {
+        errorMessage("Failed to register alias %s for type %s\n", alias, aliasedType);
+        return false;
+    }
+    return true;
 }
 
 bool Generation::registerStruct(char* name, std::vector<sTypeDeclaration>& typelist)
@@ -159,23 +149,25 @@ bool Generation::registerStruct(char* name, std::vector<sTypeDeclaration>& typel
     std::vector<TypeId> types;
     std::vector<std::string> names;
     for (auto& x : typelist) {
-        //TODO: check if type exists
-        //std::cout << "registerStruct" << std::endl;
         types.push_back(x.resource->getBaseId());
         names.push_back(x.name);
     }
     // Clear types
     typelist.clear();
-    // TODO: add error message
-    return typeregister->addCompositeWithNames(name, types, names);
+
+    auto result = typeregister->addCompositeWithNames(name, types, names);
+    if (result == false)
+        errorMessage("Failed to register structure named %s\n", name);
+    return result;
 }
 
 bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
 {
-    // Get type
+    // Get resource for type
     auto resource = typeregister->sharedResource(type);
     if (resource == nullptr) {
-        errorMessage("Unk type %s\n", type);
+        errorMessage("Undefined parameter type %s:%s\n", type, name);
+        resource = typeregister->sharedResource("any");
     }
 
     globalVariables->addVar(name, resource);
@@ -183,6 +175,7 @@ bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
     // TODO: check types and do implicit converion if neccesary
     // TODO: use hasLiteral and literal
 
+    // if literal is specified
     if (hasLiteral) {
         auto literal = this->expressionsStack.top();
         // calculate literal and set the param

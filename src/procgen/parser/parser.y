@@ -17,24 +17,11 @@
 #include <cstdio>
 #include <iostream>
 #include <memory> 
-//#include <error.h>
-
 #include <procgen/parser/generation.h>
 #include <location.hh>
 #include <position.hh>
 
 #define yylex generation._scanner->yylex
-//using namespace ProcGen;
-// stuff from flex that bison needs to know about:
-//extern "C" int yylex();
-//extern int yylex(ProcGen::Generation* proc);
-//extern "C" int yyparse();
-//extern "C" FILE *yyin;
-
-
-//void yyerror(Interpret& interpret, const char *s);
-//void yyerror(Generation* proc, const char *s);
-
 %}
 
 
@@ -299,18 +286,11 @@ literal                   : INTEGER
                 
 
 %%
-/*void yyerror(Generation* generation, const char *s) {
-    generation.errorMessage(s);
-	//std::cout << s << " at line: "<< yylloc.first_line << ":" << yylloc.first_column <<  std::endl;
-	//exit(-1);
-}
-*/
 
 namespace ProcGen
 {
     void Parser::error(const location& loc, const std::string& m)
     {
         generation.errorMessage(m);
-//        std::cerr << "Error" << loc << std::endl;
     }
 }

@@ -278,21 +278,25 @@ public:
     };
 
 // Define a binary operatorion OPNAME<type>
-#define DEF_BINARY_OP(OPNAME, OPERATOR)                                                                            \
-    template <typename T>                                                                                          \
-    class OPNAME : public Function {                                                                               \
-    public:                                                                                                        \
-        virtual bool operator()(RunStatus& stat)                                                                   \
-        {                                                                                                          \
-            if (_doInputs(stat))                                                                                   \
-                return true;                                                                                       \
-            T out = *(T*)_getInput(0)->getOutput()->getData() OPERATOR * (T*)_getInput(1)->getOutput()->getData(); \
-            LOG_DEBUG(#OPNAME ": %s = %s " #OPERATOR " %s\n", std::to_string(out).c_str(),                         \
-                std::to_string(*(T*)_getInput(0)->getOutput()->getData()).c_str(),                                 \
-                std::to_string(*(T*)_getInput(1)->getOutput()->getData()).c_str());                                \
-            *(T*)(getOutput()->getData()) = out;                                                                   \
-            return false;                                                                                          \
-        }                                                                                                          \
+#define DEF_BINARY_OP(OPNAME, OPERATOR)                                                                                                            \
+    template <typename T>                                                                                                                          \
+    class OPNAME : public Function {                                                                                                               \
+    public:                                                                                                                                        \
+        virtual bool operator()(RunStatus& stat)                                                                                                   \
+        {                                                                                                                                          \
+            if (_doInputs(stat))                                                                                                                   \
+                return true;                                                                                                                       \
+            T first = *(T*)_getInput(0)->getOutput()->getData();                                                                                   \
+            T second = *(T*)_getInput(1)->getOutput()->getData();                                                                                  \
+            if (std::string(#OPNAME) == "Div" && second == 0)                                                                                      \
+                throw std::runtime_error(std::string("Division by zero: ") + std::to_string(first) + std::string(" / ") + std::to_string(second)); \
+            T out = first OPERATOR second;                                                                                                         \
+            LOG_DEBUG(#OPNAME ": %s = %s " #OPERATOR " %s\n", std::to_string(out).c_str(),                                                         \
+                std::to_string(first).c_str(),                                                                                                     \
+                std::to_string(second).c_str());                                                                                                   \
+            *(T*)(getOutput()->getData()) = out;                                                                                                   \
+            return false;                                                                                                                          \
+        }                                                                                                                                          \
     };
 
 // Define a unary operatorion OPNAME<type>
