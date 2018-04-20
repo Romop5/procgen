@@ -105,7 +105,7 @@ bool Generation::initializeFunction(const char* type)
     return true;
 }
 
-bool Generation::registerRule(char* name, char* type)
+bool Generation::registerRule(const char* name, const char* type)
 {
     static int ruleID = 0;
     ruleID++;
@@ -135,7 +135,7 @@ bool Generation::registerRule(char* name, char* type)
     return der->addRule(typeId, functionregister->getFunc(conditionName.str()),
         functionregister->getFunc(ruleName.str()));
 }
-bool Generation::registerAlias(char* alias, char* aliasedType)
+bool Generation::registerAlias(const char* alias, const char* aliasedType)
 {
     if (typeregister->addAlias(alias, aliasedType) == false) {
         errorMessage("Failed to register alias %s for type %s\n", alias, aliasedType);
@@ -144,7 +144,7 @@ bool Generation::registerAlias(char* alias, char* aliasedType)
     return true;
 }
 
-bool Generation::registerStruct(char* name, std::vector<sTypeDeclaration>& typelist)
+bool Generation::registerStruct(const char* name, std::vector<sTypeDeclaration>& typelist)
 {
     std::vector<TypeId> types;
     std::vector<std::string> names;
@@ -161,7 +161,7 @@ bool Generation::registerStruct(char* name, std::vector<sTypeDeclaration>& typel
     return result;
 }
 
-bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
+bool Generation::registerParameter(const char* name, const char* type, bool hasLiteral)
 {
     // Get resource for type
     auto resource = typeregister->sharedResource(type);
@@ -192,7 +192,7 @@ bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
     return true;
 }
 
-bool Generation::registerFunction(char* type, char* name)
+bool Generation::registerFunction(const char* type, const char* name)
 {
     LOG_DEBUG("Registering function %s:%s\n", type, name);
     auto resource = localStackFrame->getVar("_return");
@@ -222,7 +222,7 @@ bool Generation::registerFunction(char* type, char* name)
         statementTop, inputResources, resource);
 }
 
-std::shared_ptr<Function> Generation::createUnaryOperation(char operation)
+std::shared_ptr<Function> Generation::createUnaryOperation(const char operation)
 {
     std::shared_ptr<Function> exp = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -252,7 +252,7 @@ std::shared_ptr<Function> Generation::createUnaryOperation(char operation)
     return operationBox;
 }
 
-std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
+std::shared_ptr<Function> Generation::createExpressionOperation(const char operation)
 {
     // TODO: produce common type
 
@@ -394,7 +394,7 @@ void Generation::createLiteralFloat(float value)
     this->expressionsStack.push(functionregister->getHandler(val));
 }
 
-bool Generation::createLiteralFromVariable(char* name)
+bool Generation::createLiteralFromVariable(const char* name)
 {
     auto res = this->getVariable(name);
     if (res == nullptr) {
@@ -407,7 +407,7 @@ bool Generation::createLiteralFromVariable(char* name)
     return true;
 }
 
-bool Generation::createStructuredLiteral(char* member)
+bool Generation::createStructuredLiteral(const char* member)
 {
     auto compositeFunction = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -546,7 +546,7 @@ bool Generation::makeReturn(bool hasExpression)
 
     return true;
 }
-bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
+bool Generation::makeAssignment(const char* name, bool hasAssignment, const char op)
 {
     /*// get resourse
 		auto resource = localStackFrame->getVar(name);
@@ -745,7 +745,7 @@ void Generation::setDebugOn(bool state)
     //  yydebug = 1;
 }
 
-sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
+sTypeDeclaration Generation::fillTypeDeclaration(const char* type, const char* name)
 {
     sTypeDeclaration result;
     result.name = name;
@@ -753,7 +753,7 @@ sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
     return result;
 }
 
-bool Generation::initializeRule(char* typeName)
+bool Generation::initializeRule(const char* typeName)
 {
     this->initializeFunction("bool");
     auto thisResource = typeregister->sharedResource(typeName);
@@ -764,7 +764,7 @@ bool Generation::initializeRule(char* typeName)
     return true;
 }
 
-bool Generation::ruleProcedure(char* typeName)
+bool Generation::ruleProcedure(const char* typeName)
 {
     this->localStackFrame->clear();
     auto thisResource = typeregister->sharedResource(typeName);
@@ -773,7 +773,7 @@ bool Generation::ruleProcedure(char* typeName)
     return true;
 }
 
-bool Generation::makeTypeid(char* name)
+bool Generation::makeTypeid(const char* name)
 {
     std::shared_ptr<Resource> nameResource = nullptr;
     if (typeregister->hasType(name)) {
@@ -791,7 +791,7 @@ bool Generation::makeTypeid(char* name)
     return true;
 }
 
-bool Generation::makeConvert(char* name)
+bool Generation::makeConvert(const char* name)
 {
     auto expr = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -804,7 +804,7 @@ bool Generation::makeConvert(char* name)
     return true;
 }
 
-bool Generation::makeExplicitCast(char* finalTypename)
+bool Generation::makeExplicitCast(const char* finalTypename)
 {
     auto expr = this->expressionsStack.top();
     this->expressionsStack.pop();

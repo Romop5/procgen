@@ -188,29 +188,29 @@ public:
     // Prepare local stack
     bool initializeFunction(const char* type);
 
-    bool registerRule(char* name, char* type);
+    bool registerRule(const char* name, const char* type);
 
     // Register a new name for type.
     // May fail on missing aliasedType or alias name collision
-    bool registerAlias(char* alias, char* aliasedType);
+    bool registerAlias(const char* alias, const char* aliasedType);
 
     // Define a structure with its members. May fail on invalid type / name duplication
-    bool registerStruct(char* name, std::vector<sTypeDeclaration>& types);
+    bool registerStruct(const char* name, std::vector<sTypeDeclaration>& types);
 
     // Register global parameter
-    bool registerParameter(char* name, char* type, bool hasLiteral);
+    bool registerParameter(const char* name, const char* type, bool hasLiteral);
 
-    bool registerFunction(char* type, char* name);
+    bool registerFunction(const char* type, const char* name);
 
-    std::shared_ptr<Function> createUnaryOperation(char operation);
-    std::shared_ptr<Function> createExpressionOperation(char operation);
-    std::shared_ptr<Function> createExpressionLogicOperation(char operation);
+    std::shared_ptr<Function> createUnaryOperation(const char operation);
+    std::shared_ptr<Function> createExpressionOperation(const char operation);
+    std::shared_ptr<Function> createExpressionLogicOperation(const char operation);
 
     void createLiteralBool(bool value);
     void createLiteralInteger(int value);
     void createLiteralFloat(float value);
-    bool createLiteralFromVariable(char* name);
-    bool createStructuredLiteral(char* member);
+    bool createLiteralFromVariable(const char* name);
+    bool createStructuredLiteral(const char* member);
 
     bool createFunctionCall(const char* functionName, std::vector<Argument>);
 
@@ -219,7 +219,7 @@ public:
     bool registerLocalVariable(const char* type, const char* name, bool hasExp);
     bool makeReturn(bool hasExpression);
 
-    bool makeAssignment(const char* name, bool hasAssignment, char op = '=');
+    bool makeAssignment(const char* name, bool hasAssignment, const char op = '=');
 
     bool makeWhile();
 
@@ -231,15 +231,15 @@ public:
 
     bool registerFormalParameter(sTypeDeclaration& parameter);
 
-    sTypeDeclaration fillTypeDeclaration(char* type, char* name);
+    sTypeDeclaration fillTypeDeclaration(const char* type, const char* name);
 
-    bool initializeRule(char* typeName);
-    bool ruleProcedure(char* rulename);
+    bool initializeRule(const char* typeName);
+    bool ruleProcedure(const char* rulename);
 
-    bool makeTypeid(char* name);
-    bool makeConvert(char* name);
+    bool makeTypeid(const char* name);
+    bool makeConvert(const char* name);
 
-    bool makeExplicitCast(char* finalTypename);
+    bool makeExplicitCast(const char* finalTypename);
 
     bool makeConstructor(const char* functionName, std::vector<Argument>);
 
@@ -248,7 +248,7 @@ public:
     bool createCollectionSize();
     bool createCollectionDel();
 
-    bool isLogicOperator(char operatorName)
+    bool isLogicOperator(const char operatorName)
     {
         switch (operatorName) {
         case '>':

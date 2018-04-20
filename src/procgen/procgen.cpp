@@ -17,8 +17,10 @@ bool Procgen::parseFile(const std::string& file)
 {
     std::ifstream s(file.c_str(), std::ifstream::in);
     generation._scanner->switch_streams(&s, &std::cerr);
-    std::string* newString = new std::string(file);
-    generation._location.initialize(newString);
+    //std::string* newString = new std::string(file);
+
+    std::shared_ptr<std::string> fileName = std::make_shared<std::string>(file);
+    generation._location.initialize(fileName.get());
     generation._parser->parse();
 
     s.close();

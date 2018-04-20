@@ -39,7 +39,7 @@
 %union {
 	int     ival;
 	float   fval;
-	char    *sval;
+	const char *sval;
 	size_t  nodeId;
     bool    boolean;
 }

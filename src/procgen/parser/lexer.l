@@ -144,7 +144,9 @@ typedef ProcGen::Parser::token_type token_type;
 [0-9]+            { yylval->ival = atoi(yytext); return token::INTEGER; }
 [a-zA-Z0-9]+      {
 	//cout << "Got string: " << yytext << endl;
-	yylval->sval = strdup(yytext);
+    auto identifierStringObject = std::make_shared<std::string>(yytext);
+    this->identifiers.push_back(identifierStringObject);
+	yylval->sval = identifierStringObject.get()->c_str();
 	// detect if it is type or identifier
     if(generation.hasType(yytext))
 		return token::TYPE;
