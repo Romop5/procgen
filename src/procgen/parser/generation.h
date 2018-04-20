@@ -95,6 +95,8 @@ public:
         return true;
     }
 
+    bool appendSymbol(json symbol);
+
     /* Compilation utilities*/
 
     /**

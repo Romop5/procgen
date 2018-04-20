@@ -95,4 +95,9 @@ bool Procgen::hasAnyErrorMessage() const
 {
     return (!this->lastError.empty());
 }
+
+bool Procgen::appendSymbol(json symbol)
+{
+    return this->generation->appendSymbol(symbol);
+}
 }

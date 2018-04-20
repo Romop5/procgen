@@ -48,6 +48,8 @@ public:
 
     // Clean
     void reinitialize();
+
+    bool appendSymbol(json symbol);
 };
 }
 #endif

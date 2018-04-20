@@ -34,12 +34,21 @@ Generation::~Generation()
     delete _scanner;
 }
 
+bool Generation::appendSymbol(json symbol)
+{
+    auto resource = this->typeregister->createResourceFromJson(symbol);
+    if(resource == nullptr)
+        return false;
+    this->derivation->appendNextSymbol(symbol);
+    return true;
+}
+
 bool Generation::parseFile(const std::string& file)
 {
     std::ifstream s(file.c_str(), std::ifstream::in);
     _scanner->switch_streams(&s, &std::cerr);
-    std::string* newString = new std::string(file);
-    _location.initialize(newString);
+    auto newString = std::make_shared<std::string>(file);
+    _location.initialize(newString.get());
     _parser->parse();
 
     s.close();
