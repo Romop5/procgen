@@ -16,10 +16,14 @@
 #include <procgen/utils/json.hpp>
 
 namespace ProcGen {
+
 using TypeId = size_t;
 class CompositeType;
 class TypeRegister;
 
+/**
+ * @brief Enumeration classifying resource classes (composite, atomic, etc)
+ */
 enum class ResourceType { ABSTRACT,
     ATOMIC,
     COMPOSITE,
@@ -49,22 +53,64 @@ protected:
 public:
     virtual ~Resource() {}
 
+    /**
+     * @brief Get resource data
+     *
+     * @return pointer to raw data
+     */
     virtual void* getData() const = 0;
 
+    /**
+     * @brief Get resource's TypeRegister ID
+     *
+     * @return 
+     */
     virtual size_t getBaseId() { return baseType; }
 
-    ResourceType getResourceType() { return resourceType; }
+    /**
+     * @brief Get resource classification
+     *
+     * @return 
+     */
+    ResourceType getResourceType() const { return resourceType; }
 
+    /**
+     * @brief Get resource's type name
+     *
+     * @return 
+     */
     std::string getTypeName() const;
 
+    /**
+     * @brief Copy contain of src to this resource class
+     *
+     * @param src
+     *
+     * @return 
+     */
     virtual bool copy(const std::shared_ptr<Resource> src) = 0;
 
+    /**
+     * @brief Serialize content of resource to JSON object
+     *
+     * @return 
+     */
     virtual json to_json() const { return json("UnkResource"); }
 
-    ResourceType getResourceType() const { return this->resourceType; }
-
+    /**
+     * @brief Duplicates the current resource into a new resource with same content
+     *
+     * @return new instance of Resource
+     */
     std::shared_ptr<Resource> allocateClone();
 
+    /**
+     * @brief Has two resource equal type
+     *
+     * @param res
+     *
+     * @return 
+     */
     bool hasSameType(std::shared_ptr<Resource> res);
 };
 

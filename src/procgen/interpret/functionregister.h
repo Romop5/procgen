@@ -29,30 +29,63 @@ public:
     FunctionReg(std::weak_ptr<TypeRegister> reg)
         : tr(reg){};
     ~FunctionReg(){};
+    /**
+     * @brief Register function provided name and lambda constructor
+     *
+     * @param name function name
+     * @param std::function Function constructor
+     *
+     * @return 
+     */
     bool addFunction(std::string name, std::function<std::shared_ptr<Function>()>);
 
+    /**
+     * @brief Register class as function
+     *
+     * @tparam X class name
+     * @param name function name in interpret
+     *
+     * @return false if name is already defined
+     */
     template <class X>
     bool addFunction(std::string name)
     {
         return this->addFunction(name, [] { return std::static_pointer_cast<Function>(std::make_shared<X>()); });
     }
 
+    /**
+     * @brief Register function from statements
+     *
+     * @param name function name
+     * @param body function statements
+     * @param inputs function parameters resources
+     * @param output function return value resource
+     *
+     * @return 
+     */
     bool addCompositeFunction(
         std::string name,
-        std::shared_ptr<Statement> core,
+        std::shared_ptr<Statement> body,
         std::vector<std::shared_ptr<Resource>> inputs,
         std::shared_ptr<Resource> output)
     {
-        auto cfs = std::make_shared<CompositeFunction>(core, inputs, output);
-        //return std::make_shared<FunctionCall>(cfs);
+        auto cfs = std::make_shared<CompositeFunction>(body, inputs, output);
+        // register lambda constructor for given composite function
         func[name] = [cfs, name] { return std::static_pointer_cast<Function>(std::make_shared<FunctionCall>(cfs, name)); };
         return true;
     }
 
+    /**
+     * @brief Get instance of function by name
+     *
+     * @param name function name
+     *
+     * @return  Function instance or nullptr if function misses 
+     */
     std::shared_ptr<Function> getFunc(std::string name);
 
-    /**
-* @brief Returns an instance of funcion handling given resource
+/**
+* @brief Returns an instance of utility funcion handling given resource
 * @param res
 */
     std::shared_ptr<HandleFunction> getHandler(std::shared_ptr<Resource> res)
