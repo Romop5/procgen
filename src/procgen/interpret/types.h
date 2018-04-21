@@ -10,11 +10,6 @@ namespace ProcGen {
     FNC(bool, "bool");          \
     FNC(float, "float");        \
     FNC(long, "long");
-/*
-	FNC(char,"char");\
-	FNC(short,"short");\
-	FNC(double,"double");\
-*/
 
 // Provides an easy way to iterate a FNC function over standard built-in types
 // This time supports a parameter, passed to function
@@ -22,14 +17,6 @@ namespace ProcGen {
     FNC(int, PARAM);                    \
     FNC(long, PARAM);                   \
     FNC(float, PARAM);
-
-//FNC(bool,PARAM);
-
-/*
-	FNC(double,"double",PARAM);\
-	FNC(char,"char",PARAM);\
-	FNC(short,"short",PARAM);
-*/
 
 // Defines a templated function which can be used to convert C++ type
 // to its string representation.
@@ -46,4 +33,4 @@ std::string keyword();
     template <>                 \
     std::string keyword<type>() { return typeName; }
 }
-#endif // Calls FNC(type, string:typeName)
+#endif 
