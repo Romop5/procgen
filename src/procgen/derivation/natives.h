@@ -6,6 +6,8 @@
 #include <procgen/interpret/function.h>
 #include <procgen/utils/logger.h>
 
+
+namespace ProcGen {
 // int = getCurrentPosition() returns current position in derivation string
 class NativeCurrentPosition : public Function {
     std::weak_ptr<Derivation> derivation;
@@ -153,5 +155,5 @@ public:
         return false;
     }
 };
-
+}
 #endif

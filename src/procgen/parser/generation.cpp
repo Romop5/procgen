@@ -8,9 +8,7 @@
 
 #include <cstdarg>
 
-extern FILE* yyin;
 namespace ProcGen {
-
 Generation::Generation()
 {
     _scanner = new Scanner();

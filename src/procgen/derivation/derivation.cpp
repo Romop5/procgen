@@ -1,5 +1,6 @@
 #include <procgen/derivation/derivation.h>
 
+namespace ProcGen {
 bool Derivation::addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure)
 {
     auto rule = std::make_tuple(predicate, procedure);
@@ -149,4 +150,5 @@ json Derivation::to_json() const
         subjson.push_back(x->to_json());
     }
     return subjson;
+}
 }

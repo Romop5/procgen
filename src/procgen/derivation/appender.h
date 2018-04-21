@@ -3,6 +3,7 @@
 #include <procgen/derivation/derivation.h>
 #include <procgen/interpret/interpret.h>
 
+namespace ProcGen {
 class AppendSymbol : public Function {
     std::weak_ptr<Derivation> derivation;
 
@@ -31,4 +32,5 @@ public:
         return false;
     }
 };
+}
 #endif

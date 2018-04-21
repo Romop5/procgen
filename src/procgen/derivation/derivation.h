@@ -1,53 +1,11 @@
 #ifndef DERIVATION_H
 #define DERIVATION_H
 #include <procgen/interpret/interpret.h>
-//#include <procgen/derivation/natives.h>
-//#include <procgen/derivation/appender.h>
 #include <map>
 #include <procgen/utils/json.hpp>
 
-/*
-class DomNode {
-	public:
-		std::shared_ptr<Resource> symbol;
-		std::shared_ptr<DomNode> parent;
-		std::shared_ptr<DomNode> left;
-		std::shared_ptr<DomNode> right;
-};
-
-class Dom
-{
-	public:
-		std::map<std::shared_ptr<Resource>, size_t> resourceToId;
-		std::map<size_t, DomNode> node;
-
-	bool insertResource(std::shared_ptr<Resource> res)
-	{
-		static size_t index = 1;	
-		resourceToId[res] = index;
-		node[index] = DomNode();
-		index++;
-		return true;
-
-	}
-	size_t getResourceId(std::shared_ptr<Resource> res) 
-	{
-		if(resourceToId.count(res) > 0)
-			return resourceToId[res];
-		return 0;
-	}
-	DomNode& getNodeById(size_t id)
-	{
-		if(node.count(id) > 0)
-			return node[id];
-		static DomNode empty;
-		return empty;
-	}
-};
-*/
-
+namespace ProcGen {
 class Derivation {
-    //TODO
 public:
     using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function>>;
     std::weak_ptr<FunctionReg> fr;
@@ -159,4 +117,5 @@ public:
         return -1;
     }
 };
+}
 #endif
