@@ -98,6 +98,6 @@ bool Procgen::hasAnyErrorMessage() const
 
 bool Procgen::appendSymbol(json symbol)
 {
-    return this->generation->appendSymbol(symbol);
+    return this->generation.appendSymbol(symbol);
 }
 }
