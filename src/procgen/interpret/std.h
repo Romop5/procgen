@@ -1,5 +1,6 @@
 #include <procgen/interpret/typeregister.h>
 
+namespace ProcGen {
 /**
 * @brief Register std types 
 * @param tr
@@ -31,3 +32,4 @@ void registerStandardFunctions(FunctionReg* fr);
 */
 
 int getCommonType(std::string first, std::string second);
+}

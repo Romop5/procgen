@@ -3,6 +3,7 @@
 #include <procgen/interpret/types.h>
 #include <string>
 
+namespace ProcGen {
 // Provides an easy way to iterate a FNC function over standard built-in types
 #define FORALL_ATOMICTYPES(FNC) \
     FNC(int, "int");            \
@@ -45,4 +46,5 @@ std::string keyword();
     template <>                 \
     std::string keyword<type>() { return typeName; }
 
+}
 #endif // Calls FNC(type, string:typeName)

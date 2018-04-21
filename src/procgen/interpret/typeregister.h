@@ -8,6 +8,8 @@
 #include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
 
+namespace ProcGen {
+
 /**
 * @class TypeRegister 
 * @brief Registration and instancing of user-defined types
@@ -349,4 +351,5 @@ private:
     std::map<std::string, TypeId> names;
     std::map<TypeId, std::shared_ptr<AbstractType>> types;
 };
+}
 #endif

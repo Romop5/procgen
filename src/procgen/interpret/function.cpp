@@ -1,4 +1,7 @@
 #include <procgen/interpret/function.h>
+
+namespace ProcGen {
+
 bool Function::operator()(RunStatus& stat)
 {
     if (_doInputs(stat))
@@ -37,4 +40,5 @@ bool DebugStatement::operator()(RunStatus& stat)
 bool HandleFunction::operator()(RunStatus& stat)
 {
     return false;
+}
 }

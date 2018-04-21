@@ -11,6 +11,7 @@
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/typeregister.h>
 
+namespace ProcGen {
 // function pointer = Function constructor
 typedef std::shared_ptr<Function> (*func_constr)();
 
@@ -69,3 +70,4 @@ private:
     std::weak_ptr<TypeRegister> tr;
     std::map<std::string, std::function<std::shared_ptr<Function>()>> func;
 };
+}

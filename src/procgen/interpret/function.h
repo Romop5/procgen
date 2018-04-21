@@ -19,6 +19,8 @@
 #include <procgen/interpret/statement.h>
 #include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
+
+namespace ProcGen {
 class Statement;
 class Resource;
 
@@ -571,4 +573,5 @@ DEF_BINARY_LOGIC_OP(Eq, ==);
 DEF_BINARY_LOGIC_OP(And, &&);
 DEF_BINARY_LOGIC_OP(Or, ||);
 DEF_BINARY_LOGIC_OP(NotEq, !=);
+}
 #endif

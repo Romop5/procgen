@@ -19,6 +19,8 @@
 
 5. Enjoy it
 */
+
+namespace ProcGen {
 // Will handle tree and interfaces
 struct CompositeFunction {
     std::vector<std::shared_ptr<Resource>> inputs;
@@ -112,5 +114,5 @@ public:
         return Function::bindOutput(res);
     }
 };
-
+}
 #endif

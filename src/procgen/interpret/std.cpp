@@ -1,8 +1,9 @@
 #include <procgen/interpret/functionregister.h>
 #include <procgen/interpret/typeregister.h>
 #include <procgen/interpret/types.h>
-
 #include <set>
+
+namespace ProcGen {
 
 void registerStandardTypes(TypeRegister* tr)
 {
@@ -139,4 +140,5 @@ int getCommonType(std::string first, std::string second)
         return 1;
     }
     return 0;
+}
 }

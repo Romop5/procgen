@@ -15,6 +15,7 @@
 
 #include <procgen/utils/json.hpp>
 
+namespace ProcGen {
 using TypeId = size_t;
 class CompositeType;
 class TypeRegister;
@@ -199,5 +200,5 @@ public:
     virtual bool copy(const std::shared_ptr<Resource> src) override;
     virtual json to_json() const override;
 };
-
+}
 #endif

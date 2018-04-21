@@ -6,6 +6,7 @@
 #include <procgen/interpret/resource.h>
 #include <vector>
 
+namespace ProcGen {
 /**
 * @class RunStatus
 * @brief Helper class for execution flow controlling
@@ -150,4 +151,5 @@ public:
     void bindInput(std::shared_ptr<Function> function) { input = std::dynamic_pointer_cast<Statement>(function); }
     virtual bool operator()(RunStatus&);
 };
+}
 #endif

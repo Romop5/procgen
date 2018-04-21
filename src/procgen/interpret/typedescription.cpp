@@ -3,6 +3,8 @@
 #include <procgen/interpret/typeregister.h>
 #include <procgen/utils/logger.h>
 
+namespace ProcGen {
+
 unsigned int AbstractType::getAlignedSize()
 {
     /*    size_t alignment = alignof(max_align_t);
@@ -58,4 +60,5 @@ TypeId CompositeType::getComponentTypeId(size_t componentID) const
     if (componentID >= this->components.size())
         return 0;
     return this->components[componentID];
+}
 }

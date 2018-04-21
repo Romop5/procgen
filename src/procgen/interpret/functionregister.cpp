@@ -1,6 +1,8 @@
 #include <iostream>
 #include <procgen/interpret/functionregister.h>
 
+namespace ProcGen {
+
 bool FunctionReg::addFunction(std::string name, std::function<std::shared_ptr<Function>()> c)
 {
     // if there isn't any function with name @name
@@ -25,4 +27,5 @@ void FunctionReg::_debug()
     for (auto& x : this->func) {
         std::cout << x.first << std::endl;
     }
+}
 }
