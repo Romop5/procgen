@@ -61,11 +61,11 @@ public:
     virtual bool operator()(RunStatus& stat);
 };
 
+/**
+ * @class HandleFunction
+ * @brief Utility function to handle resource while passing input to Function
+ */
 class HandleFunction : public Function {
-public:
-    virtual bool operator()(RunStatus& stat);
-};
-class DebugStatement : public Function {
 public:
     virtual bool operator()(RunStatus& stat);
 };
@@ -76,25 +76,7 @@ public:
 */
 class PrintJson : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        LOG_INFO("PrintJson %s\n", _getInput(0)->getOutput()->to_json().dump().c_str());
-        return false;
-    }
-};
-
-template <typename T>
-class PrintValue : public Function {
-public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        LOG_INFO("Operation: %g\n", *(T*)(_getInput(0)->getOutput()->getData()));
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -106,15 +88,7 @@ public:
 */
 class CollectionAppend : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput())->append(_getInput(1)->getOutput());
-
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -127,16 +101,7 @@ public:
 */
 class CollectionIndex : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        this->bindOutput(res->at(*(int*)_getInput(1)->getOutput()->getData()));
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -148,16 +113,7 @@ public:
 */
 class CollectionLength : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        *(int*)this->getOutput()->getData() = res->length();
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -169,16 +125,7 @@ public:
 */
 class CollectionRemove : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        res->remove(*(int*)_getInput(1)->getOutput()->getData());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -189,15 +136,7 @@ public:
 */
 class CollectionClear : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        res->clear();
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -210,17 +149,7 @@ public:
 */
 class CompositeGet : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
-        size_t index = *(int*)_getInput(1)->getOutput()->getData();
-        this->bindOutput(res->getComponent(index));
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -234,31 +163,13 @@ public:
 
 class CompositeSet : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
-        size_t index = *(int*)_getInput(1)->getOutput()->getData();
-        res->getComponent(index)->copy(_getInput(2)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // TODO: create macro type2type
 class FloatToBool : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        bool out = (bool)*(float*)_getInput(0)->getOutput()->getData();
-        *(bool*)(getOutput()->getData()) = out;
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Define a binary logic operatorion OPNAME<type>
@@ -372,14 +283,7 @@ public:
 // input(0) = input(1)
 class GenericCopy : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        _getInput(0)->getOutput()->copy(_getInput(1)->getOutput());
-        this->bindOutput(_getInput(0)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Run-time verification of type
@@ -390,73 +294,27 @@ private:
 public:
     Convert(TypeId _type)
         : type(_type){};
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        if (_getInput(0)->getOutput()->getBaseId() != type) {
-            // error = types doesn't match
-            throw std::runtime_error("Convert<>: types don't match");
-        }
-        this->bindOutput(_getInput(0)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Returns run-time TypeId for given resource
 // TypeId is int
 class GetTypeId : public Function {
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        // Write TypeId to output resource
-        *(int*)this->getOutput()->getData() = (_getInput(0)->getOutput()->getBaseId());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Random in range <a,b)
 class GenerateUniform : public Function {
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // a = 0
-        // b = 1
-
-        float a = *(float*)_getInput(0)->getOutput()->getData();
-        float b = *(float*)_getInput(1)->getOutput()->getData();
-
-        float x = rand() / (float(RAND_MAX) + 1.0);
-        x = x * (b - a) + a;
-        *(float*)this->getOutput()->getData() = x;
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Random in range <0,1)
 class GenerateRandom : public Function {
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        *(float*)this->getOutput()->getData() = rand() / (float(RAND_MAX) + 1.0);
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 class SetRandomSeed : public Function {
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        srand(*(int*)_getInput(0)->getOutput()->getData());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 template <typename DEST, typename SRC>
@@ -475,77 +333,14 @@ public:
 
 class ConstructCollection : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        LOG_DEBUG("Construct \n");
-        assert(this->getOutput() != nullptr);
-
-        auto resourceType = this->getOutput()->getResourceType();
-        if (resourceType == ResourceType::COLLECTION) {
-            LOG_DEBUG("Constructing collection\n");
-            auto output = std::dynamic_pointer_cast<CollectionResource>(this->getOutput());
-            size_t countOfFunctionInputs = this->getCountOfInputs();
-            output->clear();
-            for (size_t i = 0; i < countOfFunctionInputs; i++) {
-                // append at the end of collection
-                output->append(this->_getInput(i)->getOutput());
-            }
-        }
-
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 class Construct : public Function {
 public:
-    size_t getCountOfComponents()
-    {
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        return output->getComponentCount();
-    }
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        LOG_DEBUG("Construct \n");
-        assert(this->getOutput() != nullptr);
-
-        auto resourceType = this->getOutput()->getResourceType();
-        if (resourceType == ResourceType::COMPOSITE) {
-            auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-            size_t count = output->getComponentCount();
-            size_t countOfFunctionInputs = this->getCountOfInputs();
-
-            // presume correct match of arguments and parameters
-            assert(count == countOfFunctionInputs);
-            static_cast<void>(countOfFunctionInputs);
-
-            for (size_t i = 0; i < count; i++) {
-                LOG_DEBUG("Construct atrib %d\n", i);
-                output->getComponent(i)->copy(this->_getInput(i)->getOutput());
-            }
-        }
-        return false;
-    }
-
-    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
-    {
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        assert(output != nullptr);
-
-        if (id >= output->getComponentCount())
-            return false;
-        // detect type consistency
-        if (!func->getOutput()->hasSameType(output->getComponent(id))) {
-            return false;
-        }
-        Function::bindInput(id, func);
-        return true;
-    }
+    size_t getCountOfComponents();
+    virtual bool operator()(RunStatus& stat);
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
 };
 
 /*
