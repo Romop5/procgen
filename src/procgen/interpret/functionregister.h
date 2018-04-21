@@ -84,7 +84,7 @@ public:
      */
     std::shared_ptr<Function> getFunc(std::string name);
 
-/**
+    /**
 * @brief Returns an instance of utility funcion handling given resource
 * @param res
 */

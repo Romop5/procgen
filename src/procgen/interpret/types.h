@@ -45,6 +45,5 @@ std::string keyword();
 #define KEYWORD(type, typeName) \
     template <>                 \
     std::string keyword<type>() { return typeName; }
-
 }
 #endif // Calls FNC(type, string:typeName)

@@ -25,6 +25,7 @@ add_subdirectory(vendors)
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src/procgen)
 
 set(INTERPRET_SOURCE 
+    src/procgen/interpret/compositefunction.cpp
     src/procgen/interpret/function.cpp
     src/procgen/interpret/types.cpp
     src/procgen/interpret/functionregister.cpp

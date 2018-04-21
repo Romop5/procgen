@@ -256,7 +256,4 @@ bool Construct::bindInput(size_t id, std::shared_ptr<Function> func)
     Function::bindInput(id, func);
     return true;
 }
-
-
-
 }

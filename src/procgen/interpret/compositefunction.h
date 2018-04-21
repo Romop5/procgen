@@ -40,7 +40,7 @@ class FunctionCall : public Function {
 
 public:
     FunctionCall(std::shared_ptr<CompositeFunction> cf, std::string name);
-   
+
     bool operator()(RunStatus& stat);
     bool bindInput(size_t id, std::shared_ptr<Function> func) override;
     bool bindOutput(std::shared_ptr<Resource> res) override;

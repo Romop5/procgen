@@ -1,7 +1,7 @@
 #ifndef DERIVATION_H
 #define DERIVATION_H
-#include <procgen/interpret/interpret.h>
 #include <map>
+#include <procgen/interpret/interpret.h>
 #include <procgen/utils/json.hpp>
 
 namespace ProcGen {

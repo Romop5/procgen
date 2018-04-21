@@ -35,7 +35,7 @@ Generation::~Generation()
 bool Generation::appendSymbol(json symbol)
 {
     auto resource = this->typeregister->createResourceFromJson(symbol);
-    if(resource == nullptr)
+    if (resource == nullptr)
         return false;
     this->der->appendNextSymbol(resource);
     return true;
