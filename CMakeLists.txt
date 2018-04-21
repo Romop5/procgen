@@ -30,6 +30,7 @@ set(INTERPRET_SOURCE
     src/procgen/interpret/types.cpp
     src/procgen/interpret/functionregister.cpp
     src/procgen/interpret/typedescription.cpp
+    src/procgen/interpret/typeregister.cpp
     src/procgen/interpret/std.cpp
     src/procgen/interpret/variableregister.cpp
     src/procgen/interpret/statement.cpp
