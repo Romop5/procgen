@@ -19,29 +19,30 @@ It works as a blackbox that receives a description of generation, written down i
 The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 2018.
 ## Example results
 <p align="center">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/bullet.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/densetree.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/ker-10angle.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/newhash.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/nicehash.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-30-06.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-sixedge.svg.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.snowflake.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.labyrint.procgen.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.classic.procgen.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree.procgen.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree2.procgen.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree3.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/bullet.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/densetree.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/ker-10angle.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/newhash.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/nicehash.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-30-06.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-sixedge.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.snowflake.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.labyrint.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.classic.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree2.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree3.procgen.png?raw=true" width="120px">
 </p>
 <p align="center">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/exampleProceduralPlane.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/examplePyramide.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/exampleRealTree.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/exampleSiepiersky.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTower.png?raw=true" width="120px">
-<img src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTree.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleProceduralPlane.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/examplePyramide.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleRealTree.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleSiepiersky.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTower.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTree.png?raw=true" width="120px">
 
 </p>
+<div style="clear:both"></div>
 
 See 
 * [Romop5/procgen-svg](https://github.com/Romop5/procgen-svg)

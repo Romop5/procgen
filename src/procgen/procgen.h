@@ -6,6 +6,10 @@
 
 #include <procgen/parser/generation.h>
 
+/*!
+ *  \addtogroup ProcGen 
+ *  @{
+ */
 namespace ProcGen {
 class Procgen {
     ProcGen::Generation generation;
@@ -52,4 +56,5 @@ public:
     bool appendSymbol(json symbol);
 };
 }
+/*! @} End of Doxygen ProcGen*/
 #endif
