@@ -471,6 +471,14 @@ bool Generation::createFunctionCall(const char* functionName, std::vector<Argume
         }
     }
 
+    // detect if all required ports are binded
+
+    if(functionPointer->hasRequiredBindings() == false)
+    {
+        errorMessage("[Semantic Error] Invalid count of parameters given to call of %s. Expected %d parameters",
+                functionName, functionPointer->getNumberOfExpectedInputs());
+    }
+
     // Push new expression(function call) to expression stack
     this->expressionsStack.push(functionPointer);
     return true;

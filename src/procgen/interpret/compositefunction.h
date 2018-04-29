@@ -48,6 +48,9 @@ public:
         this->cf = cf;
         this->bindOutput(this->cf.lock()->output->allocateClone());
         this->name = name;
+
+        // Set number of expected params to count of inputs
+        _numberOfExpectedBindings = cf->inputs.size();
     }
     bool operator()(RunStatus& stat)
     {
@@ -111,6 +114,7 @@ public:
             return false;
         return Function::bindOutput(res);
     }
+
 };
 
 #endif

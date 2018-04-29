@@ -37,10 +37,14 @@ private:
     std::shared_ptr<Resource> _output;
 
 protected:
+    bool _hasVariableCountOfBindings;
+    size_t _numberOfExpectedBindings;
+
     bool _doInputs(RunStatus& stat);
     std::shared_ptr<Function> _getInput(size_t id) { return this->_inputs[id]; }
 
 public:
+Function(): _hasVariableCountOfBindings(false), _numberOfExpectedBindings(0) {}
     /**
 * @brief Bind func expression as input at slot id
 * @param id
@@ -56,7 +60,14 @@ public:
     std::shared_ptr<Resource> getOutput() { return this->_output; }
 
     size_t getCountOfInputs() const { return this->_inputs.size(); }
+    
+    size_t getNumberOfExpectedInputs() const { return this->_numberOfExpectedBindings; }
+
+    bool hasRequiredBindings() const { if(_hasVariableCountOfBindings) return true; return this->_inputs.size() == this->_numberOfExpectedBindings; }
+
     virtual bool operator()(RunStatus& stat);
+
+
 };
 
 class HandleFunction : public Function {
@@ -74,23 +85,18 @@ public:
 */
 class PrintJson : public Function {
 public:
+    PrintJson() { _numberOfExpectedBindings = 1; }
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
+    {
+        if(id != 0)
+            return false;
+        return Function::bindInput(id, func);
+    }
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
             return true;
         LOG_INFO("PrintJson %s\n", _getInput(0)->getOutput()->to_json().dump().c_str());
-        return false;
-    }
-};
-
-template <typename T>
-class PrintValue : public Function {
-public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        LOG_INFO("Operation: %g\n", *(T*)(_getInput(0)->getOutput()->getData()));
         return false;
     }
 };
@@ -104,6 +110,7 @@ public:
 */
 class CollectionAppend : public Function {
 public:
+
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
@@ -351,6 +358,13 @@ public:
     template <typename T>                                                               \
     class OPNAME : public Function {                                                    \
     public:                                                                             \
+        OPNAME() {_numberOfExpectedBindings = 1; }                                      \
+        virtual bool bindInput(size_t id, std::shared_ptr<Function> fn)                 \
+        {                                                                               \
+            if(fn->getOutput()->getTypeName() != keyword<T>())               \
+                return false;                                                           \
+            return Function::bindInput(id, fn);                                         \
+        }                                                                               \
         virtual bool operator()(RunStatus& stat)                                        \
         {                                                                               \
             if (_doInputs(stat))                                                        \
@@ -383,7 +397,9 @@ private:
 
 public:
     Convert(TypeId _type)
-        : type(_type){};
+        : type(_type){
+            _numberOfExpectedBindings = 1;
+    };
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
@@ -400,6 +416,8 @@ public:
 // Returns run-time TypeId for given resource
 // TypeId is int
 class GetTypeId : public Function {
+    public:
+    GetTypeId() { _numberOfExpectedBindings = 1; }
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
@@ -412,6 +430,20 @@ class GetTypeId : public Function {
 
 // Random in range <a,b)
 class GenerateUniform : public Function {
+    public:
+    GenerateUniform()  {
+        _numberOfExpectedBindings = (2);
+    }
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
+    {
+        // allow only two params
+        if(id > 1)
+            return false;
+        if(func->getOutput()->getTypeName() != "float")
+            return false;
+        return Function::bindInput(id, func);
+    }
+
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
@@ -432,6 +464,12 @@ class GenerateUniform : public Function {
 
 // Random in range <0,1)
 class GenerateRandom : public Function {
+    public:
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override
+    {
+        return false;
+    }
+
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
@@ -443,6 +481,20 @@ class GenerateRandom : public Function {
 };
 
 class SetRandomSeed : public Function {
+   public:
+   SetRandomSeed() {
+        _numberOfExpectedBindings = 0;
+   }
+   virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override
+    {
+        // allow only two params
+        if(id > 0)
+            return false;
+        if(func->getOutput()->getTypeName() != "float")
+            return false;
+        return Function::bindInput(id, func);
+    }
+
     virtual bool operator()(RunStatus& stat)
     {
         if (_doInputs(stat))
