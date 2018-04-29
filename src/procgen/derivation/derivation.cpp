@@ -1,5 +1,6 @@
 #include <procgen/derivation/derivation.h>
 
+namespace ProcGen {
 bool Derivation::addRule(TypeId type, std::shared_ptr<Function> predicate, std::shared_ptr<Function> procedure)
 {
     auto rule = std::make_tuple(predicate, procedure);
@@ -27,6 +28,8 @@ void Derivation::generate(size_t maxSteps)
         // TODO
         // Document this algorithm in BC
         for (size_t i = 0; i < this->currentString.size(); i++) {
+            // Reset skip step to 1 - current symbol
+            this->numberOfSymbolsToSkip = 0;
             this->currentStringPositionID = i;
             // Find a rule for current symbols
             // If no rule exists, copy to nextString and continue
@@ -50,9 +53,9 @@ void Derivation::generate(size_t maxSteps)
                     size_t randomChoose = rand() % availableRules.size();
                     std::cout << "Random no: " << randomChoose << std::endl;
                     // apply rule on symbol
-                    int howManytoSkip = applyRule(availableRules[randomChoose], sym);
-                    // skip symbols
-                    i += howManytoSkip;
+                    applyRule(availableRules[randomChoose], sym);
+                    // Skip following symbols if neccessary
+                    i += this->numberOfSymbolsToSkip;
                 } else {
                     // if 'availableRules' is empty, apply default rule (copy)
                     std::cerr << "No aplicable rule found for type: " << sym->getTypeName() << std::endl;
@@ -147,4 +150,5 @@ json Derivation::to_json() const
         subjson.push_back(x->to_json());
     }
     return subjson;
+}
 }

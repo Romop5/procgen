@@ -6,13 +6,22 @@
 
 #include <procgen/parser/generation.h>
 
+/*!
+ *  \addtogroup ProcGen 
+ *  @{
+ */
 namespace ProcGen {
 class Procgen {
     ProcGen::Generation generation;
+    std::string lastError;
 
 public:
     Procgen();
     ~Procgen();
+
+    bool hasAnyErrorMessage() const;
+
+    const std::string& getLastErrorMessage() const;
 
     bool parseFile(const std::string& file);
 
@@ -33,10 +42,19 @@ public:
         return generation.setUniform(uniformName, value);
     }
 
+    template <typename T>
+    bool getUniform(std::string uniformName, T* value)
+    {
+        return generation.getUniform(uniformName, value);
+    }
+
     void setDebugOn(bool state);
 
     // Clean
     void reinitialize();
+
+    bool appendSymbol(json symbol);
 };
 }
+/*! @} End of Doxygen ProcGen*/
 #endif

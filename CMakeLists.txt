@@ -25,29 +25,31 @@ add_subdirectory(vendors)
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src/procgen)
 
 set(INTERPRET_SOURCE 
+    src/procgen/interpret/compositefunction.cpp
     src/procgen/interpret/function.cpp
     src/procgen/interpret/types.cpp
-    src/procgen/interpret/functionreg.cpp
-    src/procgen/interpret/typedesc.cpp
+    src/procgen/interpret/functionregister.cpp
+    src/procgen/interpret/typedescription.cpp
+    src/procgen/interpret/typeregister.cpp
     src/procgen/interpret/std.cpp
-    src/procgen/interpret/variablereg.cpp
+    src/procgen/interpret/variableregister.cpp
     src/procgen/interpret/statement.cpp
     src/procgen/interpret/resource.cpp
 )
 
 set(INTERPRET_HEADERS
-    src/procgen/interpret/functionreg.h
+    src/procgen/interpret/functionregister.h
     src/procgen/interpret/compositefunction.h
-    src/procgen/interpret/typedesc.h
+    src/procgen/interpret/typedescription.h
     src/procgen/interpret/function.h
     src/procgen/interpret/std.h
     src/procgen/interpret/types.h
-    src/procgen/interpret/typereg.h
+    src/procgen/interpret/typeregister.h
     src/procgen/interpret/interpret.h
     src/procgen/interpret/resource.h
     src/procgen/interpret/statement.h
     src/procgen/interpret/compositeutils.h
-    src/procgen/interpret/variablereg.h
+    src/procgen/interpret/variableregister.h
 )
 
 set(DERIVATION_SOURCE
@@ -157,11 +159,11 @@ if (PROCGEN_TESTS)
         test/compositeComponents.cpp
         test/composite.cpp
         test/dynamicboxes.cpp
-        test/functionreg.cpp
+        test/functionregister.cpp
         test/return.cpp
         test/test.cpp
-        test/typereg.cpp
-        test/variablereg.cpp
+        test/typeregister.cpp
+        test/variableregister.cpp
     )
 
 

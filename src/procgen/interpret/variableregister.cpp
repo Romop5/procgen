@@ -1,6 +1,9 @@
 #include <iostream>
-#include <procgen/interpret/variablereg.h>
+#include <procgen/interpret/variableregister.h>
 #include <procgen/utils/logger.h>
+
+namespace ProcGen {
+
 bool VariableReg::addVar(std::string name, std::shared_ptr<Resource> src)
 {
     if (this->vars.find(name) != this->vars.end())
@@ -28,4 +31,5 @@ void VariableReg::_debug()
 void VariableReg::clear()
 {
     this->vars.clear();
+}
 }

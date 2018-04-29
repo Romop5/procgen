@@ -6,6 +6,7 @@
 #include <procgen/interpret/function.h>
 #include <procgen/utils/logger.h>
 
+namespace ProcGen {
 // int = getCurrentPosition() returns current position in derivation string
 class NativeCurrentPosition : public Function {
     std::weak_ptr<Derivation> derivation;
@@ -50,8 +51,15 @@ public:
     NativeGetSymbol(std::shared_ptr<Derivation> de)
     {
         this->derivation = de;
+        this->bindOutput(derivation.lock()->tr.lock()->sharedResource("any"));
+        _numberOfExpectedBindings = 2;
     }
-
+    bool bindInput(size_t id, std::shared_ptr<Function> fn)
+    {
+        if(fn->getOutput()->getTypeName() != "int")
+            return false;
+        return true;
+    }
     bool operator()(RunStatus& rs)
     {
         if (_doInputs(rs))
@@ -71,6 +79,42 @@ public:
     }
 };
 
+// int = getSymbol(stringID,posID) returns symbol at [stringId,posid]
+class NativeHasSymbol : public Function {
+    std::weak_ptr<Derivation> derivation;
+
+public:
+    NativeHasSymbol(std::shared_ptr<Derivation> de)
+    {
+        this->derivation = de;
+        this->bindOutput(derivation.lock()->tr.lock()->sharedResource("bool"));
+        _numberOfExpectedBindings = 2;
+    }
+    bool bindInput(size_t id, std::shared_ptr<Function> fn)
+    {
+        if(fn->getOutput()->getTypeName() != "int")
+            return false;
+        return true;
+    }
+    bool operator()(RunStatus& rs)
+    {
+        if (_doInputs(rs))
+            return true;
+
+        assert(_getInput(0) != nullptr);
+        assert(_getInput(0)->getOutput()->getData() != nullptr);
+        assert(_getInput(1) != nullptr);
+        assert(_getInput(1)->getOutput()->getData() != nullptr);
+
+        int stringId = *(int*)_getInput(0)->getOutput()->getData();
+        int positionId = *(int*)_getInput(1)->getOutput()->getData();
+
+        *(bool*)this->getOutput()->getData() = derivation.lock()->hasSymbolAtPosition(stringId, positionId);
+        LOG_DEBUG("hasSymbol (%d, %d): %d\n", stringId, positionId, *(bool*)this->getOutput()->getData());
+        return false;
+    }
+};
+
 class NativeGetParent : public Function {
     std::weak_ptr<Derivation> derivation;
 
@@ -79,6 +123,13 @@ public:
     {
         this->derivation = de;
         this->bindOutput(derivation.lock()->tr.lock()->sharedResource("int"));
+        _numberOfExpectedBindings = 2;
+    }
+    bool bindInput(size_t id, std::shared_ptr<Function> fn)
+    {
+        if(fn->getOutput()->getTypeName() != "int")
+            return false;
+        return true;
     }
 
     bool operator()(RunStatus& rs)
@@ -100,4 +151,27 @@ public:
         return false;
     }
 };
+
+// void skipSymbol(void)
+class NativeSkipSymbol : public Function {
+    std::weak_ptr<Derivation> derivation;
+
+public:
+    NativeSkipSymbol(std::shared_ptr<Derivation> de)
+    {
+        this->derivation = de;
+    }
+
+    bool operator()(RunStatus& rs)
+    {
+        if (_doInputs(rs))
+            return true;
+
+        // Skip another symbol
+        this->derivation.lock()->skipSymbol();
+        LOG_DEBUG("skipSymbol++\n");
+        return false;
+    }
+};
+}
 #endif

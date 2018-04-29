@@ -19,6 +19,8 @@
 #include <procgen/interpret/statement.h>
 #include <procgen/interpret/types.h>
 #include <procgen/utils/logger.h>
+
+namespace ProcGen {
 class Statement;
 class Resource;
 
@@ -70,11 +72,11 @@ Function(): _hasVariableCountOfBindings(false), _numberOfExpectedBindings(0) {}
 
 };
 
+/**
+ * @class HandleFunction
+ * @brief Utility function to handle resource while passing input to Function
+ */
 class HandleFunction : public Function {
-public:
-    virtual bool operator()(RunStatus& stat);
-};
-class DebugStatement : public Function {
 public:
     virtual bool operator()(RunStatus& stat);
 };
@@ -86,19 +88,8 @@ public:
 class PrintJson : public Function {
 public:
     PrintJson() { _numberOfExpectedBindings = 1; }
-    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
-    {
-        if(id != 0)
-            return false;
-        return Function::bindInput(id, func);
-    }
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        LOG_INFO("PrintJson %s\n", _getInput(0)->getOutput()->to_json().dump().c_str());
-        return false;
-    }
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -110,16 +101,7 @@ public:
 */
 class CollectionAppend : public Function {
 public:
-
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput())->append(_getInput(1)->getOutput());
-
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -132,16 +114,7 @@ public:
 */
 class CollectionIndex : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        this->bindOutput(res->at(*(int*)_getInput(1)->getOutput()->getData()));
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -153,16 +126,7 @@ public:
 */
 class CollectionLength : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        *(int*)this->getOutput()->getData() = res->length();
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -174,16 +138,7 @@ public:
 */
 class CollectionRemove : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        res->remove(*(int*)_getInput(1)->getOutput()->getData());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -194,15 +149,7 @@ public:
 */
 class CollectionClear : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        auto res = std::dynamic_pointer_cast<CollectionResource>(_getInput(0)->getOutput());
-        res->clear();
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -215,17 +162,7 @@ public:
 */
 class CompositeGet : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
-        size_t index = *(int*)_getInput(1)->getOutput()->getData();
-        this->bindOutput(res->getComponent(index));
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 /**
@@ -239,31 +176,13 @@ public:
 
 class CompositeSet : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // TODO check if 0 is collection and 1 is size_t
-        auto res = std::dynamic_pointer_cast<CompositeResource>(_getInput(0)->getOutput());
-        size_t index = *(int*)_getInput(1)->getOutput()->getData();
-        res->getComponent(index)->copy(_getInput(2)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // TODO: create macro type2type
 class FloatToBool : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        bool out = (bool)*(float*)_getInput(0)->getOutput()->getData();
-        *(bool*)(getOutput()->getData()) = out;
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Define a binary logic operatorion OPNAME<type>
@@ -285,21 +204,25 @@ public:
     };
 
 // Define a binary operatorion OPNAME<type>
-#define DEF_BINARY_OP(OPNAME, OPERATOR)                                                                            \
-    template <typename T>                                                                                          \
-    class OPNAME : public Function {                                                                               \
-    public:                                                                                                        \
-        virtual bool operator()(RunStatus& stat)                                                                   \
-        {                                                                                                          \
-            if (_doInputs(stat))                                                                                   \
-                return true;                                                                                       \
-            T out = *(T*)_getInput(0)->getOutput()->getData() OPERATOR * (T*)_getInput(1)->getOutput()->getData(); \
-            LOG_DEBUG(#OPNAME ": %s = %s " #OPERATOR " %s\n", std::to_string(out).c_str(),                         \
-                std::to_string(*(T*)_getInput(0)->getOutput()->getData()).c_str(),                                 \
-                std::to_string(*(T*)_getInput(1)->getOutput()->getData()).c_str());                                \
-            *(T*)(getOutput()->getData()) = out;                                                                   \
-            return false;                                                                                          \
-        }                                                                                                          \
+#define DEF_BINARY_OP(OPNAME, OPERATOR)                                                                                                            \
+    template <typename T>                                                                                                                          \
+    class OPNAME : public Function {                                                                                                               \
+    public:                                                                                                                                        \
+        virtual bool operator()(RunStatus& stat)                                                                                                   \
+        {                                                                                                                                          \
+            if (_doInputs(stat))                                                                                                                   \
+                return true;                                                                                                                       \
+            T first = *(T*)_getInput(0)->getOutput()->getData();                                                                                   \
+            T second = *(T*)_getInput(1)->getOutput()->getData();                                                                                  \
+            if (std::string(#OPNAME) == "Div" && second == 0)                                                                                      \
+                throw std::runtime_error(std::string("Division by zero: ") + std::to_string(first) + std::string(" / ") + std::to_string(second)); \
+            T out = first OPERATOR second;                                                                                                         \
+            LOG_DEBUG(#OPNAME ": %s = %s " #OPERATOR " %s\n", std::to_string(out).c_str(),                                                         \
+                std::to_string(first).c_str(),                                                                                                     \
+                std::to_string(second).c_str());                                                                                                   \
+            *(T*)(getOutput()->getData()) = out;                                                                                                   \
+            return false;                                                                                                                          \
+        }                                                                                                                                          \
     };
 
 // Define a unary operatorion OPNAME<type>
@@ -380,14 +303,7 @@ public:
 // input(0) = input(1)
 class GenericCopy : public Function {
 public:
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        _getInput(0)->getOutput()->copy(_getInput(1)->getOutput());
-        this->bindOutput(_getInput(0)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Run-time verification of type
@@ -400,17 +316,7 @@ public:
         : type(_type){
             _numberOfExpectedBindings = 1;
     };
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        if (_getInput(0)->getOutput()->getBaseId() != type) {
-            // error = types doesn't match
-            throw std::runtime_error("Convert<>: types don't match");
-        }
-        this->bindOutput(_getInput(0)->getOutput());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Returns run-time TypeId for given resource
@@ -418,14 +324,7 @@ public:
 class GetTypeId : public Function {
     public:
     GetTypeId() { _numberOfExpectedBindings = 1; }
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        // Write TypeId to output resource
-        *(int*)this->getOutput()->getData() = (_getInput(0)->getOutput()->getBaseId());
-        return false;
-    }
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Random in range <a,b)
@@ -434,50 +333,15 @@ class GenerateUniform : public Function {
     GenerateUniform()  {
         _numberOfExpectedBindings = (2);
     }
-    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
-    {
-        // allow only two params
-        if(id > 1)
-            return false;
-        if(func->getOutput()->getTypeName() != "float")
-            return false;
-        return Function::bindInput(id, func);
-    }
-
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        // a = 0
-        // b = 1
-
-        float a = *(float*)_getInput(0)->getOutput()->getData();
-        float b = *(float*)_getInput(1)->getOutput()->getData();
-
-        float x = rand() / (float(RAND_MAX) + 1.0);
-        x = x * (b - a) + a;
-        *(float*)this->getOutput()->getData() = x;
-        return false;
-    }
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
+    virtual bool operator()(RunStatus& stat);
 };
 
 // Random in range <0,1)
 class GenerateRandom : public Function {
     public:
-    virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override
-    {
-        return false;
-    }
-
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        *(float*)this->getOutput()->getData() = rand() / (float(RAND_MAX) + 1.0);
-        return false;
-    }
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
+    virtual bool operator()(RunStatus& stat);
 };
 
 class SetRandomSeed : public Function {
@@ -485,25 +349,11 @@ class SetRandomSeed : public Function {
    SetRandomSeed() {
         _numberOfExpectedBindings = 0;
    }
-   virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override
-    {
-        // allow only two params
-        if(id > 0)
-            return false;
-        if(func->getOutput()->getTypeName() != "float")
-            return false;
-        return Function::bindInput(id, func);
-    }
-
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        srand(*(int*)_getInput(0)->getOutput()->getData());
-        return false;
-    }
+   
+   virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
+    virtual bool operator()(RunStatus& stat);
 };
+
 
 template <typename DEST, typename SRC>
 class Cast : public Function {
@@ -519,50 +369,16 @@ public:
     }
 };
 
+class ConstructCollection : public Function {
+public:
+    virtual bool operator()(RunStatus& stat);
+};
+
 class Construct : public Function {
 public:
-    size_t getCountOfComponents()
-    {
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        return output->getComponentCount();
-    }
-    virtual bool operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        LOG_DEBUG("Construct \n");
-        assert(this->getOutput() != nullptr);
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        size_t count = output->getComponentCount();
-        size_t countOfFunctionInputs = this->getCountOfInputs();
-
-        // presume correct match of arguments and parameters
-        assert(count == countOfFunctionInputs);
-        static_cast<void>(countOfFunctionInputs);
-
-        for (size_t i = 0; i < count; i++) {
-            LOG_DEBUG("Construct atrib %d\n", i);
-            output->getComponent(i)->copy(this->_getInput(i)->getOutput());
-        }
-
-        return false;
-    }
-
-    virtual bool bindInput(size_t id, std::shared_ptr<Function> func)
-    {
-        auto output = std::dynamic_pointer_cast<CompositeResource>(this->getOutput());
-        assert(output != nullptr);
-
-        if (id >= output->getComponentCount())
-            return false;
-        // detect type consistency
-        if (!func->getOutput()->hasSameType(output->getComponent(id))) {
-            return false;
-        }
-        Function::bindInput(id, func);
-        return true;
-    }
+    size_t getCountOfComponents();
+    virtual bool operator()(RunStatus& stat);
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
 };
 
 /*
@@ -577,6 +393,7 @@ DEF_PREFIX_UNARY_OP(UnaryPlus, +);
 
 DEF_PREFIX_UNARY_FUNCTION(Sin, sin);
 DEF_PREFIX_UNARY_FUNCTION(Cosin, cos);
+DEF_PREFIX_UNARY_FUNCTION(Sqrt, sqrt);
 
 DEF_BINARY_OP(Add, +);
 DEF_BINARY_OP(Sub, -);
@@ -589,4 +406,5 @@ DEF_BINARY_LOGIC_OP(Eq, ==);
 DEF_BINARY_LOGIC_OP(And, &&);
 DEF_BINARY_LOGIC_OP(Or, ||);
 DEF_BINARY_LOGIC_OP(NotEq, !=);
+}
 #endif

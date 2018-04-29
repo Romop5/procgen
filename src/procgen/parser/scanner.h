@@ -2,6 +2,7 @@
 #define SCANPIT_HH_
 
 #include "parser.hh"
+#include <memory>
 
 #ifndef YY_DECL
 #define YY_DECL ProcGen::Parser::token_type                     \
@@ -38,6 +39,9 @@ public:
     std::stack<Parser::location_type> includeLocation;
 
     std::set<std::string> alreadyParsed;
+
+    std::vector<std::shared_ptr<std::string>> identifiers;
+    std::vector<std::shared_ptr<std::ifstream>> includeFileStreams;
 
     bool hasParserFileWithName(const std::string& name)
     {

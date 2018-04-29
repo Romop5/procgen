@@ -8,9 +8,7 @@
 
 #include <cstdarg>
 
-extern FILE* yyin;
 namespace ProcGen {
-
 Generation::Generation()
 {
     _scanner = new Scanner();
@@ -26,7 +24,6 @@ Generation::Generation()
 
     flagIsParsed = true;
     hasAnyError = false;
-    ;
 }
 
 Generation::~Generation()
@@ -35,29 +32,26 @@ Generation::~Generation()
     delete _scanner;
 }
 
+bool Generation::appendSymbol(json symbol)
+{
+    auto resource = this->typeregister->createResourceFromJson(symbol);
+    if (resource == nullptr)
+        return false;
+    this->der->appendNextSymbol(resource);
+    return true;
+}
+
 bool Generation::parseFile(const std::string& file)
 {
-    /*yyin = fopen(file.c_str(),"r");
-		if(yyin == NULL)
-        {
-			errorMessage("Failed to open file ...");
-            return false;
-        }
-		do {
-			yyparse(this);
-		} while (!feof(yyin));
-    */
     std::ifstream s(file.c_str(), std::ifstream::in);
     _scanner->switch_streams(&s, &std::cerr);
-    std::string* newString = new std::string(file);
-    _location.initialize(newString);
+    auto newString = std::make_shared<std::string>(file);
+    _location.initialize(newString.get());
     _parser->parse();
 
     s.close();
 
-    if (!hasAnyError)
-        return true;
-    return false;
+    return (!hasAnyError);
 }
 
 bool Generation::runInit()
@@ -71,7 +65,6 @@ bool Generation::runInit()
     }
     RunStatus rs;
     (*initFunction)(rs);
-    //std::cout << "Initialized...\n";
     return true;
 }
 
@@ -89,17 +82,21 @@ bool Generation::run(int maximumSteps)
 
 void Generation::registerNatives()
 {
+    // Register standard types provided by interpret (bool, int, float)
     registerStandardTypes(typeregister.get());
+    // Register standard functions by interpret (sin, cos)
     registerStandardFunctions(functionregister.get());
 
-    // Add derivation standards
+    // Add functions provided by derivation module
     auto derivation = this->der;
     REGISTER_NATIVE_FUNCTION("appendSymbol", AppendSymbol);
     REGISTER_NATIVE_FUNCTION("getCurrentPosition", NativeCurrentPosition);
     REGISTER_NATIVE_FUNCTION("getCurrentStringId", NativeCurrentStringId);
     REGISTER_NATIVE_FUNCTION("getSymbol", NativeGetSymbol);
+    REGISTER_NATIVE_FUNCTION("hasSymbol", NativeHasSymbol);
     REGISTER_NATIVE_FUNCTION("getParent", NativeGetParent);
     REGISTER_NATIVE_FUNCTION("setMaximumIterations", IteratorLimit);
+    REGISTER_NATIVE_FUNCTION("skipSymbol", NativeSkipSymbol);
 }
 
 bool Generation::initializeFunction(const char* type)
@@ -115,7 +112,7 @@ bool Generation::initializeFunction(const char* type)
     return true;
 }
 
-bool Generation::registerRule(char* name, char* type)
+bool Generation::registerRule(const char* name, const char* type)
 {
     static int ruleID = 0;
     ruleID++;
@@ -127,13 +124,11 @@ bool Generation::registerRule(char* name, char* type)
     ruleName << "rule" << ruleID;
     //auto typeResource = typeregister->sharedResource(type);
     auto typeResource = localStackFrame->getVar("this");
+
     functionregister->addCompositeFunction(
         ruleName.str(), procedure, { typeResource }, localStackFrame->getVar("_return"));
 
     // Get condition
-    //
-    //auto boolResult= typeregister->sharedResource("bool");
-    //TODO
     auto boolResult = ruleDefinition.conditionReturn;
     auto condition = this->stackedBodies.popBody();
 
@@ -147,33 +142,40 @@ bool Generation::registerRule(char* name, char* type)
     return der->addRule(typeId, functionregister->getFunc(conditionName.str()),
         functionregister->getFunc(ruleName.str()));
 }
-bool Generation::registerAlias(char* alias, char* aliasedType)
+bool Generation::registerAlias(const char* alias, const char* aliasedType)
 {
-    return typeregister->addAlias(alias, aliasedType);
+    if (typeregister->addAlias(alias, aliasedType) == false) {
+        errorMessage("Failed to register alias %s for type %s\n", alias, aliasedType);
+        return false;
+    }
+    return true;
 }
 
-bool Generation::registerStruct(char* name, std::vector<sTypeDeclaration>& typelist)
+bool Generation::registerStruct(const char* name, std::vector<sTypeDeclaration>& typelist)
 {
+    LOG_DEBUG("Registering struct %s\n", name);
     std::vector<TypeId> types;
     std::vector<std::string> names;
     for (auto& x : typelist) {
-        //TODO: check if type exists
-        //std::cout << "registerStruct" << std::endl;
         types.push_back(x.resource->getBaseId());
         names.push_back(x.name);
     }
     // Clear types
     typelist.clear();
-    // TODO: add error message
-    return typeregister->addCompositeWithNames(name, types, names);
+
+    auto result = typeregister->addCompositeWithNames(name, types, names);
+    if (result == false)
+        errorMessage("Failed to register structure named %s\n", name);
+    return result;
 }
 
-bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
+bool Generation::registerParameter(const char* name, const char* type, bool hasLiteral)
 {
-    // Get type
+    // Get resource for type
     auto resource = typeregister->sharedResource(type);
     if (resource == nullptr) {
-        errorMessage("Unk type %s\n", type);
+        errorMessage("Undefined parameter type %s:%s\n", type, name);
+        resource = typeregister->sharedResource("any");
     }
 
     globalVariables->addVar(name, resource);
@@ -181,6 +183,7 @@ bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
     // TODO: check types and do implicit converion if neccesary
     // TODO: use hasLiteral and literal
 
+    // if literal is specified
     if (hasLiteral) {
         auto literal = this->expressionsStack.top();
         // calculate literal and set the param
@@ -197,8 +200,9 @@ bool Generation::registerParameter(char* name, char* type, bool hasLiteral)
     return true;
 }
 
-bool Generation::registerFunction(char* type, char* name)
+bool Generation::registerFunction(const char* type, const char* name)
 {
+    LOG_DEBUG("Registering function %s:%s\n", type, name);
     auto resource = localStackFrame->getVar("_return");
     if (resource == nullptr) {
         errorMessage("Unknown type: %s\n", type);
@@ -226,7 +230,7 @@ bool Generation::registerFunction(char* type, char* name)
         statementTop, inputResources, resource);
 }
 
-std::shared_ptr<Function> Generation::createUnaryOperation(char operation)
+std::shared_ptr<Function> Generation::createUnaryOperation(const char operation)
 {
     std::shared_ptr<Function> exp = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -256,7 +260,7 @@ std::shared_ptr<Function> Generation::createUnaryOperation(char operation)
     return operationBox;
 }
 
-std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
+std::shared_ptr<Function> Generation::createExpressionOperation(const char operation)
 {
     // TODO: produce common type
 
@@ -352,7 +356,8 @@ std::shared_ptr<Function> Generation::createExpressionOperation(char operation)
     //std::cout << type+":"+operationName<< " je kunda" << std::endl;
     auto operationBox = functionregister->getFunc(operationName + ":" + type);
     if (!operationBox) {
-        errorMessage("Failed to create an instance for operation");
+        errorMessage("Failed to create an instance for operation %s for type %s", operationName.c_str(), type.c_str());
+        operationBox = std::make_shared<Function>();
     }
 
     auto tmpResult = typeregister->sharedResource(a);
@@ -397,7 +402,7 @@ void Generation::createLiteralFloat(float value)
     this->expressionsStack.push(functionregister->getHandler(val));
 }
 
-bool Generation::createLiteralFromVariable(char* name)
+bool Generation::createLiteralFromVariable(const char* name)
 {
     auto res = this->getVariable(name);
     if (res == nullptr) {
@@ -410,7 +415,7 @@ bool Generation::createLiteralFromVariable(char* name)
     return true;
 }
 
-bool Generation::createStructuredLiteral(char* member)
+bool Generation::createStructuredLiteral(const char* member)
 {
     auto compositeFunction = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -514,7 +519,6 @@ bool Generation::registerLocalVariable(const char* type, const char* name, bool 
         return this->makeAssignment(name, true);
     } else {
         // clear collection
-
         if (resource->getResourceType() == ResourceType::COLLECTION) {
             auto collectionReseter = std::make_shared<CollectionClear>();
             collectionReseter->bindInput(0, functionregister->getHandler(resource));
@@ -558,7 +562,7 @@ bool Generation::makeReturn(bool hasExpression)
 
     return true;
 }
-bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
+bool Generation::makeAssignment(const char* name, bool hasAssignment, const char op)
 {
     /*// get resourse
 		auto resource = localStackFrame->getVar(name);
@@ -584,6 +588,11 @@ bool Generation::makeAssignment(const char* name, bool hasAssignment, char op)
     // Get expression
     auto assignedResource = this->expressionsStack.top();
     this->expressionsStack.pop();
+
+    if (expressionTop == nullptr || assignedResource == nullptr) {
+        errorMessage("[Internal error] Nullptr");
+        return false;
+    }
 
     // if we don't assign to "any" variable
     if (assignedResource->getOutput()->getTypeName() != "any") {
@@ -752,7 +761,7 @@ void Generation::setDebugOn(bool state)
     //  yydebug = 1;
 }
 
-sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
+sTypeDeclaration Generation::fillTypeDeclaration(const char* type, const char* name)
 {
     sTypeDeclaration result;
     result.name = name;
@@ -760,7 +769,7 @@ sTypeDeclaration Generation::fillTypeDeclaration(char* type, char* name)
     return result;
 }
 
-bool Generation::initializeRule(char* typeName)
+bool Generation::initializeRule(const char* typeName)
 {
     this->initializeFunction("bool");
     auto thisResource = typeregister->sharedResource(typeName);
@@ -771,7 +780,7 @@ bool Generation::initializeRule(char* typeName)
     return true;
 }
 
-bool Generation::ruleProcedure(char* typeName)
+bool Generation::ruleProcedure(const char* typeName)
 {
     this->localStackFrame->clear();
     auto thisResource = typeregister->sharedResource(typeName);
@@ -780,7 +789,7 @@ bool Generation::ruleProcedure(char* typeName)
     return true;
 }
 
-bool Generation::makeTypeid(char* name)
+bool Generation::makeTypeid(const char* name)
 {
     std::shared_ptr<Resource> nameResource = nullptr;
     if (typeregister->hasType(name)) {
@@ -798,7 +807,7 @@ bool Generation::makeTypeid(char* name)
     return true;
 }
 
-bool Generation::makeConvert(char* name)
+bool Generation::makeConvert(const char* name)
 {
     auto expr = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -811,7 +820,7 @@ bool Generation::makeConvert(char* name)
     return true;
 }
 
-bool Generation::makeExplicitCast(char* finalTypename)
+bool Generation::makeExplicitCast(const char* finalTypename)
 {
     auto expr = this->expressionsStack.top();
     this->expressionsStack.pop();
@@ -834,24 +843,39 @@ bool Generation::makeExplicitCast(char* finalTypename)
 
 bool Generation::makeConstructor(const char* typeName, std::vector<Argument> args)
 {
-    auto constructor = std::make_shared<Construct>();
-    assert(constructor != nullptr);
-    LOG_DEBUG("Making constructor for type %s\n", typeName);
-    constructor->bindOutput(this->typeregister->sharedResource(typeName));
+    // Note: collection constructing differs in lack of type checking as it isn't neccessary
+    if (strcmp(typeName, "collection") == 0) {
+        auto collectionConstructor = std::make_shared<ConstructCollection>();
+        assert(collectionConstructor != nullptr);
+        LOG_DEBUG("Making collection constructor %s\n", typeName);
+        collectionConstructor->bindOutput(this->typeregister->sharedResource("collection"));
 
-    if (constructor->getOutput()->getResourceType() != ResourceType::COMPOSITE) {
-        errorMessage("Creating constructor for non-composite type %s", typeName);
-    } else {
-        if (constructor->getCountOfComponents() != args.size()) {
-            errorMessage("Invalid count of arguments for %s() constructor.", typeName);
-        }
         for (size_t i = 0; i < args.size(); i++) {
-            if (constructor->bindInput(i, args[i]) == false) {
-                errorMessage("Invalid parameter or type of %dth parameter in constructor of %s", i, typeName);
+            collectionConstructor->bindInput(i, args[i]);
+        }
+        this->expressionsStack.push(collectionConstructor);
+
+    } else {
+        auto constructor = std::make_shared<Construct>();
+        assert(constructor != nullptr);
+        LOG_DEBUG("Making constructor for type %s\n", typeName);
+        constructor->bindOutput(this->typeregister->sharedResource(typeName));
+
+        auto resourceType = constructor->getOutput()->getResourceType();
+        if (resourceType != ResourceType::COMPOSITE) {
+            errorMessage("Creating constructor for non-composite type %s", typeName);
+        } else {
+            if (constructor->getCountOfComponents() != args.size()) {
+                errorMessage("Invalid count of arguments for %s() constructor.", typeName);
+            }
+            for (size_t i = 0; i < args.size(); i++) {
+                if (constructor->bindInput(i, args[i]) == false) {
+                    errorMessage("Invalid parameter or type of %dth parameter in constructor of %s", i, typeName);
+                }
             }
         }
+        this->expressionsStack.push(constructor);
     }
-    this->expressionsStack.push(constructor);
     return true;
 }
 

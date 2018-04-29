@@ -3,12 +3,14 @@
 #include <procgen/derivation/derivation.h>
 #include <procgen/interpret/interpret.h>
 
+namespace ProcGen {
 class AppendSymbol : public Function {
     std::weak_ptr<Derivation> derivation;
 
 public:
     AppendSymbol(std::weak_ptr<Derivation> de)
     {
+        _numberOfExpectedBindings = 1;
         this->derivation = de;
     }
 
@@ -31,4 +33,5 @@ public:
         return false;
     }
 };
+}
 #endif

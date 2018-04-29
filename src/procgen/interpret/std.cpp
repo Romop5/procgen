@@ -1,8 +1,9 @@
-#include <procgen/interpret/functionreg.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/functionregister.h>
+#include <procgen/interpret/typeregister.h>
 #include <procgen/interpret/types.h>
-
 #include <set>
+
+namespace ProcGen {
 
 void registerStandardTypes(TypeRegister* tr)
 {
@@ -35,7 +36,6 @@ void registerStandardFunctions(FunctionReg* fr)
 		fr->addFunction("PrintValue:" typeName,\
 		[]{return std::static_pointer_cast<Function>(std::make_shared<PrintValue<type>>());});
 */
-
     //FORALL_ATOMICTYPES(REG_PRINT);
 
     REG_FUNC_FORALL("Copy", Copy);
@@ -43,6 +43,9 @@ void registerStandardFunctions(FunctionReg* fr)
     REG_FUNC_FORALL("UnaryPlus", UnaryPlus);
 
     REG_FUNC(bool, Negation);
+    REG_FUNC(bool, Eq);
+    REG_FUNC(bool, And);
+    REG_FUNC(bool, Or);
     REG_FUNC(int, Modulo);
 
     REG_FUNC2(float, int, Cast);
@@ -73,6 +76,15 @@ void registerStandardFunctions(FunctionReg* fr)
         [tr] {
 
             auto generate = std::static_pointer_cast<Function>(std::make_shared<Cosin<float>>());
+            auto result = tr->sharedResource("float");
+            generate->bindOutput(result);
+            return generate;
+        });
+
+    fr->addFunction("sqrt",
+        [tr] {
+
+            auto generate = std::static_pointer_cast<Function>(std::make_shared<Sqrt<float>>());
             auto result = tr->sharedResource("float");
             generate->bindOutput(result);
             return generate;
@@ -128,4 +140,5 @@ int getCommonType(std::string first, std::string second)
         return 1;
     }
     return 0;
+}
 }

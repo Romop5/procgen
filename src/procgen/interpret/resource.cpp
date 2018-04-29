@@ -1,9 +1,11 @@
 #include <procgen/interpret/resource.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typeregister.h>
 #include <sstream>
-
+namespace ProcGen {
 bool Resource::hasSameType(std::shared_ptr<Resource> res)
 {
+    if (res == nullptr)
+        return false;
     return (this->getBaseId() == res->getBaseId());
 }
 
@@ -210,4 +212,5 @@ size_t AnyResource::getBaseId()
     if (content == nullptr)
         return 0;
     return content->getBaseId();
+}
 }

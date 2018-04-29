@@ -90,22 +90,26 @@ typedef ProcGen::Parser::token_type token_type;
                 {
                     //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
                     std::string name = std::string(yytext).substr(1,yyleng-2);
-                    std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
+                   // std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
+                    auto includedFile = std::make_shared<std::ifstream>(name, std::ifstream::in);
                     if(includedFile->is_open() == false)
                     {
-                        delete includedFile;
-                        generation.errorMessage("failed to load '%s' file in #include.", name);
+                        //delete includedFile;
+                        generation.errorMessage("Failed to load '%s' file in #include.", name);
                         yyterminate();
                     }
+
+                    this->includeFileStreams.push_back(includedFile);
 
                     this->addParsingFile(name.c_str());
                     this->includes.push(YY_CURRENT_BUFFER);
                     this->includeLocation.push(generation._location);
-            
-                    std::string* locationName = new std::string(name);
-                    generation._location = Parser::location_type(locationName,0,0);
+                
+                    auto locationName = std::make_shared<std::string>(name);
+                    this->identifiers.push_back(locationName);
+                    generation._location = Parser::location_type(locationName.get(),0,0);
 
-                    this->yy_switch_to_buffer(this->yy_create_buffer(includedFile,YY_BUF_SIZE));
+                    this->yy_switch_to_buffer(this->yy_create_buffer(includedFile.get(),YY_BUF_SIZE));
                     BEGIN(INITIAL);
                 }
             }
@@ -144,7 +148,9 @@ typedef ProcGen::Parser::token_type token_type;
 [0-9]+            { yylval->ival = atoi(yytext); return token::INTEGER; }
 [a-zA-Z0-9]+      {
 	//cout << "Got string: " << yytext << endl;
-	yylval->sval = strdup(yytext);
+    auto identifierStringObject = std::make_shared<std::string>(yytext);
+    this->identifiers.push_back(identifierStringObject);
+	yylval->sval = identifierStringObject.get()->c_str();
 	// detect if it is type or identifier
     if(generation.hasType(yytext))
 		return token::TYPE;

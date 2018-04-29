@@ -1,6 +1,7 @@
 #include "../interpret/interpret.h"
 #include <procgen/derivation/derivation.h>
 
+namespace ProcGen {
 class IteratorLimit : public Function {
     std::shared_ptr<Derivation> derivation;
 
@@ -22,3 +23,4 @@ public:
         return false;
     }
 };
+}

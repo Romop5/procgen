@@ -11,12 +11,43 @@ Have you ever wanted to generate fractals ? Recursive geometry ? Complex self-si
 
 *ProcGen* is a C++ library aimed to be used for procedural generation. It works as rewritting machine which **iteratively transforms user-defined structures to other structures**. This is allowed by defining custom structures like in C-like language and defining rules which act like procedures, transforming the given input structure to new structures.
 
-The generation is thus similar to parametric L-systems as it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**, with C-like statements like **if**, **while**.
+The generation is thus similar to parametric stochastic OL-systems as it has **rules** with **parameters**, which are **conditioned**. However, both rule body and condition are defined in **imperative manner**, with C-like statements like **if**, **while**.
 
 It works as a blackbox that receives a description of generation, written down in **procedural language** at the input and outputs generated **collection of structures** in fancy *JSON* format.
 
 
 The library is a part of *bachelor thesis* at [FIT BUT](www.fit.vutbr.cz) in 2018.
+## Example results
+<p align="center">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/bullet.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/densetree.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/ker-10angle.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/newhash.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/nicehash.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-30-06.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/strom-sixedge.svg.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.snowflake.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.labyrint.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.classic.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree2.procgen.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/procgen-svg/blob/master/build/turtle.tree3.procgen.png?raw=true" width="120px">
+</p>
+<p align="center">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleProceduralPlane.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/examplePyramide.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleRealTree.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleSiepiersky.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTower.png?raw=true" width="120px">
+<img style="float:left"  src="https://github.com/Romop5/noob-engine/blob/master/build/exampleTree.png?raw=true" width="120px">
+
+</p>
+<div style="clear:both"></div>
+
+See 
+* [Romop5/procgen-svg](https://github.com/Romop5/procgen-svg)
+* [Romop5/noob-engine](https://github.com/Romop5/noob-engine)
+
 
 ### Features
 * C-like style of code
@@ -47,25 +78,10 @@ using vec3 = struct  {// define vector of 3 floats
     float z;
 };
 
-vec3 cVec3(float x, float y, float z) {// define 'constructor'
-    vec3 tmp;
-    tmp.x = x;
-    tmp.y = y;
-    tmp.z = z;
-    return tmp;
-}
-
 using cube = struct {// define cube (position + side of cube)
     vec3 position;
     float sz;
 };
-
-cube cCube(vec3 pos, float sz) {// constructor
-    cube tmp;
-    tmp.position = pos;
-    tmp.sz = sz;
-    return tmp;
-}
 
 // the one and only rule
 using tst = rule cube {
@@ -75,11 +91,11 @@ using tst = rule cube {
     // replace the current one in next-step string
     float newSize = this.sz/2.0;
     // Generate three base cubes
-    appendSymbol(cCube(cVec3(this.position.x-newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
-    appendSymbol(cCube(cVec3(this.position.x+newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
-    appendSymbol(cCube(cVec3(this.position.x,this.position.y-newSize,this.position.z+newSize) ,newSize));
+    appendSymbol(cube(vec3(this.position.x-newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
+    appendSymbol(cube(vec3(this.position.x+newSize,this.position.y-newSize,this.position.z-newSize) ,newSize));
+    appendSymbol(cube(vec3(this.position.x,this.position.y-newSize,this.position.z+newSize) ,newSize));
     // Generate one above them
-    appendSymbol(cCube(cVec3(this.position.x,this.position.y+newSize,this.position.z) ,newSize));
+    appendSymbol(cube(vec3(this.position.x,this.position.y+newSize,this.position.z) ,newSize));
 
 };
 
@@ -89,9 +105,6 @@ int init() {
     setMaximumIterations(5);
 }
 ```
-## Example results
-See https://imgur.com/a/xdzYu
-
 ## Dependencies
 * [bison](https://www.gnu.org/software/bison/)
 * [westes/flex](https://github.com/westes/flex)

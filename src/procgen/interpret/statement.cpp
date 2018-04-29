@@ -1,5 +1,8 @@
 #include <procgen/interpret/function.h>
 #include <procgen/interpret/statement.h>
+
+namespace ProcGen {
+
 bool If::operator()(RunStatus& stat)
 {
     // get result of expression
@@ -66,4 +69,5 @@ bool Return::operator()(RunStatus& stat)
 
     stat.setStatus(RunStatus::RETURN_REACHED);
     return true;
+}
 }

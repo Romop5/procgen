@@ -1,5 +1,8 @@
 #include <procgen/interpret/resource.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typeregister.h>
+
+namespace ProcGen {
+
 /**
 * @class VariableReg 
 * @brief Registers and returns named variables 
@@ -46,3 +49,4 @@ private:
     /// holds all variable name to resource mappings
     std::map<std::string, std::shared_ptr<Resource>> vars;
 };
+}

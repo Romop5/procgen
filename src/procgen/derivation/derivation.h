@@ -1,53 +1,11 @@
 #ifndef DERIVATION_H
 #define DERIVATION_H
-#include <procgen/interpret/interpret.h>
-//#include <procgen/derivation/natives.h>
-//#include <procgen/derivation/appender.h>
 #include <map>
+#include <procgen/interpret/interpret.h>
 #include <procgen/utils/json.hpp>
 
-/*
-class DomNode {
-	public:
-		std::shared_ptr<Resource> symbol;
-		std::shared_ptr<DomNode> parent;
-		std::shared_ptr<DomNode> left;
-		std::shared_ptr<DomNode> right;
-};
-
-class Dom
-{
-	public:
-		std::map<std::shared_ptr<Resource>, size_t> resourceToId;
-		std::map<size_t, DomNode> node;
-
-	bool insertResource(std::shared_ptr<Resource> res)
-	{
-		static size_t index = 1;	
-		resourceToId[res] = index;
-		node[index] = DomNode();
-		index++;
-		return true;
-
-	}
-	size_t getResourceId(std::shared_ptr<Resource> res) 
-	{
-		if(resourceToId.count(res) > 0)
-			return resourceToId[res];
-		return 0;
-	}
-	DomNode& getNodeById(size_t id)
-	{
-		if(node.count(id) > 0)
-			return node[id];
-		static DomNode empty;
-		return empty;
-	}
-};
-*/
-
+namespace ProcGen {
 class Derivation {
-    //TODO
 public:
     using ruleType = std::tuple<std::shared_ptr<Function>, std::shared_ptr<Function>>;
     std::weak_ptr<FunctionReg> fr;
@@ -59,6 +17,8 @@ private:
     size_t currentStringPositionID;
 
     int allowedIterations;
+
+    int numberOfSymbolsToSkip;
 
     using vectorOfSymbols = std::vector<std::shared_ptr<Resource>>;
 
@@ -119,16 +79,32 @@ public:
     }
 
     void setMaximumIterations(int maximum) { this->allowedIterations = maximum; }
+    void skipSymbol() { this->numberOfSymbolsToSkip++; }
 
     size_t getCurrentStringId() const { return this->currentStringID; }
     size_t getCurrentStringPositionId() const { return this->currentStringPositionID; }
     size_t getCurrentIterationId() const { return this->currentIterationID; }
-    std::shared_ptr<Resource> getSymbolAtPosition(size_t stringId, size_t position)
+
+    bool hasSymbolAtPosition(size_t stringId, size_t position)
     {
         if (stringId == this->getCurrentIterationId()) {
-            return this->currentString[position];
+            if (this->currentString.size() > position)
+                return true;
         } else if (this->hierarchy.find(stringId) != this->hierarchy.end()) {
-            return this->hierarchy[stringId][position];
+            if (this->hierarchy[stringId].size() > position)
+                return true;
+        }
+        return false;
+    }
+
+    std::shared_ptr<Resource> getSymbolAtPosition(size_t stringId, size_t position)
+    {
+        if (this->hasSymbolAtPosition(stringId, position)) {
+            if (stringId == this->getCurrentIterationId()) {
+                return this->currentString[position];
+            } else if (this->hierarchy.find(stringId) != this->hierarchy.end()) {
+                return this->hierarchy[stringId][position];
+            }
         }
         return tr.lock()->sharedResource("any");
     }
@@ -141,4 +117,5 @@ public:
         return -1;
     }
 };
+}
 #endif

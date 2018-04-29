@@ -21,10 +21,20 @@ int main(int argc, char** argv)
 	{
         // set uniform
         pg.setUniform("ticks", 1000);
-        if(pg.runInit() == false)
+        auto initResult = pg.runInit();
+        if(initResult == false)
+        {
+            if(pg.hasAnyErrorMessage())
+                std::cout << pg.getLastErrorMessage() << std::endl;
             return 1;
+        }
 		std::cout << "It's dones" << std::endl;
-		pg.run(iterationCount);
+		auto runResult = pg.run(iterationCount);
+        if(runResult == false)
+        {
+            std::cout << "Error: " <<  pg.getLastErrorMessage() << std::endl;
+        }
+
         json result = pg.serialize();
         std::cout << "Result" << result.dump(1) << "\n";
         

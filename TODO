@@ -1,8 +1,13 @@
 TODO List for 2018
 =================
 
-1. construktory
-2. JSON importer
+Buglist
+    - operation * for arbitrary types -> crash
+    - redefinition of structure names allowed
+    - missing function leads to crash
+
+1. construktory DONE
+2. JSON importer DONE
 3. examples
     - skyscrape
     - SVG

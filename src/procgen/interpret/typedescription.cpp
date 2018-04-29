@@ -1,7 +1,9 @@
 #include <iostream>
-#include <procgen/interpret/typedesc.h>
-#include <procgen/interpret/typereg.h>
+#include <procgen/interpret/typedescription.h>
+#include <procgen/interpret/typeregister.h>
 #include <procgen/utils/logger.h>
+
+namespace ProcGen {
 
 unsigned int AbstractType::getAlignedSize()
 {
@@ -58,4 +60,5 @@ TypeId CompositeType::getComponentTypeId(size_t componentID) const
     if (componentID >= this->components.size())
         return 0;
     return this->components[componentID];
+}
 }

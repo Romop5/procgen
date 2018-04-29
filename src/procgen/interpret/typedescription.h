@@ -1,10 +1,10 @@
 #ifndef _TYPEDESC_H
 #define _TYPEDESC_H
 #include <memory>
-//#include <stdalign.h>
 #include <stddef.h>
 #include <vector>
-//typedef int TypeId;
+
+namespace ProcGen {
 using TypeId = size_t;
 enum descType { ATOMIC,
     COMPOSITE,
@@ -138,4 +138,5 @@ public:
     AnyType(){};
     virtual descType getType() { return ANY; }
 };
+}
 #endif
