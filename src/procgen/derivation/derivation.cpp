@@ -63,7 +63,7 @@ void Derivation::generate(size_t maxSteps)
         }
         // Move next to current buffer
         this->shiftBuffers();
-    } while (shouldContinue && step < maxSteps);
+    } while (shouldContinue && ++step < maxSteps);
 }
 
 bool Derivation::isRuleAplicable(const ruleType& rule, std::shared_ptr<Resource> symbol) const
