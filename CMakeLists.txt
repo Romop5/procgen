@@ -58,9 +58,7 @@ set(DERIVATION_SOURCE
 
 set(DERIVATION_HEADERS
     src/procgen/derivation/natives.h
-    src/procgen/derivation/appender.h
     src/procgen/derivation/derivation.h
-    src/procgen/derivation/iteratorlimit.h
 )
 
 set(PARSER_HEADERS

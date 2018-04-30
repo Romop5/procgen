@@ -173,5 +173,68 @@ public:
         return false;
     }
 };
+
+class NativeIteratorLimit : public Function {
+    std::shared_ptr<Derivation> derivation;
+
+public:
+    NativeIteratorLimit(std::shared_ptr<Derivation> de)
+    {
+        this->derivation = de;
+        _numberOfExpectedBindings = 1;
+    }
+
+    bool bindInput(size_t id, std::shared_ptr<Function> fn)
+    {
+        if(fn->getOutput()->getTypeName() != "int")
+            return false;
+        return true;
+    }
+
+
+    bool operator()(RunStatus& rs)
+    {
+        if (_getInput(0) != nullptr)
+            (*_getInput(0))(rs);
+
+        std::shared_ptr<Resource> src = _getInput(0)->getOutput();
+        int iterator = *(int*)src->getData();
+        derivation->setMaximumIterations(iterator);
+
+        return false;
+    }
+};
+
+class NativeAppendSymbol : public Function {
+    std::weak_ptr<Derivation> derivation;
+
+public:
+    NativeAppendSymbol(std::weak_ptr<Derivation> de)
+    {
+        _numberOfExpectedBindings = 1;
+        this->derivation = de;
+    }
+
+    bool operator()(RunStatus& rs)
+    {
+        if (_getInput(0) != nullptr) {
+            (*_getInput(0))(rs);
+        }
+
+        std::string dmp = _getInput(0)->getOutput()->to_json().dump();
+
+        std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
+
+        std::shared_ptr<Resource> src = derivation.lock()->tr.lock()->sharedResource(_getInput(0)->getOutput()->getBaseId());
+        if (src->copy(_getInput(0)->getOutput()) == false)
+            return false;
+        std::cout << "Appending id " << src->getBaseId() << "\n";
+        derivation.lock()->appendNextSymbol(src);
+
+        return false;
+    }
+};
+
+
 }
 #endif

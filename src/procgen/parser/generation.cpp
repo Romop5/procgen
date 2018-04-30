@@ -1,7 +1,5 @@
 #include "parser.hh"
 #include <fstream>
-#include <procgen/derivation/appender.h>
-#include <procgen/derivation/iteratorlimit.h>
 #include <procgen/derivation/natives.h>
 #include <procgen/parser/generation.h>
 #include <sstream>
@@ -89,13 +87,13 @@ void Generation::registerNatives()
 
     // Add functions provided by derivation module
     auto derivation = this->der;
-    REGISTER_NATIVE_FUNCTION("appendSymbol", AppendSymbol);
+    REGISTER_NATIVE_FUNCTION("appendSymbol", NativeAppendSymbol);
     REGISTER_NATIVE_FUNCTION("getCurrentPosition", NativeCurrentPosition);
     REGISTER_NATIVE_FUNCTION("getCurrentStringId", NativeCurrentStringId);
     REGISTER_NATIVE_FUNCTION("getSymbol", NativeGetSymbol);
     REGISTER_NATIVE_FUNCTION("hasSymbol", NativeHasSymbol);
     REGISTER_NATIVE_FUNCTION("getParent", NativeGetParent);
-    REGISTER_NATIVE_FUNCTION("setMaximumIterations", IteratorLimit);
+    REGISTER_NATIVE_FUNCTION("setMaximumIterations", NativeIteratorLimit);
     REGISTER_NATIVE_FUNCTION("skipSymbol", NativeSkipSymbol);
 }
 
