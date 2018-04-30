@@ -58,7 +58,7 @@ public:
     {
         if(fn->getOutput()->getTypeName() != "int")
             return false;
-        return true;
+        return Function::bindInput(id, fn);
     }
     bool operator()(RunStatus& rs)
     {
@@ -94,7 +94,7 @@ public:
     {
         if(fn->getOutput()->getTypeName() != "int")
             return false;
-        return true;
+        return Function::bindInput(id, fn);
     }
     bool operator()(RunStatus& rs)
     {
@@ -129,7 +129,7 @@ public:
     {
         if(fn->getOutput()->getTypeName() != "int")
             return false;
-        return true;
+        return Function::bindInput(id, fn);
     }
 
     bool operator()(RunStatus& rs)
@@ -188,7 +188,7 @@ public:
     {
         if(fn->getOutput()->getTypeName() != "int")
             return false;
-        return true;
+        return Function::bindInput(id, fn);
     }
 
 
