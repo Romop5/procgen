@@ -52,12 +52,12 @@ void Derivation::generate(size_t maxSteps)
                     i += this->numberOfSymbolsToSkip;
                 } else {
                     // if 'availableRules' is empty, apply default rule (copy)
-                    LOG_DEBUG("No aplicable rule found for type:\n",sym->getTypeName());
+                    LOG_DEBUG("No aplicable rule found for type:\n",sym->getTypeName().c_str());
                     this->appendNextSymbol(sym);
                 }
             } else {
                 // if 'availableRules' is empty, apply default rule (copy)
-                LOG_DEBUG("No rule found for type: %s\n",sym->getTypeName());
+                LOG_DEBUG("No rule found for type: %s\n",sym->getTypeName().c_str());
                 this->appendNextSymbol(sym);
             }
         }
