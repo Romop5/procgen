@@ -205,7 +205,7 @@ bool GenerateRandom::operator()(RunStatus& stat)
 
 bool SetRandomSeed::bindInput(size_t id, std::shared_ptr<Function> func) 
     {
-        // allow only two params
+        // allow only one params
         if(id > 0)
             return false;
         if(func->getOutput()->getTypeName() != "float")

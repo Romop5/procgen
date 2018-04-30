@@ -347,7 +347,7 @@ class GenerateRandom : public Function {
 class SetRandomSeed : public Function {
    public:
    SetRandomSeed() {
-        _numberOfExpectedBindings = 0;
+        _numberOfExpectedBindings = 1;
    }
    
    virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
