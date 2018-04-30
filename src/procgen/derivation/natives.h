@@ -223,12 +223,11 @@ public:
 
         std::string dmp = _getInput(0)->getOutput()->to_json().dump();
 
-        std::cout << "AppendSymbol: '" << dmp << "'" << std::endl;
+        LOG_DEBUG("AppendSymbol: '%s\n'", dmp.c_str());
 
         std::shared_ptr<Resource> src = derivation.lock()->tr.lock()->sharedResource(_getInput(0)->getOutput()->getBaseId());
         if (src->copy(_getInput(0)->getOutput()) == false)
             return false;
-        std::cout << "Appending id " << src->getBaseId() << "\n";
         derivation.lock()->appendNextSymbol(src);
 
         return false;
