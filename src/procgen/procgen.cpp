@@ -100,4 +100,19 @@ bool Procgen::appendSymbol(json symbol)
 {
     return this->generation.appendSymbol(symbol);
 }
+
+size_t Procgen::countOfSymbols() const
+{
+    return this->generation.der->getCountOfSymbols();
+}
+
+json Procgen::at(size_t index) const
+{
+    if(index < this->countOfSymbols())
+    {
+        return this->generation.der->getSymbolAtIndex(index);
+    }
+    return json();
+}
+
 }

@@ -35,8 +35,12 @@ int main(int argc, char** argv)
             std::cout << "Error: " <<  pg.getLastErrorMessage() << std::endl;
         }
 
-        json result = pg.serialize();
-        std::cout << "Result" << result.dump(1) << "\n";
+        //json result = pg.serialize();
+        for(size_t i = 0; i < pg.countOfSymbols(); i++)
+        {
+            std::cout <<  pg.at(i).dump(1) << "\n";
+        }
+        //std::cout << "Result" << result.dump(1) << "\n";
         
 	} else {
         std::cout << "Failed...\n";

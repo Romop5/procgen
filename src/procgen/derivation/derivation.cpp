@@ -21,12 +21,7 @@ void Derivation::generate(size_t maxSteps)
     // Move next to current buffer etc
     this->shiftBuffers();
     do {
-        std::cout << "Step: " << step++ << std::endl;
         shouldContinue = false;
-        std::cout << "Current string size: " << this->currentString.size() << std::endl;
-
-        // TODO
-        // Document this algorithm in BC
         for (size_t i = 0; i < this->currentString.size(); i++) {
             // Reset skip step to 1 - current symbol
             this->numberOfSymbolsToSkip = 0;
@@ -51,19 +46,18 @@ void Derivation::generate(size_t maxSteps)
                 if (availableRules.size() > 0) {
                     shouldContinue = true;
                     size_t randomChoose = rand() % availableRules.size();
-                    std::cout << "Random no: " << randomChoose << std::endl;
                     // apply rule on symbol
                     applyRule(availableRules[randomChoose], sym);
                     // Skip following symbols if neccessary
                     i += this->numberOfSymbolsToSkip;
                 } else {
                     // if 'availableRules' is empty, apply default rule (copy)
-                    std::cerr << "No aplicable rule found for type: " << sym->getTypeName() << std::endl;
+                    LOG_DEBUG("No aplicable rule found for type:\n",sym->getTypeName());
                     this->appendNextSymbol(sym);
                 }
             } else {
                 // if 'availableRules' is empty, apply default rule (copy)
-                std::cerr << "No rule found for type: " << sym->getTypeName() << std::endl;
+                LOG_DEBUG("No rule found for type: %s\n",sym->getTypeName());
                 this->appendNextSymbol(sym);
             }
         }
@@ -94,7 +88,6 @@ int Derivation::applyRule(const ruleType& rule, std::shared_ptr<Resource> symbol
     RunStatus rs;
     (*std::get<1>(rule))(rs);
 
-    std::cout << "Return skip number: " << *(int*)result->getData() << std::endl;
     return 0;
 }
 
@@ -109,9 +102,6 @@ bool Derivation::hasAnyRule(TypeId type) const
 void Derivation::appendNextSymbol(std::shared_ptr<Resource> symbol)
 {
     this->nextString.push_back(symbol);
-    std::cout << "Appended\n";
-    std::cout << this->nextString.size() << "\n";
-    std::cout << this << std::endl;
 
     // add relation for parent
     hierarchyRelation[std::make_pair(this->getCurrentStringId() + 1, this->nextString.size() - 1)] = this->getCurrentStringPositionId();

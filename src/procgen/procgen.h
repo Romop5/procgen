@@ -33,6 +33,9 @@ public:
 
     json serialize() const;
 
+    // Get symbol at index
+    json at(size_t index) const; 
+
     bool isReady() { return (generation.hasAnyError == false) && this->isParsed(); }
     bool isParsed() { return generation.flagIsParsed; }
 
@@ -53,6 +56,7 @@ public:
     // Clean
     void reinitialize();
 
+    size_t countOfSymbols() const;
     bool appendSymbol(json symbol);
 };
 }

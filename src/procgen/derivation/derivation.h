@@ -116,6 +116,15 @@ public:
         }
         return -1;
     }
+    json getSymbolAtIndex(size_t index)
+    {
+        if(this->currentString.size() > index)
+        {
+            return this->currentString[index]->to_json();
+        }
+        return json();
+    }
+    size_t getCountOfSymbols() const {return this->currentString.size(); }
 };
 }
 #endif
