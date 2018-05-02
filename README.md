@@ -60,6 +60,8 @@ See
 ### Documentation
 [Changelog](CHANGELOG.md)
 
+[Language reference](doc/LANGUAGEREFERENCE.md)
+
 [Simple generating tutorial](doc/TUTORIAL.md)
 
 [How does this tool and L-systems work](HOWDOESITWORK.md)
