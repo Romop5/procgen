@@ -33,9 +33,9 @@ bool Procgen::parseFile(const std::string& file)
 bool Procgen::runInit()
 {
     try {
-        generation.der->generate(0);
+        //generation.der->generate(0);
         // clear all
-        this->generation.der->clear();
+        //this->generation.der->clear();
         auto initFunction = generation.functionregister->getFunc("init");
         if (initFunction == nullptr) {
             generation.errorMessage("Missing init() function");

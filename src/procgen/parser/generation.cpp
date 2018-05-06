@@ -55,7 +55,7 @@ bool Generation::parseFile(const std::string& file)
 bool Generation::runInit()
 {
     // clear all
-    this->der->clear();
+    //this->der->clear();
     auto initFunction = functionregister->getFunc("init");
     if (initFunction == nullptr) {
         errorMessage("Missing init() function");

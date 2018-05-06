@@ -77,6 +77,7 @@ float AtomicResource::getFloat()
 
 bool CompositeResource::copy(const std::shared_ptr<Resource> src)
 {
+    assert(src != nullptr);
     auto tmp = src;
     // if src is ANY, then use it content
     if (src->getResourceType() == ResourceType::ANY)
@@ -99,6 +100,7 @@ size_t CompositeResource::getComponentCount() const
 
 void CollectionResource::append(std::shared_ptr<Resource> item)
 {
+    assert(item != nullptr);
     auto newElement = this->tr.lock()->sharedResource(item->getBaseId());
     newElement->copy(item);
     this->collection.push_back(newElement);
@@ -121,7 +123,7 @@ std::shared_ptr<Resource> CollectionResource::at(size_t index)
 
 bool CollectionResource::copy(const std::shared_ptr<Resource> src)
 {
-
+    assert(src != nullptr);
     auto tmp = src;
     // if src is ANY, then use it content
     if (src->getResourceType() == ResourceType::ANY)
@@ -185,6 +187,7 @@ TypeId CompositeResource::getComponentType(size_t index) const
 
 bool AnyResource::copy(const std::shared_ptr<Resource> src)
 {
+    assert(src != nullptr);
     auto realsource = src;
     if (src->getResourceType() == ResourceType::ANY) {
         realsource = std::dynamic_pointer_cast<AnyResource>(src)->getContent();

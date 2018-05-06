@@ -77,6 +77,8 @@ std::shared_ptr<Resource> TypeRegister::createResourceFromJson(json symbol)
         auto collection = std::dynamic_pointer_cast<CollectionResource>(this->sharedResource("collection"));
         for (auto& element : symbol) {
             auto elementInstance = this->createResourceFromJson(element);
+            if (elementInstance == nullptr)
+                return nullptr;
             collection->append(elementInstance);
         }
         return collection;
