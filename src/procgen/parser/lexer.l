@@ -48,6 +48,7 @@ typedef ProcGen::Parser::token_type token_type;
 %option c++
 %option prefix="ProcGen"
 %option never-interactive
+%option nounistd
 
 %%
 %{
