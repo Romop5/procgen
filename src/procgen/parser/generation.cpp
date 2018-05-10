@@ -405,10 +405,8 @@ bool Generation::createLiteralFromVariable(const char* name)
     auto res = this->getVariable(name);
     if (res == nullptr) {
         errorMessage("Undefined variable %s", name);
-        return false;
+        res = typeregister->sharedResource("int");
     }
-    //std::cout << "Pushing variable " << name << " with type " <<
-    //res->getTypeName() << std::endl;
     this->expressionsStack.push(functionregister->getHandler(res));
     return true;
 }
@@ -462,6 +460,7 @@ bool Generation::createFunctionCall(const char* functionName, std::vector<Argume
     if (functionPointer == nullptr) {
         // if functionName doesn't exist
         errorMessage("Failed to get function '%s'", functionName);
+        this->expressionsStack.push(std::make_shared<Function>());
         return false;
     }
 

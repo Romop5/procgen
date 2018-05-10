@@ -87,10 +87,10 @@ typedef ProcGen::Parser::token_type token_type;
 "#include" BEGIN(incl);
 <incl>[ \t]*      /* eat the whitespace */
 <incl>\"[^\"]+\"  { /* got the include file name */
-                if(this->hasParserFileWithName(yytext) == false) 
+                std::string name = std::string(yytext).substr(1,yyleng-2);
+                if(this->hasParserFileWithName(name) == false) 
                 {
                    //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
-                    std::string name = std::string(yytext).substr(1,yyleng-2);
                    //std::cout << "Switching to file '" << name << "'" << std::endl;
                    // std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
                     auto includedFile = std::make_shared<std::ifstream>(name, std::ifstream::in);
@@ -112,8 +112,8 @@ typedef ProcGen::Parser::token_type token_type;
                     generation._location = Parser::location_type(locationName.get(),0,0);
 
                     this->yy_switch_to_buffer(this->yy_create_buffer(includedFile.get(),YY_BUF_SIZE));
-                    BEGIN(INITIAL);
                 }
+                BEGIN(INITIAL);
             }
 <<EOF>> {
             if(!this->includes.empty())
