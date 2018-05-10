@@ -89,14 +89,15 @@ typedef ProcGen::Parser::token_type token_type;
 <incl>\"[^\"]+\"  { /* got the include file name */
                 if(this->hasParserFileWithName(yytext) == false) 
                 {
-                    //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
+                   //std::cout << "Switching to file '" << yytext << "'" << std::endl; 
                     std::string name = std::string(yytext).substr(1,yyleng-2);
+                   //std::cout << "Switching to file '" << name << "'" << std::endl;
                    // std::ifstream* includedFile = new std::ifstream(name,std::ifstream::in);
                     auto includedFile = std::make_shared<std::ifstream>(name, std::ifstream::in);
                     if(includedFile->is_open() == false)
                     {
                         //delete includedFile;
-                        generation.errorMessage("Failed to load '%s' file in #include.", name);
+                        generation.errorMessage("Failed to load '%s' file in #include", name.c_str());
                         yyterminate();
                     }
 
