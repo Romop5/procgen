@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/compositefunction.h'
+ * @brief Declaration of function call and composite function mechanism
+ * @copyright The MIT license 
+ */
 #ifndef COMPOSITE_H
 #define COMPOSITE_H
 #include <memory>

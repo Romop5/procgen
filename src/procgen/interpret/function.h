@@ -1,9 +1,7 @@
-/*
- * Procedural generation library
- * xdobia11 - Roman Dobias
- * Purpose: defines standard boxes (functions)
- * Description: a Composite pattern for handling functions
- * 		HandleFunction is terminal Function
+/**
+ * @file 'interpret/function.h'
+ * @brief Defines Function mechanism and standard functions
+ * @copyright The MIT license 
  */
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
@@ -46,7 +44,11 @@ protected:
     std::shared_ptr<Function> _getInput(size_t id) { return this->_inputs[id]; }
 
 public:
-Function(): _hasVariableCountOfBindings(false), _numberOfExpectedBindings(0) {}
+    Function()
+        : _hasVariableCountOfBindings(false)
+        , _numberOfExpectedBindings(0)
+    {
+    }
     /**
 * @brief Bind func expression as input at slot id
 * @param id
@@ -62,14 +64,17 @@ Function(): _hasVariableCountOfBindings(false), _numberOfExpectedBindings(0) {}
     std::shared_ptr<Resource> getOutput() { return this->_output; }
 
     size_t getCountOfInputs() const { return this->_inputs.size(); }
-    
+
     size_t getNumberOfExpectedInputs() const { return this->_numberOfExpectedBindings; }
 
-    bool hasRequiredBindings() const { if(_hasVariableCountOfBindings) return true; return this->_inputs.size() == this->_numberOfExpectedBindings; }
+    bool hasRequiredBindings() const
+    {
+        if (_hasVariableCountOfBindings)
+            return true;
+        return this->_inputs.size() == this->_numberOfExpectedBindings;
+    }
 
     virtual bool operator()(RunStatus& stat);
-
-
 };
 
 /**
@@ -281,10 +286,10 @@ public:
     template <typename T>                                                               \
     class OPNAME : public Function {                                                    \
     public:                                                                             \
-        OPNAME() {_numberOfExpectedBindings = 1; }                                      \
+        OPNAME() { _numberOfExpectedBindings = 1; }                                     \
         virtual bool bindInput(size_t id, std::shared_ptr<Function> fn)                 \
         {                                                                               \
-            if(fn->getOutput()->getTypeName() != keyword<T>())               \
+            if (fn->getOutput()->getTypeName() != keyword<T>())                         \
                 return false;                                                           \
             return Function::bindInput(id, fn);                                         \
         }                                                                               \
@@ -313,8 +318,9 @@ private:
 
 public:
     Convert(TypeId _type)
-        : type(_type){
-            _numberOfExpectedBindings = 1;
+        : type(_type)
+    {
+        _numberOfExpectedBindings = 1;
     };
     virtual bool operator()(RunStatus& stat);
 };
@@ -322,15 +328,16 @@ public:
 // Returns run-time TypeId for given resource
 // TypeId is int
 class GetTypeId : public Function {
-    public:
+public:
     GetTypeId() { _numberOfExpectedBindings = 1; }
     virtual bool operator()(RunStatus& stat);
 };
 
 // Random in range <a,b)
 class GenerateUniform : public Function {
-    public:
-    GenerateUniform()  {
+public:
+    GenerateUniform()
+    {
         _numberOfExpectedBindings = (2);
     }
     virtual bool bindInput(size_t id, std::shared_ptr<Function> func);
@@ -339,21 +346,21 @@ class GenerateUniform : public Function {
 
 // Random in range <0,1)
 class GenerateRandom : public Function {
-    public:
+public:
     virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
     virtual bool operator()(RunStatus& stat);
 };
 
 class SetRandomSeed : public Function {
-   public:
-   SetRandomSeed() {
+public:
+    SetRandomSeed()
+    {
         _numberOfExpectedBindings = 1;
-   }
-   
-   virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
+    }
+
+    virtual bool bindInput(size_t id, std::shared_ptr<Function> func) override;
     virtual bool operator()(RunStatus& stat);
 };
-
 
 template <typename DEST, typename SRC>
 class Cast : public Function {

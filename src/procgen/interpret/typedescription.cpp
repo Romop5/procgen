@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/typedescription.cpp'
+ * @brief Definition of AbstractTypes etc
+ * @copyright The MIT license 
+ */
 #include <iostream>
 #include <procgen/interpret/typedescription.h>
 #include <procgen/interpret/typeregister.h>

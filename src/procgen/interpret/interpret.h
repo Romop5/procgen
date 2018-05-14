@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/interpret.h'
+ * @brief Interface header for interpret
+ * @copyright The MIT license 
+ */
 #ifndef _INTERPRET_H
 #define _INTERPRET_H
 #include <procgen/interpret/functionregister.h>

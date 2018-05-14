@@ -1,3 +1,8 @@
+/**
+ * @file 'derivation/algae.cpp'
+ * @brief Obsolete unit test.
+ * @copyright The MIT license 
+ */
 #include <procgen/derivation/derivation.h>
 
 class AlwaysTrue : public Function {

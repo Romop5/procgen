@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/variableregister.h'
+ * @brief VariableRegister for registering instances of types
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/typeregister.h>
 

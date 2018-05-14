@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/variableregister.cpp'
+ * @brief Definition of variableregister
+ * @copyright The MIT license 
+ */
 #include <iostream>
 #include <procgen/interpret/variableregister.h>
 #include <procgen/utils/logger.h>

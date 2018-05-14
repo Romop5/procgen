@@ -1,3 +1,8 @@
+/**
+ * @file 'derivation/derivation.h'
+ * @brief Carries out derivation (rewriting) process header
+ * @copyright The MIT license 
+ */
 #ifndef DERIVATION_H
 #define DERIVATION_H
 #include <map>
@@ -118,13 +123,12 @@ public:
     }
     json getSymbolAtIndex(size_t index)
     {
-        if(this->currentString.size() > index)
-        {
+        if (this->currentString.size() > index) {
             return this->currentString[index]->to_json();
         }
         return json();
     }
-    size_t getCountOfSymbols() const {return this->currentString.size(); }
+    size_t getCountOfSymbols() const { return this->currentString.size(); }
 };
 }
 #endif

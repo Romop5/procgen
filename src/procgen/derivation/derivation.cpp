@@ -1,3 +1,8 @@
+/**
+ * @file 'derivation/derivation.cpp'
+ * @brief Definition of derivation class
+ * @copyright The MIT license 
+ */
 #include <procgen/derivation/derivation.h>
 
 namespace ProcGen {
@@ -52,12 +57,12 @@ void Derivation::generate(size_t maxSteps)
                     i += this->numberOfSymbolsToSkip;
                 } else {
                     // if 'availableRules' is empty, apply default rule (copy)
-                    LOG_DEBUG("No aplicable rule found for type:\n",sym->getTypeName().c_str());
+                    LOG_DEBUG("No aplicable rule found for type:\n", sym->getTypeName().c_str());
                     this->appendNextSymbol(sym);
                 }
             } else {
                 // if 'availableRules' is empty, apply default rule (copy)
-                LOG_DEBUG("No rule found for type: %s\n",sym->getTypeName().c_str());
+                LOG_DEBUG("No rule found for type: %s\n", sym->getTypeName().c_str());
                 this->appendNextSymbol(sym);
             }
         }

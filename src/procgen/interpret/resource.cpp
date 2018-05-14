@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/resource.cpp'
+ * @brief Definition of resource
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/resource.h>
 #include <procgen/interpret/typeregister.h>
 #include <sstream>

@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/types.h'
+ * @brief Declaring standard types and utility type macros
+ * @copyright The MIT license 
+ */
 #ifndef _TYPESTRING_H
 #define _TYPESTRING_H
 #include <procgen/interpret/types.h>
@@ -33,4 +38,4 @@ std::string keyword();
     template <>                 \
     std::string keyword<type>() { return typeName; }
 }
-#endif 
+#endif

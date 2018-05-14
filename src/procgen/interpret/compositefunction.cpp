@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/compositefunction.cpp'
+ * @brief Definition of function calls
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/compositefunction.h>
 namespace ProcGen {
 CompositeFunction::CompositeFunction(

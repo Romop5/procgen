@@ -1,3 +1,8 @@
+/**
+ * @file 'parser/generation.h'
+ * @brief Generation class which maps Bison grammar to interpret and derivator
+ * @copyright The MIT license 
+ */
 /*
  * Compilation helper structs / classes
  */

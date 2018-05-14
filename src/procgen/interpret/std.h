@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/std.h'
+ * @brief Registering standard functions and types
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/typeregister.h>
 
 namespace ProcGen {

@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/statement.h'
+ * @brief Statement declaration
+ * @copyright The MIT license 
+ */
 #ifndef _STATEMENT_H
 #define _STATEMENT_H
 #include <iostream>

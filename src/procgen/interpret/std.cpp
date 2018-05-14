@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/std.cpp'
+ * @brief Registering functions 
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/functionregister.h>
 #include <procgen/interpret/typeregister.h>
 #include <procgen/interpret/types.h>

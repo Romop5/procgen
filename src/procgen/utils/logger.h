@@ -1,3 +1,8 @@
+/**
+ * @file 'utils/logger.h'
+ * @brief Utility module for logging
+ * @copyright The MIT license 
+ */
 #ifndef _PROCGEN_UTILS_H
 #define _PROCGEN_UTILS_H
 #include <cstdarg>

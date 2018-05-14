@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/typedescription.h'
+ * @brief Declares metaclasses for type handling
+ * @copyright The MIT license 
+ */
 #ifndef _TYPEDESC_H
 #define _TYPEDESC_H
 #include <memory>

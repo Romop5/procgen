@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/function.cpp'
+ * @brief Definition of Function and related classes
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/function.h>
 
 namespace ProcGen {
@@ -38,7 +43,7 @@ bool HandleFunction::operator()(RunStatus& stat)
 
 bool PrintJson::bindInput(size_t id, std::shared_ptr<Function> func)
 {
-    if(id != 0)
+    if (id != 0)
         return false;
     return Function::bindInput(id, func);
 }
@@ -49,7 +54,6 @@ bool PrintJson::operator()(RunStatus& stat)
     LOG_INFO("PrintJson %s\n", _getInput(0)->getOutput()->to_json().dump().c_str());
     return false;
 }
-
 
 bool CollectionAppend::operator()(RunStatus& stat)
 {
@@ -141,16 +145,16 @@ bool GenericCopy::operator()(RunStatus& stat)
     return false;
 }
 bool Convert::operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-        if (_getInput(0)->getOutput()->getBaseId() != type) {
-            // error = types doesn't match
-            throw std::runtime_error("Convert<>: types don't match");
-        }
-        this->bindOutput(_getInput(0)->getOutput());
-        return false;
+{
+    if (_doInputs(stat))
+        return true;
+    if (_getInput(0)->getOutput()->getBaseId() != type) {
+        // error = types doesn't match
+        throw std::runtime_error("Convert<>: types don't match");
     }
+    this->bindOutput(_getInput(0)->getOutput());
+    return false;
+}
 
 bool GetTypeId::operator()(RunStatus& stat)
 {
@@ -164,9 +168,9 @@ bool GetTypeId::operator()(RunStatus& stat)
 bool GenerateUniform::bindInput(size_t id, std::shared_ptr<Function> func)
 {
     // allow only two params
-    if(id > 1)
+    if (id > 1)
         return false;
-    if(func->getOutput()->getTypeName() != "float")
+    if (func->getOutput()->getTypeName() != "float")
         return false;
     return Function::bindInput(id, func);
 }
@@ -188,7 +192,7 @@ bool GenerateUniform::operator()(RunStatus& stat)
     return false;
 }
 
-bool GenerateRandom::bindInput(size_t id, std::shared_ptr<Function> func) 
+bool GenerateRandom::bindInput(size_t id, std::shared_ptr<Function> func)
 {
     return false;
 }
@@ -202,25 +206,25 @@ bool GenerateRandom::operator()(RunStatus& stat)
     return false;
 }
 
-
-bool SetRandomSeed::bindInput(size_t id, std::shared_ptr<Function> func) 
-    {
-        // allow only one params
-        if(id > 0)
-            return false;
-        if(func->getOutput()->getTypeName() != "float")
-            return false;
-        return Function::bindInput(id, func);
-    }
-
-    bool SetRandomSeed::operator()(RunStatus& stat)
-    {
-        if (_doInputs(stat))
-            return true;
-
-        srand(*(int*)_getInput(0)->getOutput()->getData());
+bool SetRandomSeed::bindInput(size_t id, std::shared_ptr<Function> func)
+{
+    // allow only one params
+    if (id > 0)
         return false;
-    }bool ConstructCollection::operator()(RunStatus& stat)
+    if (func->getOutput()->getTypeName() != "float")
+        return false;
+    return Function::bindInput(id, func);
+}
+
+bool SetRandomSeed::operator()(RunStatus& stat)
+{
+    if (_doInputs(stat))
+        return true;
+
+    srand(*(int*)_getInput(0)->getOutput()->getData());
+    return false;
+}
+bool ConstructCollection::operator()(RunStatus& stat)
 {
     if (_doInputs(stat))
         return true;

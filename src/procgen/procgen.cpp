@@ -1,3 +1,8 @@
+/**
+ * @file 'procgen.cpp'
+ * @brief API class for ProcGen library definition
+ * @copyright The MIT license 
+ */
 #include <procgen/parser/generation.h>
 #include <procgen/procgen.h>
 
@@ -108,11 +113,9 @@ size_t Procgen::countOfSymbols() const
 
 json Procgen::at(size_t index) const
 {
-    if(index < this->countOfSymbols())
-    {
+    if (index < this->countOfSymbols()) {
         return this->generation.der->getSymbolAtIndex(index);
     }
     return json();
 }
-
 }

@@ -1,3 +1,8 @@
+/**
+ * @file 'procgen.h'
+ * @brief API class for ProcGen library header
+ * @copyright The MIT license 
+ */
 /*
  * API
  */
@@ -34,7 +39,7 @@ public:
     json serialize() const;
 
     // Get symbol at index
-    json at(size_t index) const; 
+    json at(size_t index) const;
 
     bool isReady() { return (generation.hasAnyError == false) && this->isParsed(); }
     bool isParsed() { return generation.flagIsParsed; }

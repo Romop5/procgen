@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/typeregister.h'
+ * @brief Declares class for type registration and instanciation
+ * @copyright The MIT license 
+ */
 #ifndef _TYPE_H
 #define _TYPE_H
 

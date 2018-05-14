@@ -1,3 +1,8 @@
+/**
+ * @file 'parser/generation.cpp'
+ * @brief Definition of Generation class
+ * @copyright The MIT license 
+ */
 #include "parser.hh"
 #include <fstream>
 #include <procgen/derivation/natives.h>
@@ -475,10 +480,9 @@ bool Generation::createFunctionCall(const char* functionName, std::vector<Argume
 
     // detect if all required ports are binded
 
-    if(functionPointer->hasRequiredBindings() == false)
-    {
+    if (functionPointer->hasRequiredBindings() == false) {
         errorMessage("[Semantic Error] Invalid count of parameters given to call of %s. Expected %d parameters",
-                functionName, functionPointer->getNumberOfExpectedInputs());
+            functionName, functionPointer->getNumberOfExpectedInputs());
     }
 
     // Push new expression(function call) to expression stack

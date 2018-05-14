@@ -1,9 +1,7 @@
-/*
- * Procedural generation library
- * xdobia11 - Roman Dobias
- * Purpose: FunctionRegister registers shared<Function> under std::string name
- * Note: standard functions available under FUNC:TYPE name
- *
+/**
+ * @file 'interpret/functionregister.h'
+ * @brief FunctionRegister registers shared<Function> under std::string name
+ * @copyright The MIT license 
  */
 #include <functional>
 #include <procgen/interpret/compositefunction.h>

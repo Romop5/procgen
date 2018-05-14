@@ -1,3 +1,8 @@
+/**
+ * @file 'parser/scanner.h'
+ * @brief Class for wrapping Flex into C++ 
+ * @copyright The MIT license 
+ */
 #ifndef SCANPIT_HH_
 #define SCANPIT_HH_
 

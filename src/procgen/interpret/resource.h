@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/resource.h'
+ * @brief Resource class for handling type values
+ * @copyright The MIT license 
+ */
 /*
  * Procedural generation library
  * xdobia11 - Roman Dobias

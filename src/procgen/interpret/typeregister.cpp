@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/typeregister.cpp'
+ * @brief Class definition
+ * @copyright The MIT license 
+ */
 #include "typeregister.h"
 
 namespace ProcGen {
@@ -10,7 +15,7 @@ bool TypeRegister::addAlias(const std::string& alias, const std::string& aliased
         return true;
     }
     return false;
-}    
+}
 
 bool TypeRegister::addComposite(const std::string& typeName, std::vector<TypeId> types)
 {
@@ -31,8 +36,6 @@ bool TypeRegister::addComposite(const std::string& typeName, std::vector<TypeId>
 
     return true;
 }
-
-
 
 std::shared_ptr<Resource> TypeRegister::createResourceFromJson(json symbol)
 {
@@ -100,5 +103,4 @@ std::shared_ptr<Resource> TypeRegister::createResourceFromJson(json symbol)
     }
     return nullptr;
 }
-
 }

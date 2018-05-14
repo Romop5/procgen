@@ -1,3 +1,8 @@
+/**
+ * @file 'parser/utils.h'
+ * @brief Utility module for generation.cpp refactoring
+ * @copyright The MIT license 
+ */
 #ifndef _PARSER_UTILS_H
 #define _PARSER_UTILS_H
 #include <procgen/derivation/derivation.h>

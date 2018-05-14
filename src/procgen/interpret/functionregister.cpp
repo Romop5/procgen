@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/functionregister.cpp'
+ * @brief Definition of FunctionRegister
+ * @copyright The MIT license 
+ */
 #include <iostream>
 #include <procgen/interpret/functionregister.h>
 

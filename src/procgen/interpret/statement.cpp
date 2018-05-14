@@ -1,3 +1,8 @@
+/**
+ * @file 'interpret/statement.cpp'
+ * @brief Statement mechanism
+ * @copyright The MIT license 
+ */
 #include <procgen/interpret/function.h>
 #include <procgen/interpret/statement.h>
 

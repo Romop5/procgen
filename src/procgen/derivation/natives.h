@@ -1,3 +1,8 @@
+/**
+ * @file 'derivation/natives.h'
+ * @brief Contains native functions for derivation module
+ * @copyright The MIT license 
+ */
 #ifndef _NATIVES_H
 #define _NATIVES_H
 // Native functions for derivation
@@ -56,7 +61,7 @@ public:
     }
     bool bindInput(size_t id, std::shared_ptr<Function> fn)
     {
-        if(fn->getOutput()->getTypeName() != "int")
+        if (fn->getOutput()->getTypeName() != "int")
             return false;
         return Function::bindInput(id, fn);
     }
@@ -92,7 +97,7 @@ public:
     }
     bool bindInput(size_t id, std::shared_ptr<Function> fn)
     {
-        if(fn->getOutput()->getTypeName() != "int")
+        if (fn->getOutput()->getTypeName() != "int")
             return false;
         return Function::bindInput(id, fn);
     }
@@ -127,7 +132,7 @@ public:
     }
     bool bindInput(size_t id, std::shared_ptr<Function> fn)
     {
-        if(fn->getOutput()->getTypeName() != "int")
+        if (fn->getOutput()->getTypeName() != "int")
             return false;
         return Function::bindInput(id, fn);
     }
@@ -186,11 +191,10 @@ public:
 
     bool bindInput(size_t id, std::shared_ptr<Function> fn)
     {
-        if(fn->getOutput()->getTypeName() != "int")
+        if (fn->getOutput()->getTypeName() != "int")
             return false;
         return Function::bindInput(id, fn);
     }
-
 
     bool operator()(RunStatus& rs)
     {
@@ -233,7 +237,5 @@ public:
         return false;
     }
 };
-
-
 }
 #endif
